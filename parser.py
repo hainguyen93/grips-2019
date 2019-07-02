@@ -43,9 +43,9 @@ def create_driving_edges(xml_root, day, driving_edges):
             stop_number = len(stop_list)
             
             for i in range(1, stop_number): 
-                from_station = stop_list[i-1].get('StationID')
+                from_station = stop_list[i-1].get('StationID').replace(" ", "")
                 departure_time = stop_list[i-1].get('DepartureTime')
-                to_station = stop_list[i].get('StationID')
+                to_station = stop_list[i].get('StationID').replace(" ", "")
                 arrival_time = stop_list[i].get('ArrivalTime')           		
                 passenger_number = stop_list[i-1].get('Passagiere')
                 
@@ -125,7 +125,7 @@ def main():
             file.write(" ".join(str(i) for i in edge) + "\n")
         for edge in waiting_edges:
             file.write(" ".join(str(i) for i in edge) + "\n")
-           
+        
                         
 if __name__ == "__main__":
     main()
