@@ -30,10 +30,10 @@ with open('../Data/digraph_data', "r") as file:
         graph.add_node(end, station = line[2], time_stamp = line[3])
         graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
 
-# adding source and sink to DiGraph
+# adding sources and sinks to DiGraph
 for k, vals in inspectors.items():
-    source = vals["base"] + "_source"
-    sink = vals["base"] + "_sink"
+    source = "source_" + str(k)
+    sink = "sink_"+str(k)
     graph.add_node(source, time_stamp = null)
     graph.add_node(sink, time_stamp = null)
     for node in graph.nodes():
@@ -41,7 +41,7 @@ for k, vals in inspectors.items():
             graph.add_edge(graph[source], node, num_passengers = 0, travel_time = 0)
             graph.add_edge(node, graph[sink], num_passengers=0, travel_time = 0 )
 
-# nx.write_gexf(graph, "test.gexf")
+# nx.write_gexf(graph, "event_digraph.gexf")
 # cplex start
 c = cplex.Cplex()
 c.set_problem_type(c.problem_type.LP)
@@ -73,24 +73,72 @@ for u, v in graph.edges():
         range_values = [0],
         names = 'bdd_by_inspector_count_{}_{}'.format(u, v)
     )
-# ==================== time flow constraint ==================
-# (equation 8)
+# ================================================================
+#           Time flow and sink/source node constraint
+# ================================================================
+# (equation 8) and (equation 7)
 
-lin_expr = []
+lin_expr_time_flow = []
 names = []
 rhs = []
 
-for k, vals in inspectors.items():
-    # look at all predecessors of sink k
-    sinks = [graph[vals["base"]]]
-    for u in sinks.predecessors(sinks[k]):
-        indices.append(var_name_to_id['var_t_{}_{}'.format(u,sinks[k])])
-    values = [1]*len(indices)
+lin_expr_sink_constr = []
+names_2 = []
+rhs_2 = []
 
+lin_expr_source_constr = []
+names_3 = []
+rhs_3 = []
+
+
+for k, vals in inspectors.items():
+    indices = []
+    indices_2 = [] # for sinks
+    indices_3 = [] # for sources
+    # look at all predecessors of sink k
+    sink = "sink_"+str(k)
+    for u in graph.predecessors(sink):
+        indices.append(var_name_to_id['var_x_{}_{}^{}'.format(u,sink, k)]*u.time_stamp)
+        indices_2.append(var_name_to_id['var_x_{}_{}^{}'.format(u, sink, k)])
+    values = [1]*len(indices)
+    values_2 = [1]*len(indices_2)
     # look at all successors of source k
-    for v in sources.successors(sources[k]):
-        indices.append(var_name_to_id['var_t_{}_{}'.format(sources[k], v)])
+    source = "source_"+str(k)
+    for v in graph.successors(source):
+        indices.append(var_name_to_id['var_x_{}_{}^{}'.format(source, v, k)]*u.time_stamp)
         values.append(-1)
-    lin_expr.append(cplex.SparsePair(ind = indices, val= values))
+        indices_3.append(var_name_to_id['var_x_{}_{}^{}'.format(source, v, k)])
+    values_3 = [1]*len(indices_3)
+    # add time flow constraint
+    lin_expr_time_flow.append(cplex.SparsePair(ind = indices, val= values))
+    # add sink node constraint
+    lin_expr_sink_constr.append(cplex.SparsePair(ind = indices_2, val= values_2))
+    # add source node constraint
+    lin_expr_source_constr.append(cplex.SparsePair(ind = indices_3, val= values_3))
     names.append('time_flow_constr_{}'.format(k))
-    c.linear_constraints.add(lin_expr = lin_expr, senses= num*['L'], rhs=[vals["theta"]]], names=names)
+    names_2.append('sink_constr_{}'.format(k))
+    names_3.append('source_constr_{}'.format(k))
+    c.linear_constraints.add(
+        lin_expr = lin_expr_time_flow,
+        senses=['L'],
+        rhs=[vals["theta"]]],
+        names=names
+    )
+    c.linear_constraints.add(
+        lin_expr = lin_expr_sink_constr,
+        senses=['E'],
+        rhs=[1],
+        names=names_2
+    )
+    c.linear_constraints.add(
+        lin_expr=lin_expr_source_constr,
+        senses=['E'],
+        rhs=[1],
+        names=names_3
+    )
+
+# ===================== mass-balance constraint =================
+
+# note: need to omit sinks and sources
+for q in graph.nodes():
+    pass
