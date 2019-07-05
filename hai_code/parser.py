@@ -52,7 +52,7 @@ def create_driving_edges(xml_root, day, driving_edges):
                 # calculating the travelling time (i.e., datetime.timedelta objects)
                 travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
                 travel_time_minutes = (travel_time_seconds % 3600) // 60                    
-                new_edge = tuple((from_station, departure_time, to_station, arrival_time, passenger_number, travel_time_minutes, train_id))
+                new_edge = tuple((from_station, departure_time, to_station, arrival_time, passenger_number, travel_time_minutes))
                 driving_edges.append(new_edge)
                 #print(new_edge)
 
@@ -90,7 +90,7 @@ def create_waiting_edges(waiting_edges, events):
         for i in range(len(timestamps)-1):
             travel_time_seconds = (parse(timestamps[i+1])-parse(timestamps[i])).seconds
             travel_time_minutes = (travel_time_seconds % 3600) // 60
-            new_edge = tuple((station, timestamps[i], station, timestamps[i+1], 0, travel_time_minutes, "NA"))
+            new_edge = tuple((station, timestamps[i], station, timestamps[i+1], 0, travel_time_minutes))
             waiting_edges.add(new_edge)    
             #print(new_edge)            
 
