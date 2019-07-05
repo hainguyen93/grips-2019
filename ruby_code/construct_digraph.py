@@ -9,7 +9,7 @@ import cplex
 import networkx as nx
 
 # networkx start
-graph = nx.DiGraph()
+graph = nx.MultiDiGraph() # nx.MultiDiGraph()
 
 inspectors = { 0:{"base": 'RDRM', "theta": 8*60, "rate": 12}} # for now
 
@@ -17,7 +17,7 @@ flow_var_names = []
 number_of_passengers_checked_M = []
 num_edges = 0
 
-with open('../Data/digraph_data', "r") as file:
+with open('../data/Mon_Arcs.txt', "r") as file:
     for line in file.readlines()[:-1]:
         line = line.replace('\n','').split(' ')
         start = line[0]+'@'+line[1]
@@ -28,19 +28,22 @@ with open('../Data/digraph_data', "r") as file:
         graph.add_node(start, station = line[0], time_stamp = line[1])
         graph.add_node(end, station = line[2], time_stamp = line[3])
         graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
+        #
         num_edges+=1
 
 print('built graph')
+
+# print("Num of edges checked: {}".format(num_edges ==  graph.number_of_edges()))
+g = graph.nodes()
+
 # adding sources and sinks to DiGraph
 for k, vals in inspectors.items():
     source = "source_" + str(k)
     sink = "sink_"+str(k)
-    graph.add_node(source, time_stamp = None)
-    graph.add_node(sink, time_stamp = None)
+    graph.add_node(source, station = vals['base'], time_stamp = None)
+    graph.add_node(sink, station = vals['base'], time_stamp = None)
     for node in graph.nodes():
-        station = nx.get_node_attributes(graph, 'station')
-        time_stamp = nx.get_node_attributes(graph, 'time_stamp')
-        if station is vals['base'] and not time_stamp:
+        if g[node]['station'] == vals['base'] and not g[node]['time_stamp']:
             # adding edge between sink and events and adding to the variable dictionary
             graph.add_edge(graph[source], node, num_passengers = 0, travel_time = 0)
             flow_var_names.append('var_x_{}_{}^{}'.format(graph[source], node, k))
