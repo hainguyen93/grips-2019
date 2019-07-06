@@ -61,15 +61,13 @@ with open(input_dir, "r") as f:
 # time to build graph
 t2 = time.time()
 
-print('Finished!. ', end=" ")
-print("Took {} seconds".format(t2-t1))
+print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
 
 #============================== ADDING SOURCE/SINK NODES ==========================================
 
 print("Adding Sinks/Sources...", end=" ")
 
-# adding sources and sinks to DiGraph
 for k, vals in inspectors.items():
     source = "source_" + str(k)
     sink = "sink_"+str(k)
@@ -90,8 +88,7 @@ for k, vals in inspectors.items():
 
 t3 = time.time()
 
-print('Finished! ', end=" ")
-print("Took {} seconds".format(t3-t2))
+print('Finished! Took {:.5f} seconds'.format(t3-t2))
 
 # test edge source to sinks
 print('TEST: Unique edge between two nodes: ', num_edges == graph.number_of_edges())
@@ -100,14 +97,9 @@ print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 # freeze graph to prevent further changes
 graph = nx.freeze(graph)
 
-## plot the graph
-#nx.draw(graph)
-#plt.show()
-
 
 #================================== START CPLEX =================================================
 
-# cplex start
 print("Start CPLEX")
 
 c = cplex.Cplex()
@@ -135,8 +127,7 @@ c.variables.add(
 
 
 t4 = time.time() 
-print("Finished!", end = " ")
-print("Took {} seconds".format(t4-t3))
+print("Finished! Took {:.5f} seconds".format(t4-t3))
 
 
 #================================== CONSTRAINT 9 ==========================================
@@ -156,8 +147,7 @@ for u, v in graph.edges():
         
 t5 = time.time()
 
-print('Finished!', end = " ")
-print("Took {} seconds".format(t5-t4))
+print('Finished! Took {:.5f} seconds'.format(t5-t4))
 
 
 #=================================== CONSTRAINT 7 ===============================================
@@ -190,13 +180,11 @@ for k, vals in inspectors.items():
     
     
 t6 = time.time()
-print('Finished!', end = " ")
-print("Took {} seconds".format(t6-t5))
+print('Finished! Took {:.5f} seconds'.format(t6-t5))
 
 
 #===================================== CONSTRAINT 8 ==================================================
 
-# Adding Constraint (8)
 print("Adding Constraint (8)...", end=" ")
 
 for k, vals in inspectors.items():
@@ -218,13 +206,11 @@ for k, vals in inspectors.items():
         
         
 t7 = time.time()
-print("Finished!", end=" ")
-print("Took {} seconds".format(t7-t6))
+print("Finished! Took {:.5f} seconds".format(t7-t6))
 
 
 #=================================== CONSTRAINT 6 ===================================================
 
-# Adding Constraint (6)
 print("Adding Constraint (6)...", end=" ")
 
 for node in graph.nodes():
@@ -250,25 +236,21 @@ for node in graph.nodes():
         
 t8 = time.time()
 
-print("Finished!", end = " ")
-print("Took {} seconds".format(t8-t7))
+print("Finished! Took {:.5f} seconds".format(t8-t7))
 
 
 #================================== POST-PROCESSING ================================================
 
 print('Write to inspectors.lp ...', end=" ")
 c.write('inspectors.lp')
-print('Finished!', end=" ")
 t9 =time.time()
-print("Took {} seconds".format(t9-t8))
+print('Finished! Took {:.5f} seconds'.format(t9-t8))
 
 
 print("Now solving ...", end = " ")
 c.solve()
 t10 = time.time()
-print('Finished!', end=" ")
-print("Took {} seconds".format(t10-t9))
-
+print('Finished! Took {:.5f} seconds'.format(t10-t9))
 print("Print out solutions:")
 
 try: 
@@ -279,5 +261,4 @@ except cplex.exceptions.errors.CplexSolverError:
 
 
 t11= time.time()
-print("Programme Terminated!", end= " ")
-print("Took {} seconds".format(t11-t1))
+print("Programme Terminated! Took {:.5f} seconds".format(t11-t1))
