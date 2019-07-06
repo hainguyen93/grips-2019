@@ -14,6 +14,7 @@ import networkx as nx
 import time
 from datetime import datetime, timedelta
 from dateutil.parser import parse
+import matplotlib.pyplot as plt
 
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
@@ -36,6 +37,8 @@ input_dir = '/home/optimi/bzfnguye/grips-2019/hai_code/Mon_Arcs.txt'
 print("Building graph ...", end = " ")
 t1 = time.time()
 
+num_edges = 0
+
 with open(input_dir, "r") as f:
     for line in f.readlines()[:-1]:
         line = line.replace('\n','').split(' ')
@@ -53,6 +56,7 @@ with open(input_dir, "r") as f:
         # we assume a unique edge between events for now
         if not graph.has_edge(start, end):
             graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
+            num_edges += 1
 
 # time to build graph
 t2 = time.time()
@@ -76,9 +80,11 @@ for k, vals in inspectors.items():
             
             # adding edge between sink and events and adding to the variable dictionary
             graph.add_edge(source, node, num_passengers = 0, travel_time = 0)
+            num_edges += 1
             flow_var_names.append('var_x_{}_{}^{}'.format(source, node, k))
             var_passengers_inspected['var_M_{}_{}'.format(source, node)] = 0
             graph.add_edge(node, sink, num_passengers=0, travel_time = 0 )
+            num_edges += 1
             flow_var_names.append('var_x_{}_{}^{}'.format(node, sink, k))
             var_passengers_inspected['var_M_{}_{}'.format(node, sink)] = 0
 
@@ -88,10 +94,15 @@ print('Finished! ', end=" ")
 print("Took {} seconds".format(t3-t2))
 
 # test edge source to sinks
-print("Test Source/Sink Edge: {}".format(graph.has_edge("source_0", "sink_0")))
+print('TEST: Unique edge between two nodes: ', num_edges == graph.number_of_edges())
+print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 
 # freeze graph to prevent further changes
 graph = nx.freeze(graph)
+
+## plot the graph
+#nx.draw(graph)
+#plt.show()
 
 
 #================================== START CPLEX =================================================
