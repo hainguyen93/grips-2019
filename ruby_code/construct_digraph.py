@@ -254,7 +254,7 @@ print("Finished!", end = " ")
 print("Took {} seconds".format(t8-t7))
 
 
-#================================== POST PROCESSING ================================================
+#================================== POST-PROCESSING ================================================
 
 print('Write to inspectors.lp ...', end=" ")
 c.write('inspectors.lp')
