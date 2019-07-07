@@ -12,6 +12,7 @@ sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
 import cplex
 import networkx as nx
 import time
+#import Logger  # print out to file
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
@@ -136,7 +137,7 @@ print('Adding Constraint (9)...', end = " ")
 
 for u, v in graph.edges():
     indices = ['var_M_{}_{}'.format(u,v)] + ['var_x_{}_{}^{}'.format(u,v,k) for k in inspectors]
-    values = [1] + [-vals["working_hours"] * graph.edges[u,v]['travel_time'] for k, vals in inspectors.items()]
+    values = [1] + [-vals["rate"] * graph.edges[u,v]['travel_time'] for k, vals in inspectors.items()]
     c.linear_constraints.add(
         lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
         senses = ['L'],
@@ -214,7 +215,7 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 print("Adding Constraint (6)...", end=" ")
 
 for node in graph.nodes():
-    if not graph.nodes[node]['time_stamp']:
+    if graph.nodes[node]['time_stamp']:
         in_indices = ['var_x_{}_{}^{}'.format(p, node, k) 
                                     for p in graph.predecessors(node) for k in inspectors]
         in_vals = [1] * len(in_indices)
@@ -249,6 +250,7 @@ print('Finished! Took {:.5f} seconds'.format(t9-t8))
 
 print("Now solving ...", end = " ")
 c.solve()
+print("Solution Status: ", c.solution.get_status())
 t10 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t10-t9))
 print("Print out solutions:")
@@ -258,6 +260,8 @@ try:
     print(vals)
 except cplex.exceptions.errors.CplexSolverError:
     print("No solution exists.")
+    
+
 
 
 t11= time.time()
