@@ -257,12 +257,20 @@ print("Print out solutions:")
 
 try: 
     vals = c.solution.get_values( flow_var_names )
-    print(vals)
+    #print(vals)
 except cplex.exceptions.errors.CplexSolverError:
     print("No solution exists.")
     
+# post-processing
+paths = [edge for edge, x_val in zip(flow_var_names, vals) if x_val]
 
+for edge in paths:
+    print(edge)
+
+print(len(paths))
 
 
 t11= time.time()
 print("Programme Terminated! Took {:.5f} seconds".format(t11-t1))
+
+#print(flow_var_names[:10])
