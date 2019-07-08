@@ -4,6 +4,10 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
               
+ICE: 401
+Day selected: Monday
+Notes: Overnight Trips removed.
+
 ============================================
 CONSOLE: 
 
