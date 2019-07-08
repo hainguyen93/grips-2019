@@ -21,6 +21,14 @@ DAY_DICT = { "Mon" : 0,
             "Sat" : 5, 
             "Sun" : 6  }
 
+FOLLOWING_DAY =  { "Mon" : "Tue", 
+            "Tue" : "Wed", 
+            "Wed" : "Thu", 
+            "Thu" : "Fri", 
+            "Fri" : "Sat", 
+            "Sat" : "Sun", 
+            "Sun" : "Mon"  }
+
 
 def create_driving_edges(xml_root, day, driving_edges):
     """ Generating all driving edges for the selected day
@@ -29,6 +37,7 @@ def create_driving_edges(xml_root, day, driving_edges):
         xml_root        : root of the xml tree
         day             : a specific day of the week (Mon, Tue,...) 
         driving_edges   : list of driving edges
+        ice :  ice fleet
     """   
     for train in xml_root.iter('Train'):
         train_id = int(train.get('TrainID_'))
@@ -38,6 +47,8 @@ def create_driving_edges(xml_root, day, driving_edges):
             
             if trip_validity[DAY_DICT[day]] is not "1":
                 continue
+            
+            next_day = False
             
             stop_list = list(trip.iter('Stop'))
             stop_number = len(stop_list)
@@ -49,6 +60,30 @@ def create_driving_edges(xml_root, day, driving_edges):
                 arrival_time = stop_list[i].get('ArrivalTime')           		
                 passenger_number = int(stop_list[i-1].get('Passagiere'))
                 
+                if departure_time > arrival_time: # overnight, removed for now 
+                    break
+                
+                """
+                if departure_time > arrival_time: #overnight
+                    next_day = True
+                    t1 = parse(departure_time)
+                    t2 = parse(arrival_time) + timedelta(days=1) 
+                    #travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
+                    travel_time_minutes = ((t2-t1).seconds % 3600) // 60    
+                else:
+                    t1 = parse(departure_time)
+                    t2 = parse(arrival_time)
+                    #travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
+                    travel_time_minutes = ((t2-t1).seconds % 3600) // 60  
+                    
+                if not next_day:
+                    departure_time = day + ":" + departure_time
+                    arrival_time = day + ":" + arrival_time                    
+                else:
+                    departure_time = FOLLOWING_DAY[day] + ":" + departure_time
+                    arrival_time = FOLLOWING_DAY[day] + ":" + arrival_time
+                   """
+
                 # calculating the travelling time (i.e., datetime.timedelta objects)
                 travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
                 travel_time_minutes = (travel_time_seconds % 3600) // 60                    
@@ -73,9 +108,11 @@ def create_list_of_events(driving_edges, events):
             else:
                 events[station] = [edge[indx+1]]   
                 
-    for station in events:        
+    for station in events:
         unduplicate_timestamps = list(set(events[station]))
-        events[station] = sorted(unduplicate_timestamps)     
+        events[station] = sorted(unduplicate_timestamps)
+    
+   
         
                 
                 
@@ -108,15 +145,25 @@ def main():
     events = dict()
     
     chosen_day = "Mon" # select a day here
+    
+    ice = '401'
+    input_dir = "/home/optimi/" + USERNAME +"/inputData/EN_GRIPS2019_" + ice + ".xml"
+    tree = ET.parse(input_dir)
+    root = tree.getroot()
+    create_driving_edges(root, chosen_day, driving_edges)
+    create_list_of_events(driving_edges, events)
+    create_waiting_edges(waiting_edges, events)
         
-    for ice in ICE_NAMES: 
-        input_dir = "/home/optimi/" + USERNAME +"/inputData/EN_GRIPS2019_" + ice + ".xml"
-        tree = ET.parse(input_dir)
-        root = tree.getroot()
-        create_driving_edges(root, chosen_day, driving_edges)
-        create_list_of_events(driving_edges, events)
-        create_waiting_edges(waiting_edges, events)
+    #for ice in ICE_NAMES: 
+        #input_dir = "/home/optimi/" + USERNAME +"/inputData/EN_GRIPS2019_" + ice + ".xml"
+        #tree = ET.parse(input_dir)
+        #root = tree.getroot()
+        #create_driving_edges(root, chosen_day, driving_edges)
+        #create_list_of_events(driving_edges, events)
+        #create_waiting_edges(waiting_edges, events)
             
+    test_station = "FFU"
+    print(events[test_station])
     #number_of_edges = len(driving_edges)+len(waiting_edges)
     #number_of_nodes = sum([len(timestamps) for _, timestamps in events.items()])
         

@@ -12,6 +12,8 @@ sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
 import cplex
 import networkx as nx
 import time
+import re
+import pandas as pd
 #import Logger  # print out to file
 from datetime import datetime, timedelta
 from dateutil.parser import parse
@@ -20,7 +22,9 @@ import matplotlib.pyplot as plt
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12}} # for now
+inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12}} 
+              #1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+              #2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
 
 flow_var_names = []
 
@@ -47,7 +51,7 @@ with open(input_dir, "r") as f:
         end = line[2]+'@'+line[3]
         
         for k in inspectors:
-            flow_var_names.append('var_x_{}_{}^{}'.format(start, end, k))
+            flow_var_names.append('var_x_{}_{}_{}'.format(start, end, k))
         
         var_passengers_inspected['var_M_{}_{}'.format(start, end)] = int(line[4])
         
@@ -80,11 +84,11 @@ for k, vals in inspectors.items():
             # adding edge between sink and events and adding to the variable dictionary
             graph.add_edge(source, node, num_passengers = 0, travel_time = 0)
             num_edges += 1
-            flow_var_names.append('var_x_{}_{}^{}'.format(source, node, k))
+            flow_var_names.append('var_x_{}_{}_{}'.format(source, node, k))
             var_passengers_inspected['var_M_{}_{}'.format(source, node)] = 0
             graph.add_edge(node, sink, num_passengers=0, travel_time = 0 )
             num_edges += 1
-            flow_var_names.append('var_x_{}_{}^{}'.format(node, sink, k))
+            flow_var_names.append('var_x_{}_{}_{}'.format(node, sink, k))
             var_passengers_inspected['var_M_{}_{}'.format(node, sink)] = 0
 
 t3 = time.time()
@@ -97,6 +101,13 @@ print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 
 # freeze graph to prevent further changes
 graph = nx.freeze(graph)
+
+print('successors of FFU@10:51:00')
+
+for node in graph.successors('FFU@10:51:00'):
+    print(node)
+
+
 
 
 #================================== START CPLEX =================================================
@@ -136,7 +147,7 @@ print("Finished! Took {:.5f} seconds".format(t4-t3))
 print('Adding Constraint (9)...', end = " ")
 
 for u, v in graph.edges():
-    indices = ['var_M_{}_{}'.format(u,v)] + ['var_x_{}_{}^{}'.format(u,v,k) for k in inspectors]
+    indices = ['var_M_{}_{}'.format(u,v)] + ['var_x_{}_{}_{}'.format(u,v,k) for k in inspectors]
     values = [1] + [-vals["rate"] * graph.edges[u,v]['travel_time'] for k, vals in inspectors.items()]
     c.linear_constraints.add(
         lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
@@ -161,7 +172,7 @@ for k, vals in inspectors.items():
             
     c.linear_constraints.add(
         lin_expr = [cplex.SparsePair(
-                        ind = ['var_x_{}_{}^{}'.format(u, sink, k) for u in graph.predecessors(sink)],
+                        ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)],
                         val = [1] * graph.in_degree(sink)
                     )],
         senses = ['E'],
@@ -171,7 +182,7 @@ for k, vals in inspectors.items():
         
     c.linear_constraints.add(
         lin_expr = [ cplex.SparsePair(
-                        ind = ['var_x_{}_{}^{}'.format(source, u, k) for u in graph.successors(source)] ,
+                        ind = ['var_x_{}_{}_{}'.format(source, u, k) for u in graph.successors(source)] ,
                         val = [1] * graph.out_degree(source) 
                     )],
         senses = ['E'],
@@ -189,12 +200,12 @@ print('Finished! Took {:.5f} seconds'.format(t6-t5))
 print("Adding Constraint (8)...", end=" ")
 
 for k, vals in inspectors.items():
-    source = "source_" + str(k)
+    source = "source_" + str(k) + ""
     sink = "sink_" + str(k)
     c.linear_constraints.add(
         lin_expr = [cplex.SparsePair(
-                    ind = ['var_x_{}_{}^{}'.format(u, sink, k) for u in graph.predecessors(sink)]
-                        + ['var_x_{}_{}^{}'.format(source, v, k) for v in graph.successors(source)],
+                    ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)]
+                        + ['var_x_{}_{}_{}'.format(source, v, k) for v in graph.successors(source)],
                     val = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) 
                                     for u in graph.predecessors(sink)]
                         + [-time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())
@@ -216,11 +227,11 @@ print("Adding Constraint (6)...", end=" ")
 
 for node in graph.nodes():
     if graph.nodes[node]['time_stamp']:
-        in_indices = ['var_x_{}_{}^{}'.format(p, node, k) 
+        in_indices = ['var_x_{}_{}_{}'.format(p, node, k) 
                                     for p in graph.predecessors(node) for k in inspectors]
         in_vals = [1] * len(in_indices)
         
-        out_indices = ['var_x_{}_{}^{}'.format(node, p, k) 
+        out_indices = ['var_x_{}_{}_{}'.format(node, p, k) 
                                     for p in graph.successors(node) for k in inspectors]
         out_vals = [-1] * len(out_indices)
         
@@ -256,21 +267,39 @@ print('Finished! Took {:.5f} seconds'.format(t10-t9))
 print("Print out solutions:")
 
 try: 
-    vals = c.solution.get_values( flow_var_names )
-    #print(vals)
+    res = c.solution.get_values( flow_var_names )
+    #print(res)
 except cplex.exceptions.errors.CplexSolverError:
     print("No solution exists.")
     
+print("Test: Do 'flow_var_names' and 'res' have same size? ", len(flow_var_names)==len(res))
+    
 # post-processing
-paths = [edge for edge, x_val in zip(flow_var_names, vals) if x_val]
+paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if x_val]
+
+print("Edges Number = ", len(paths))
 
 for edge in paths:
     print(edge)
 
-print(len(paths))
+df_paths = pd.DataFrame(paths, columns=['from_station', 'departure_time', 'to_station', 'arrival_time', 'inspector_id'])
+
+#df_paths['inspector_id'].astype('int8')
+
+for k, vals in inspectors.items():
+    print("Solution for Inspector ", k)
+    #source = 'source_' + str(k)
+    #sink = 'sink_' + str(k)
+    path = df_paths[df_paths['inspector_id'] == str(k)]
+    path = path.sort_values(by=['departure_time'])
+    print(path.to_string())
+    path.to_csv('inspector_0_path.csv', index = False)
+
+#print(len(paths))
 
 
 t11= time.time()
 print("Programme Terminated! Took {:.5f} seconds".format(t11-t1))
 
 #print(flow_var_names[:10])
+
