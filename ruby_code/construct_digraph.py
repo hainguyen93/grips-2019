@@ -22,9 +22,9 @@ import matplotlib.pyplot as plt
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12}} 
-              #1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              #2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
+inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12}, 
+              1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
 
 flow_var_names = []
 
@@ -147,15 +147,16 @@ print("Finished! Took {:.5f} seconds".format(t4-t3))
 print('Adding Constraint (9)...', end = " ")
 
 for u, v in graph.edges():
-    indices = ['var_M_{}_{}'.format(u,v)] + ['var_x_{}_{}_{}'.format(u,v,k) for k in inspectors]
-    values = [1] + [-vals["rate"] * graph.edges[u,v]['travel_time'] for k, vals in inspectors.items()]
-    c.linear_constraints.add(
-        lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
-        senses = ['L'],
-        rhs = [0],
-        range_values = [0],
-        names = ['bdd_by_inspector_count_{}_{}'.format(u, v)]
-    )
+    if not ("source_" in u+v or "sink_" in u+v):
+        indices = ['var_M_{}_{}'.format(u,v)] + ['var_x_{}_{}_{}'.format(u,v,k) for k in inspectors]
+        values = [1] + [-vals["rate"] * graph.edges[u,v]['travel_time'] for k, vals in inspectors.items()]
+        c.linear_constraints.add(
+            lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
+            senses = ['L'],
+            rhs = [0],
+            range_values = [0],
+            names = ['bdd_by_inspector_count_{}_{}'.format(u, v)]
+        )
         
 t5 = time.time()
 
@@ -225,25 +226,34 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 
 print("Adding Constraint (6)...", end=" ")
 
-for node in graph.nodes():
-    if graph.nodes[node]['time_stamp']:
-        in_indices = ['var_x_{}_{}_{}'.format(p, node, k) 
-                                    for p in graph.predecessors(node) for k in inspectors]
-        in_vals = [1] * len(in_indices)
-        
-        out_indices = ['var_x_{}_{}_{}'.format(node, p, k) 
-                                    for p in graph.successors(node) for k in inspectors]
-        out_vals = [-1] * len(out_indices)
-        
-        c.linear_constraints.add(
-            lin_expr = [cplex.SparsePair(
-                            ind = in_indices + out_indices,
-                            val = in_vals + out_vals
-                        )],
-            senses = ['E'],
-            rhs = [0],
-            names = ['mass_balance_constr_{}'.format(node)]
-        )
+for k in inspectors:
+    for node in graph.nodes():
+        if graph.nodes[node]['time_stamp']:
+            
+            in_indices = []
+            
+            for p in graph.predecessors(node):
+                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k): # not a sink/source
+                    in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
+            in_vals = [1] * len(in_indices)
+            
+            out_indices = []
+            
+            for p in graph.successors(node):
+                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k):
+                    out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
+                    
+            out_vals = [-1] * len(out_indices)
+            
+            c.linear_constraints.add(
+                lin_expr = [cplex.SparsePair(
+                                ind = in_indices + out_indices,
+                                val = in_vals + out_vals
+                            )],
+                senses = ['E'],
+                rhs = [0],
+                names = ['mass_balance_constr_{}_{}'.format(node, k)]
+            )
         
         
 t8 = time.time()
@@ -279,8 +289,8 @@ paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res
 
 print("Edges Number = ", len(paths))
 
-for edge in paths:
-    print(edge)
+#for edge in paths:
+    #print(edge)
 
 df_paths = pd.DataFrame(paths, columns=['from_station', 'departure_time', 'to_station', 'arrival_time', 'inspector_id'])
 
