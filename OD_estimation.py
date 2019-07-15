@@ -9,22 +9,10 @@ def odEstimation(G):
             waiting_edges.append((u,v))
     G.remove_edges_from(waiting_edges)
 
-    node_ref = {};#master index for all nodes
-    arc_ref = {}; #master index for all arcs
+
     arc_paths = {};
-    P = {}; #proportion matrix - all or none
 
-    #fill node_ref
-    i=0
-    for node in G.nodes():
-        node_ref[node] = i;
-        i +=1
 
-    #fill arc_ref
-    i=0
-    for (u,v) in G.edges():
-        arc_ref[u + '-->' + v] = i;
-        i +=1
 
 
     for (u,v,c) in G.edges.data('num_passengers'):
