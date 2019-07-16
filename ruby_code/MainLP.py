@@ -19,8 +19,8 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
 
-from OD_estimate_with_convergence_alg import *
-from convergence_algorithm import *
+
+from OD_matrix import *
 
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
@@ -74,7 +74,7 @@ print('Finished! Took {:.5f} seconds'.format(t2-t1))
 #================================ OD Estimation ===============================
 
 # create set of all paths traveling through each arc
-arc_paths = odEstimation(graph)
+arc_paths = create_arc_paths(graph)
 # implement the multiproportional algorithm
 X = multiproportional(arc_paths)
 # generate the OD-matrix disctionary (sparse representation)
