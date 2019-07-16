@@ -3,10 +3,10 @@
 # author: Ruby Abrams
 
 import numpy as np
+import networkx as nx
 
 
 def create_arc_paths(G):
-
     #remove waiting edges from our graph
     waiting_edges = [];
     for u,v in G.edges():
@@ -27,7 +27,7 @@ def create_arc_paths(G):
         for sink in paths[source]:
             for u,v in zip(paths[source][sink],paths[source][sink][1:]):
                 arc_paths[u + '-->' + v].append(paths[source][sink])
-    return arc_paths
+    return paths, arc_paths
 
 def does_converge(V, V_hat, epsilon = 0.05):
     '''
@@ -85,25 +85,24 @@ def multiproportional(arc_paths):
         n+=1
     return X
 
-def generate_OD_matrix(arc_paths, X):
+def generate_OD_matrix(shortest_paths, arc_paths, X):
     '''
     This will generate a sparse representation of the OD generate_OD_matrix.
     Given the X vector and arc_paths, all non-zero entries will be returned in
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-    # create a NxN matrix, N - number of nodes in the graph
+    # create a dictionary for the number of people traveling from
+    # some origin to some destination
     T = {}
     arc_idx = {arc: i for i,arc in enumerate(arc_paths)}
 
-    for arc, value in arc_paths.items():
-        num_paths = len(value)-1
-        X_temp = np.array([])
-
-        # iterate through every path in going through that arc
-        for path_index in range(num_paths):
-            path = value[path_index+1]
-            X_temp = np.array([ X[arc_idx[node1+'-->'+node2]] for node1,node2 in zip(path, path[1:]) ])
-        # populate the dictionary with arcs and associated values
-        T[arc] = np.product(X_temp)
+    # iterate through all sources
+    for source, val in shortest_paths.items():
+        # for every sink
+        for sink, path in val.items():
+            # dont add include paths from a node to itself
+            if sink != source:
+                # collect the X_a values for all arcs in the path
+                T[source+'-->'+sink] = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
     return T

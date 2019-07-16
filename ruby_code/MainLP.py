@@ -74,11 +74,11 @@ print('Finished! Took {:.5f} seconds'.format(t2-t1))
 #================================ OD Estimation ===============================
 
 # create set of all paths traveling through each arc
-arc_paths = create_arc_paths(graph)
+shortest_paths, arc_paths = create_arc_paths(graph)
 # implement the multiproportional algorithm
 X = multiproportional(arc_paths)
 # generate the OD-matrix disctionary (sparse representation)
-T = generate_OD_matrix(arc_paths, X)
+T = generate_OD_matrix(shortest_paths, arc_paths, X)
 
 print(T)
 quit()
