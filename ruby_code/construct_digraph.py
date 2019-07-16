@@ -7,7 +7,7 @@
 import sys
 
 # change local PATH environment for Python
-sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
+# sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
 
 import cplex
 import networkx as nx
@@ -19,10 +19,13 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
 
+from OD_estimate_with_convergence_alg import *
+from convergence_algorithm import *
+
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12}, 
+inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
 
@@ -34,7 +37,7 @@ var_passengers_inspected = {}
 HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
 
-input_dir = '/home/optimi/bzfnguye/grips-2019/hai_code/Mon_Arcs.txt'
+input_dir = '../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
 
 
 #============================= CONSTRUCTING THE GRAPH ============================================
@@ -49,15 +52,15 @@ with open(input_dir, "r") as f:
         line = line.replace('\n','').split(' ')
         start = line[0]+'@'+line[1]
         end = line[2]+'@'+line[3]
-        
+
         for k in inspectors:
             flow_var_names.append('var_x_{}_{}_{}'.format(start, end, k))
-        
+
         var_passengers_inspected['var_M_{}_{}'.format(start, end)] = int(line[4])
-        
+
         graph.add_node(start, station = line[0], time_stamp = line[1])
         graph.add_node(end, station = line[2], time_stamp = line[3])
-        
+
         # we assume a unique edge between events for now
         if not graph.has_edge(start, end):
             graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
@@ -68,7 +71,17 @@ t2 = time.time()
 
 print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
+#================================ OD Estimation ===============================
 
+# create set of all paths traveling through each arc
+arc_paths = odEstimation(graph)
+# implement the multiproportional algorithm
+X = multiproportional(arc_paths)
+# generate the OD-matrix disctionary (sparse representation)
+T = generate_OD_matrix(arc_paths, X)
+
+print(T)
+quit()
 #============================== ADDING SOURCE/SINK NODES ==========================================
 
 print("Adding Sinks/Sources...", end=" ")
@@ -80,7 +93,7 @@ for k, vals in inspectors.items():
     graph.add_node(sink, station = vals['base'], time_stamp = None)
     for node in graph.nodes():
         if (graph.nodes[node]['station'] == vals['base']) and (graph.nodes[node]['time_stamp'] is not None):
-            
+
             # adding edge between sink and events and adding to the variable dictionary
             graph.add_edge(source, node, num_passengers = 0, travel_time = 0)
             num_edges += 1
@@ -138,7 +151,7 @@ c.variables.add(
     types = [ c.variables.type.continuous ] * len(var_passengers_inspected))
 
 
-t4 = time.time() 
+t4 = time.time()
 print("Finished! Took {:.5f} seconds".format(t4-t3))
 
 
@@ -157,7 +170,7 @@ for u, v in graph.edges():
             range_values = [0],
             names = ['bdd_by_inspector_count_{}_{}'.format(u, v)]
         )
-        
+
 t5 = time.time()
 
 print('Finished! Took {:.5f} seconds'.format(t5-t4))
@@ -170,7 +183,7 @@ print("Adding constraint (7) ...", end=" ")
 for k, vals in inspectors.items():
     sink = "sink_" + str(k)
     source = "source_" + str(k)
-            
+
     c.linear_constraints.add(
         lin_expr = [cplex.SparsePair(
                         ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)],
@@ -180,18 +193,18 @@ for k, vals in inspectors.items():
         rhs = [1],
         names = ['sink_constr_{}'.format(k)]
     )
-        
+
     c.linear_constraints.add(
         lin_expr = [ cplex.SparsePair(
                         ind = ['var_x_{}_{}_{}'.format(source, u, k) for u in graph.successors(source)] ,
-                        val = [1] * graph.out_degree(source) 
+                        val = [1] * graph.out_degree(source)
                     )],
         senses = ['E'],
         rhs = [1],
         names = ['source_constr_{}'.format(k)]
-    )  
-    
-    
+    )
+
+
 t6 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t6-t5))
 
@@ -207,7 +220,7 @@ for k, vals in inspectors.items():
         lin_expr = [cplex.SparsePair(
                     ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)]
                         + ['var_x_{}_{}_{}'.format(source, v, k) for v in graph.successors(source)],
-                    val = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) 
+                    val = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())
                                     for u in graph.predecessors(sink)]
                         + [-time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())
                                     for v in graph.successors(source)]
@@ -216,8 +229,8 @@ for k, vals in inspectors.items():
         rhs = [vals['working_hours'] * HOUR_TO_SECONDS],
         names = ['time_flow_constr_{}'.format(k)]
     )
-        
-        
+
+
 t7 = time.time()
 print("Finished! Took {:.5f} seconds".format(t7-t6))
 
@@ -229,22 +242,22 @@ print("Adding Constraint (6)...", end=" ")
 for k in inspectors:
     for node in graph.nodes():
         if graph.nodes[node]['time_stamp']:
-            
+
             in_indices = []
-            
+
             for p in graph.predecessors(node):
                 if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k): # not a sink/source
                     in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
             in_vals = [1] * len(in_indices)
-            
+
             out_indices = []
-            
+
             for p in graph.successors(node):
                 if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k):
                     out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
-                    
+
             out_vals = [-1] * len(out_indices)
-            
+
             c.linear_constraints.add(
                 lin_expr = [cplex.SparsePair(
                                 ind = in_indices + out_indices,
@@ -254,8 +267,8 @@ for k in inspectors:
                 rhs = [0],
                 names = ['mass_balance_constr_{}_{}'.format(node, k)]
             )
-        
-        
+
+
 t8 = time.time()
 
 print("Finished! Took {:.5f} seconds".format(t8-t7))
@@ -276,14 +289,14 @@ t10 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t10-t9))
 print("Print out solutions:")
 
-try: 
+try:
     res = c.solution.get_values( flow_var_names )
     #print(res)
 except cplex.exceptions.errors.CplexSolverError:
     print("No solution exists.")
-    
+
 print("Test: Do 'flow_var_names' and 'res' have same size? ", len(flow_var_names)==len(res))
-    
+
 # post-processing
 paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if x_val]
 
@@ -312,4 +325,3 @@ t11= time.time()
 print("Programme Terminated! Took {:.5f} seconds".format(t11-t1))
 
 #print(flow_var_names[:10])
-
