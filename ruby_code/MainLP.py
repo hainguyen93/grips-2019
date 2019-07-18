@@ -14,11 +14,13 @@ import networkx as nx
 import time
 import re
 import pandas as pd
+from scipy import *
+from scipy.sparse import *
+import numpy as np
 #import Logger  # print out to file
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
-
 
 from OD_matrix import *
 
@@ -78,9 +80,14 @@ shortest_paths, arc_paths = create_arc_paths(graph)
 # implement the multiproportional algorithm
 X = multiproportional(arc_paths)
 # generate the OD-matrix disctionary (sparse representation)
-T = generate_OD_matrix(shortest_paths, arc_paths, X)
-
-print(T)
+nodes = graph.nodes()
+nod_idx = {node: i for i,node in enumerate(nodes)}
+T = generate_OD_matrix(nod_idx, shortest_paths, arc_paths, X)
+# generate new weights vector for number of new passengers departing from each node
+N = len(nodes)
+new_weights = T*np.ones((N,1))
+print(N)
+print(new_weights)
 quit()
 #============================== ADDING SOURCE/SINK NODES ==========================================
 

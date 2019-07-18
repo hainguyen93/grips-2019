@@ -4,6 +4,8 @@
 
 import numpy as np
 import networkx as nx
+from scipy.sparse import *
+from scipy import *
 
 
 def create_arc_paths(G):
@@ -20,7 +22,7 @@ def create_arc_paths(G):
         arc_paths[u + '-->' + v] = [c]
 
     paths = dict(nx.all_pairs_shortest_path(G))
-    print(paths.__sizeof__())
+    # print(paths.__sizeof__())
 
     ##compute proportions by finding shortest paths
     for source in paths:
@@ -85,16 +87,16 @@ def multiproportional(arc_paths):
         n+=1
     return X
 
-def generate_OD_matrix(shortest_paths, arc_paths, X):
+def generate_OD_matrix(nod_idx, shortest_paths, arc_paths, X):
     '''
-    This will generate a sparse representation of the OD generate_OD_matrix.
+    This will generate a sparse matrix of the OD generate_OD_matrix.
     Given the X vector and arc_paths, all non-zero entries will be returned in
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-    # create a dictionary for the number of people traveling from
-    # some origin to some destination
-    T = {}
+
+    N = len(nod_idx)
+    T = dok_matrix((N,N))
     arc_idx = {arc: i for i,arc in enumerate(arc_paths)}
 
     # iterate through all sources
@@ -104,5 +106,5 @@ def generate_OD_matrix(shortest_paths, arc_paths, X):
             # dont add include paths from a node to itself
             if sink != source:
                 # collect the X_a values for all arcs in the path
-                T[source+'-->'+sink] = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
+                T[ nod_idx[sink] , nod_idx[source] ] = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
     return T
