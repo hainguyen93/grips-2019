@@ -28,7 +28,9 @@ def create_arc_paths(G):
     for source in paths:
         for sink in paths[source]:
             for u,v in zip(paths[source][sink],paths[source][sink][1:]):
-                arc_paths[u + '-->' + v].append(paths[source][sink])
+                # excluding paths from nodes to themselves
+                if source != sink:
+                    arc_paths[u + '-->' + v].append(paths[source][sink])
     return paths, arc_paths
 
 def does_converge(V, V_hat, epsilon = 0.05):
@@ -87,18 +89,23 @@ def multiproportional(arc_paths):
         n+=1
     return X
 
-def generate_OD_matrix(nod_idx, shortest_paths, arc_paths, X):
+def generate_OD_matrix(graph):
     '''
     This will generate a sparse matrix of the OD generate_OD_matrix.
     Given the X vector and arc_paths, all non-zero entries will be returned in
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-
-    N = len(nod_idx)
+    nodes = graph.nodes()
+    N = len(nodes)
+    nod_idx = {node: i for i,node in enumerate(nodes)}
+    shortest_paths, arc_paths = create_arc_paths(graph)
+    X = multiproportional(arc_paths)
     T = dok_matrix((N,N))
     arc_idx = {arc: i for i,arc in enumerate(arc_paths)}
 
+    # OD matrix dictionary
+    OD = {}
     # iterate through all sources
     for source, val in shortest_paths.items():
         # for every sink
@@ -106,5 +113,9 @@ def generate_OD_matrix(nod_idx, shortest_paths, arc_paths, X):
             # dont add include paths from a node to itself
             if sink != source:
                 # collect the X_a values for all arcs in the path
-                T[ nod_idx[sink] , nod_idx[source] ] = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
-    return T
+                X_a = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
+                if X_a != 0:
+                    T[ nod_idx[source] , nod_idx[sink] ] = X_a
+                    # populate a dictionary of the non-zero entries too
+                    OD[(source, sink)] = X_a
+    return T, OD
