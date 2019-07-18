@@ -88,7 +88,7 @@ print("Start CPLEX")
 
 c = cplex.Cplex()
 
-start_cplex(c, flow_var_names, var_passengers_inspected)
+start_cplex(c, flow_var_names, var_passengers_inspected, arc_paths)
 
 t4 = time.time()
 print("Finished! Took {:.5f} seconds".format(t4-t3))
@@ -128,7 +128,10 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 
 print('Adding Constraint (9)...', end = " ")
 
-constraint_9(c, graph, inspectors)
+# new constraint
+constr_reformulated(c, graph, inspectors, arc_paths)
+# old constraint
+# constraint_9(c, graph, inspectors)
 
 t8 = time.time()
 print("Finished! Took {:.5f} seconds".format(t8-t7))
