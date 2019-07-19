@@ -25,12 +25,11 @@ def create_arc_paths(G):
         arc_paths[u + '-->' + v] = [c]
 
     paths = dict(nx.all_pairs_shortest_path(G))
-    # print(paths.__sizeof__())
 
     ##compute proportions by finding shortest paths
     for source in paths:
         for sink in paths[source]:
-            if source == sink: 
+            if source == sink:
                 continue
             for u,v in zip(paths[source][sink],paths[source][sink][1:]):
                 # excluding paths from nodes to themselves
@@ -38,16 +37,6 @@ def create_arc_paths(G):
                 arc_paths[u + '-->' + v].append(paths[source][sink])
     return paths, arc_paths
 
-def does_converge(V, V_hat):
-    '''
-    check to see if passes the convergence criterion:
-    relative error needs to be less than 5%
-    '''
-    
-    relative_error = np.abs(V_hat - V)/np.abs(V_hat)
-    return (relative_error < EPSILON).all()
-        #return True
-    #return False
 
 def multiproportional(arc_paths):
     '''
@@ -70,7 +59,7 @@ def multiproportional(arc_paths):
     for arc, value in arc_paths.items():
         V_hat[arc_idx[arc]] = value[0]
 
-    while not does_converge(V, V_hat):
+    while not (np.abs(V_hat - V)/np.abs(V_hat) < EPSILON).all():
         # for each arc a
         for arc, value in arc_paths.items():
             total = 0 # used to collect sums of products of X_a's
@@ -120,8 +109,7 @@ def generate_OD_matrix(graph, shortest_paths, arc_paths):
             if sink != source:
                 # collect the X_a values for all arcs in the path
                 X_a = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
-                if X_a != 0:
-                    T[ nod_idx[source] , nod_idx[sink] ] = X_a
-                    # populate a dictionary of the non-zero entries too
-                    OD[(source, sink)] = X_a
+                T[ nod_idx[source] , nod_idx[sink] ] = X_a
+                # populate a dictionary of the non-zero entries too
+                OD[(source, sink)] = X_a
     return T, OD

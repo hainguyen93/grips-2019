@@ -46,7 +46,7 @@ HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
 
 
-input_dir = '../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
+input_dir =  '../Nate/Small_Train_Schedule.txt'#'../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
 
 #============================= CONSTRUCTING THE GRAPH ============================================
 
@@ -89,19 +89,17 @@ shortest_paths, arc_paths = create_arc_paths(new_graph)
 
 T, OD = generate_OD_matrix(new_graph, shortest_paths, arc_paths)
 
-def enumerate_all_shortest_paths(graph, OD):
-    shortest_paths, arc_paths = create_arc_paths(graph)
-    all_paths = {}
-    for source, value in shortest_paths.items():
-        for sink, path in value.items():
-            # exclude paths from nodes to themselves
-            if source != sink and OD[(source, sink)] != 0:
-                all_paths[(source, sink)] = path
-    path_idx = {path:i for i,path in enumerate(all_paths)}
-    return all_paths, path_idx
+# Create a dictionary
+all_paths = {}
+for source, value in shortest_paths.items():
+    for sink, path in value.items():
+        # exclude paths from nodes to themselves
+        if source != sink and OD[(source, sink)] != 0:
+            all_paths[(source, sink)] = path
+path_idx = {path:i for i,path in enumerate(all_paths)}
 
-# preliminary data needed
-all_paths, path_idx = enumerate_all_shortest_paths(OD, shortest_paths)
+# # preliminary data needed
+# all_paths, path_idx = enumerate_all_shortest_paths(OD, shortest_paths)
 
 t2a = time.time()
 # print(new_weights)
@@ -300,8 +298,8 @@ for (u, v), path in all_paths.items():
             lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
             senses = ['L'],
             rhs = [0],
-            range_values = [0],
-            names = ['bdd_by_inspector_count_{}_{}'.format(u, v)]
+            # range_values = [0],
+            names = ['percentage_inspected_on_({},{})'.format(u, v)]
         )
 # old constraint
 # constraint_9(c, graph, inspectors)
