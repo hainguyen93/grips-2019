@@ -85,12 +85,15 @@ print('Finished! Took {:.5f} seconds'.format(t2-t1))
 #================================ OD Estimation ===============================
 print("Estimating OD Matrix ...", end = " ")
 
-#new_graph = deepcopy(graph)
+# create a deep copy of the graph
+new_graph = deepcopy(graph)
 
-T, OD = generate_OD_matrix(deepcopy(graph))
+shortest_paths, arc_paths = create_arc_paths(new_graph)
+
+T, OD = generate_OD_matrix(new_graph, shortest_paths, arc_paths)
 
 # preliminary data needed
-all_paths, path_idx = enumerate_all_shortest_paths(deepcopy(graph), OD)
+all_paths, path_idx = enumerate_all_shortest_paths(new_graph, OD, shortest_paths, arc_paths)
 
 # create variable names
 for (source, sink), value in all_paths.items():
