@@ -346,8 +346,6 @@ df_paths = pd.DataFrame(paths, columns=['from_station', 'departure_time', 'to_st
 
 for k, vals in inspectors.items():
     print("Solution for Inspector ", k)
-    #source = 'source_' + str(k)
-    #sink = 'sink_' + str(k)
     path = df_paths[df_paths['inspector_id'] == str(k)]
     path = path.sort_values(by=['departure_time'])
     print(path.to_string())
