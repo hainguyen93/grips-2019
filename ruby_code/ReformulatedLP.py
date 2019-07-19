@@ -4,6 +4,8 @@
 # create the DiGraph object and write it to another file
 # @author: Ruby Abrams, Hai Nguyen
 
+from __future__ import division
+
 import sys
 
 # change local PATH environment for Python
@@ -24,7 +26,7 @@ import pandas as pd
 
 from copy import deepcopy
 
-# from tools import *
+from tools import *
 from OD_matrix import *
 
 # networkx start
@@ -33,6 +35,9 @@ graph = nx.DiGraph() # nx.MultiDiGraph()
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
+
+#inspectors = {0: {"base": 'C', "working_hours":1},
+              #1: {"base": 'A', "working_hours":1}}
 # Assumption: rate of inspection remains constant
 KAPPA = 12
 flow_var_names = []
@@ -46,7 +51,8 @@ HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
 
 
-input_dir =  '../Nate/Small_Train_Schedule.txt'#'../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
+input_dir = '../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
+#input_dir = '../Nate/Small_Train_Schedule.txt'
 
 #============================= CONSTRUCTING THE GRAPH ============================================
 
@@ -138,22 +144,11 @@ print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 # freeze graph to prevent further changes
 graph = nx.freeze(graph)
 
-#print('successors of FFU@10:51:00')
-
-#count = 0
-#for edge in graph.edges():
-    #if edge['num_passengers'] == 0:
-        #count+=1
-#print('num edges: {}'.format(count))
-
 #================================== START CPLEX =================================================
 
 print("Start CPLEX")
 
 c = cplex.Cplex()
-
-# start_cplex(c, flow_var_names, var_passengers_inspected)
-# initialize_cplex(c, OD, flow_var_names, var_portion_of_passengers_inspected)
 c.set_problem_type(c.problem_type.LP)
 c.objective.set_sense(c.objective.sense.maximize)	# formulated as a maximization problem
 
@@ -179,7 +174,7 @@ c.variables.add(
     names = var_portion_of_passengers_inspected,
     lb = [0] * len(var_portion_of_passengers_inspected),
     ub = [1] * len(var_portion_of_passengers_inspected),
-    obj = OD.values(),
+    obj = list(OD.values()),
     types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
 )
 
@@ -190,7 +185,6 @@ print("Finished! Took {:.5f} seconds".format(t4-t3))
 
 print("Adding Constraint (6)...", end=" ")
 
-# constr_mass_balance(c, graph, inspectors)
 for k in inspectors:
     for node in graph.nodes():
         if graph.nodes[node]['time_stamp']:
@@ -198,13 +192,15 @@ for k in inspectors:
             in_indices = []
 
             for p in graph.predecessors(node):
-                in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
+                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k): # not a sink/source
+                    in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
             in_vals = [1] * len(in_indices)
 
             out_indices = []
 
             for p in graph.successors(node):
-                out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
+                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k):
+                    out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
 
             out_vals = [-1] * len(out_indices)
 
@@ -217,7 +213,6 @@ for k in inspectors:
                 rhs = [0],
                 names = ['mass_balance_constr_{}_{}'.format(node, k)]
             )
-
 
 t5 = time.time()
 
@@ -292,8 +287,8 @@ print('Adding Constraint (9)...', end = " ")
 
 for (u, v), path in all_paths.items():
     if not ("source_" in u+v or "sink_" in u+v):
-        indices = ['portion_of_({},{})'.format(u,v)] + ['var_x_{}_{}_{}'.format(i,j,k) for k in inspectors for i,j in zip(path, path[1:])]
-        values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for k in inspectors for i,j in zip(path, path[1:])]
+        indices = ['portion_of_({},{})'.format(u,v)] + ['var_x_{}_{}_{}'.format(i,j,k) for i,j in zip(path, path[1:]) for k in inspectors]
+        values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
         c.linear_constraints.add(
             lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
             senses = ['L'],
