@@ -4,6 +4,8 @@
 # create the DiGraph object and write it to another file
 # @author: Ruby Abrams, Hai Nguyen
 
+from __future__ import division
+
 import sys
 
 # change local PATH environment for Python
@@ -21,11 +23,10 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
 import pandas as pd
-from __future__ import division
 
 from copy import deepcopy
 
-# from tools import *
+from tools import *
 from OD_matrix import *
 
 # networkx start
@@ -34,6 +35,9 @@ graph = nx.DiGraph() # nx.MultiDiGraph()
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
+              
+#inspectors = {0: {"base": 'C', "working_hours":1},
+              #1: {"base": 'A', "working_hours":1}}
 # Assumption: rate of inspection remains constant
 KAPPA = 12
 flow_var_names = []
@@ -48,6 +52,7 @@ MINUTE_TO_SECONDS = 60
 
 
 input_dir = '../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
+#input_dir = '../Nate/Small_Train_Schedule.txt'
 
 #============================= CONSTRUCTING THE GRAPH ============================================
 
@@ -182,7 +187,7 @@ c.variables.add(
     names = var_portion_of_passengers_inspected,
     lb = [0] * len(var_portion_of_passengers_inspected),
     ub = [1] * len(var_portion_of_passengers_inspected),
-    obj = OD.values(),
+    obj = list(OD.values()),
     types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
 )
 
@@ -193,24 +198,25 @@ print("Finished! Took {:.5f} seconds".format(t4-t3))
 
 print("Adding Constraint (6)...", end=" ")
 
-# constr_mass_balance(c, graph, inspectors)
 for k in inspectors:
     for node in graph.nodes():
         if graph.nodes[node]['time_stamp']:
-
+            
             in_indices = []
-
+            
             for p in graph.predecessors(node):
-                in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
+                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k): # not a sink/source
+                    in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
             in_vals = [1] * len(in_indices)
-
+            
             out_indices = []
-
+            
             for p in graph.successors(node):
-                out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
-
+                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k):
+                    out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
+                    
             out_vals = [-1] * len(out_indices)
-
+            
             c.linear_constraints.add(
                 lin_expr = [cplex.SparsePair(
                                 ind = in_indices + out_indices,
@@ -220,7 +226,6 @@ for k in inspectors:
                 rhs = [0],
                 names = ['mass_balance_constr_{}_{}'.format(node, k)]
             )
-
 
 t5 = time.time()
 
@@ -295,8 +300,7 @@ print('Adding Constraint (9)...', end = " ")
 
 for (u, v), path in all_paths.items():
     if not ("source_" in u+v or "sink_" in u+v):
-        indices = ['portion_of_({},{})'.format(u,v)] 
-                    + ['var_x_{}_{}_{}'.format(i,j,k) for i,j in zip(path, path[1:]) for k in inspectors]
+        indices = ['portion_of_({},{})'.format(u,v)] + ['var_x_{}_{}_{}'.format(i,j,k) for i,j in zip(path, path[1:]) for k in inspectors]
         values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
         c.linear_constraints.add(
             lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked

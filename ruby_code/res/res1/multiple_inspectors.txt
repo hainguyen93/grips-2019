@@ -1,0 +1,296 @@
+============================================
+
+inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12}, 
+              1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
+              
+ICE: 401
+Day selected: Monday
+Notes: Overnight Trips removed.
+
+============================================
+CONSOLE: 
+
+Building graph ... Finished! Took 0.09061 seconds
+Adding Sinks/Sources... Finished! Took 0.01702 seconds
+TEST: Unique edge between two nodes:  True
+TEST: No Source-Sink Edge:  True
+successors of FFU@10:51:00
+FKHM@11:04:00
+FFU@11:02:00
+Start CPLEX
+Adding variables... Finished! Took 0.03745 seconds
+Adding Constraint (9)... Finished! Took 4.37358 seconds
+Adding constraint (7) ... Finished! Took 0.00385 seconds
+Adding Constraint (8)... Finished! Took 0.03213 seconds
+Adding Constraint (6)... Finished! Took 8.63081 seconds
+Warning:  Output names have been modified to conform to LP format.
+Write to inspectors.lp ... Finished! Took 0.23907 seconds
+Now solving ... CPXPARAM_Read_DataCheck                          1
+Found incumbent of value 0.000000 after 0.01 sec. (3.62 ticks)
+Tried aggregator 23 times.
+MIP Presolve eliminated 11832 rows and 15657 columns.
+MIP Presolve modified 1299 coefficients.
+Aggregator did 1744 substitutions.
+Reduced MIP has 9006 rows, 16206 columns, and 34296 nonzeros.
+Reduced MIP has 15364 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.25 sec. (194.96 ticks)
+Probing fixed 47 vars, tightened 6 bounds.
+Probing time = 0.32 sec. (59.61 ticks)
+Tried aggregator 4 times.
+MIP Presolve eliminated 33 rows and 65 columns.
+Aggregator did 27 substitutions.
+Reduced MIP has 8946 rows, 16114 columns, and 34091 nonzeros.
+Reduced MIP has 15278 binaries, 836 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.18 sec. (539.33 ticks)
+Probing time = 0.04 sec. (8.06 ticks)
+Clique table members: 30885.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 8 threads.
+Root relaxation solution time = 0.73 sec. (447.94 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                            0.0000   661206.0000              --- 
+      0     0    13333.5280   265        0.0000    13333.5280     5692     --- 
+*     0+    0                        10810.0000    13333.5280            23.34%
+      0     0    13314.9508   392    10810.0000       Cuts: 4     5715   23.17%
+      0     0    13303.9140   402    10810.0000       Cuts: 4     5727   23.07%
+      0     0    13265.1664   359    10810.0000      Cuts: 10     5818   22.71%
+      0     0    13239.4006   640    10810.0000       Cuts: 2     5906   22.47%
+      0     0    13214.7926   724    10810.0000      Cuts: 23     6026   22.25%
+*     0+    0                        11440.0000    13214.7926            15.51%
+*     0+    0                        12118.0000    13214.7926             9.05%
+      0     0    13125.2465   449    12118.0000      Cuts: 10     6195    8.31%
+      0     0    13116.9746   530    12118.0000       Cuts: 2     6204    8.24%
+      0     0    13113.7008   459    12118.0000       Cuts: 2     6213    8.22%
+      0     0    13026.1008   288    12118.0000       Cuts: 2     6262    7.49%
+*     0+    0                        12574.0000    13026.1008             3.60%
+*     0+    0                        12595.0000    13026.1008             3.42%
+      0     0    13024.5132   315    12595.0000   ZeroHalf: 1     6281    3.41%
+      0     0    13022.5308   317    12595.0000   ZeroHalf: 1     6295    3.39%
+      0     0    13022.5308   317    12595.0000   ZeroHalf: 1     6296    3.39%
+*     0+    0                        12619.0000    13022.5308             3.20%
+      0     0    13022.5308   317    12619.0000   ZeroHalf: 1     6297    3.20%
+*     0+    0                        12859.0000    13022.5308             1.27%
+
+Repeating presolve.
+Tried aggregator 11 times.
+MIP Presolve eliminated 2495 rows and 7380 columns.
+MIP Presolve modified 33 coefficients.
+Aggregator did 3457 substitutions.
+Reduced MIP has 2994 rows, 5276 columns, and 11480 nonzeros.
+Reduced MIP has 4891 binaries, 385 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.20 sec. (733.42 ticks)
+Probing fixed 1 vars, tightened 4 bounds.
+Probing time = 0.06 sec. (13.03 ticks)
+Cover probing fixed 0 vars, tightened 11 bounds.
+Tried aggregator 3 times.
+MIP Presolve eliminated 9 rows and 12 columns.
+MIP Presolve modified 10 coefficients.
+Aggregator did 12 substitutions.
+Reduced MIP has 2973 rows, 5251 columns, and 11422 nonzeros.
+Reduced MIP has 4873 binaries, 378 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.06 sec. (83.14 ticks)
+Represolve time = 0.37 sec. (861.21 ticks)
+Probing time = 0.02 sec. (3.66 ticks)
+Clique table members: 9656.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 8 threads.
+Root relaxation solution time = 0.29 sec. (160.22 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                        12859.0000    13022.5308             1.27%
+      0     0    13020.9849   192    12859.0000    13020.9849     8813    1.26%
+      0     0    13020.9849   223    12859.0000       Cuts: 2     8817    1.26%
+      0     0    13020.9849   223    12859.0000   ZeroHalf: 3     8818    0.10%
+
+GUB cover cuts applied:  12
+Zero-half cuts applied:  16
+
+Root node processing (before b&c):
+  Real time             =    9.08 sec. (4711.73 ticks)
+Parallel b&c, 8 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    9.08 sec. (4711.73 ticks)
+Solution Status:  102
+Finished! Took 9.08937 seconds
+Print out solutions:
+Test: Do 'flow_var_names' and 'res' have same size?  True
+Edges Number =  161
+Solution for Inspector  0
+    from_station departure_time to_station arrival_time inspector_id
+156       source              0       RDRM     14:07:00            0
+117         RDRM       14:07:00        RBB     14:15:00            0
+151          RBB       14:15:00        RBB     14:32:00            0
+140          RBB       14:32:00        RBB     14:34:00            0
+0            RBB       14:34:00       RDRM     14:43:00            0
+1           RDRM       14:43:00         RK     14:49:00            0
+125           RK       14:49:00         RK     14:51:00            0
+2             RK       14:51:00        RGN     14:59:00            0
+3            RGN       14:59:00       RSAB     15:02:00            0
+4           RSAB       15:02:00         RP     15:10:00            0
+5             RP       15:10:00         RM     15:14:00            0
+122           RM       15:14:00         RM     15:16:00            0
+6             RM       15:16:00        FLP     15:24:00            0
+7            FLP       15:24:00        FGE     15:34:00            0
+8            FGE       15:34:00       FMST     15:51:00            0
+146         FMST       15:51:00       FMST     15:52:00            0
+97          FMST       15:52:00        FGE     16:08:00            0
+98           FGE       16:08:00        FLP     16:19:00            0
+99           FLP       16:19:00         RM     16:27:00            0
+134           RM       16:27:00         RM     16:30:00            0
+100           RM       16:30:00         RP     16:34:00            0
+101           RP       16:34:00       RSAB     16:41:00            0
+102         RSAB       16:41:00       RROL     16:45:00            0
+103         RROL       16:45:00         TV     16:54:00            0
+104           TV       16:54:00        TSZ     17:01:00            0
+105          TSZ       17:01:00         TS     17:08:00            0
+139           TS       17:08:00         TS     17:12:00            0
+106           TS       17:12:00         TP     17:25:00            0
+107           TP       17:25:00         TG     17:45:00            0
+108           TG       17:45:00         TU     18:07:00            0
+136           TU       18:07:00         TU     18:09:00            0
+109           TU       18:09:00       MGZB     18:25:00            0
+110         MGZB       18:25:00         MA     18:53:00            0
+127           MA       18:53:00         MA     18:55:00            0
+120           MA       18:55:00         MA     18:59:00            0
+130           MA       18:59:00         MA     19:03:00            0
+71            MA       19:03:00       MGZB     19:35:00            0
+72          MGZB       19:35:00         TU     19:49:00            0
+135           TU       19:49:00         TU     19:51:00            0
+73            TU       19:51:00         TG     20:12:00            0
+74            TG       20:12:00         TP     20:32:00            0
+75            TP       20:32:00         TS     20:47:00            0
+123           TS       20:47:00         TS     20:51:00            0
+76            TS       20:51:00        TSZ     20:57:00            0
+77           TSZ       20:57:00         TV     21:05:00            0
+78            TV       21:05:00       RROL     21:13:00            0
+79          RROL       21:13:00       RSAB     21:17:00            0
+80          RSAB       21:17:00         RP     21:24:00            0
+81            RP       21:24:00         RM     21:29:00            0
+132           RM       21:29:00         RM     21:32:00            0
+143           RM       21:32:00         RM     21:36:00            0
+86            RM       21:36:00         RP     21:40:00            0
+87            RP       21:40:00       RSAB     21:47:00            0
+88          RSAB       21:47:00        RGN     21:49:00            0
+89           RGN       21:49:00         RK     21:58:00            0
+137           RK       21:58:00         RK     21:59:00            0
+133           RK       21:59:00         RK     22:00:00            0
+90            RK       22:00:00       RDRM     22:07:00            0
+155         RDRM       22:07:00       sink            0            0
+Solution for Inspector  1
+    from_station departure_time to_station arrival_time inspector_id
+32            HH       07:22:00        HWU     07:27:00            1
+33           HWU       07:27:00       HHML     07:28:00            1
+34          HHML       07:28:00       HSOR     07:34:00            1
+35          HSOR       07:34:00        HAL     07:38:00            1
+36           HAL       07:38:00       HORX     07:42:00            1
+37          HORX       07:42:00         HG     07:53:00            1
+38            HG       07:53:00        HJD     07:58:00            1
+39           HJD       07:58:00        FKW     08:10:00            1
+40           FKW       08:10:00       FKHM     08:26:00            1
+41          FKHM       08:26:00        FFU     08:37:00            1
+42           FFU       08:37:00        FFD     08:45:00            1
+43           FFD       08:45:00        FSA     08:54:00            1
+44           FSA       08:54:00       FHME     09:05:00            1
+45          FHME       09:05:00       FWFG     09:11:00            1
+46          FWFG       09:11:00        FHN     09:13:00            1
+47           FHN       09:13:00         FO     09:19:00            1
+148           FO       09:19:00         FO     09:20:00            1
+83            FO       09:20:00        FHN     09:27:00            1
+131          FHN       09:27:00        FHN     09:29:00            1
+84           FHN       09:29:00       FWFG     09:31:00            1
+85          FWFG       09:31:00       FHME     09:38:00            1
+27          FHME       09:38:00       FWFG     09:43:00            1
+28          FWFG       09:43:00        FHN     09:45:00            1
+29           FHN       09:45:00         FO     09:52:00            1
+30            FO       09:52:00        FFS     09:55:00            1
+31           FFS       09:55:00       FMST     09:58:00            1
+141         FMST       09:58:00       FMST     10:00:00            1
+158       source              1         HH     07:22:00            1
+9           FMST       10:00:00        FFS     10:02:00            1
+10           FFS       10:02:00         FO     10:05:00            1
+11            FO       10:05:00        FHN     10:11:00            1
+12           FHN       10:11:00       FWFG     10:13:00            1
+13          FWFG       10:13:00       FHME     10:18:00            1
+14          FHME       10:18:00        FSA     10:31:00            1
+15           FSA       10:31:00        FFD     10:40:00            1
+16           FFD       10:40:00        FFU     10:51:00            1
+17           FFU       10:51:00       FKHM     11:04:00            1
+18          FKHM       11:04:00        FKW     11:20:00            1
+144          FKW       11:20:00        FKW     11:22:00            1
+19           FKW       11:22:00        HJD     11:36:00            1
+20           HJD       11:36:00         HG     11:41:00            1
+147           HG       11:41:00         HG     11:43:00            1
+21            HG       11:43:00       HORX     11:56:00            1
+22          HORX       11:56:00        HAL     12:01:00            1
+23           HAL       12:01:00       HSOR     12:05:00            1
+24          HSOR       12:05:00       HHML     12:12:00            1
+25          HHML       12:12:00        HWU     12:12:00            1
+26           HWU       12:12:00         HH     12:17:00            1
+157           HH       12:17:00       sink            1            1
+Solution for Inspector  2
+    from_station departure_time to_station arrival_time inspector_id
+48          AHAR       10:12:00        AMD     10:16:00            2
+49           AMD       10:16:00       ALBG     10:29:00            2
+50          ALBG       10:29:00         HU     10:41:00            2
+51            HU       10:41:00         HC     11:03:00            2
+52            HC       11:03:00         HH     11:21:00            2
+150           HH       11:21:00         HH     11:26:00            2
+53            HH       11:26:00        HWU     11:32:00            2
+54           HWU       11:32:00       HHML     11:32:00            2
+55          HHML       11:32:00       HSOR     11:39:00            2
+56          HSOR       11:39:00        HAL     11:43:00            2
+57           HAL       11:43:00       HORX     11:49:00            2
+58          HORX       11:49:00         HG     12:00:00            2
+118           HG       12:00:00         HG     12:01:00            2
+149           HG       12:01:00         HG     12:02:00            2
+121           HG       12:02:00         HG     12:03:00            2
+111           HG       12:03:00       HORX     12:15:00            2
+112         HORX       12:15:00        HAL     12:21:00            2
+113          HAL       12:21:00       HSOR     12:25:00            2
+114         HSOR       12:25:00        HHI     12:32:00            2
+152          HHI       12:32:00        HHI     12:34:00            2
+115          HHI       12:34:00       HGGL     12:52:00            2
+116         HGGL       12:52:00        HBS     12:57:00            2
+145          HBS       12:57:00        HBS     12:58:00            2
+91           HBS       12:58:00       HGGL     13:03:00            2
+92          HGGL       13:03:00        HHI     13:23:00            2
+124          HHI       13:23:00        HHI     13:25:00            2
+93           HHI       13:25:00       HSOR     13:32:00            2
+94          HSOR       13:32:00        HAL     13:37:00            2
+95           HAL       13:37:00       HORX     13:42:00            2
+96          HORX       13:42:00         HG     13:53:00            2
+129           HG       13:53:00         HG     13:54:00            2
+128           HG       13:54:00         HG     13:55:00            2
+153           HG       13:55:00         HG     13:56:00            2
+59            HG       13:56:00       HORX     14:09:00            2
+60          HORX       14:09:00        HAL     14:14:00            2
+61           HAL       14:14:00       HSOR     14:18:00            2
+62          HSOR       14:18:00       HHML     14:25:00            2
+64           HWU       14:25:00         HH     14:32:00            2
+63          HHML       14:25:00        HWU     14:25:00            2
+126           HH       14:32:00         HH     14:36:00            2
+65            HH       14:36:00         HC     14:54:00            2
+66            HC       14:54:00         HU     15:13:00            2
+67            HU       15:13:00       ALBG     15:26:00            2
+68          ALBG       15:26:00        AMD     15:39:00            2
+69           AMD       15:39:00       AHAR     15:42:00            2
+154         AHAR       15:42:00       AHAR     15:44:00            2
+70          AHAR       15:44:00         AH     15:54:00            2
+138           AH       15:54:00         AH     15:57:00            2
+142           AH       15:57:00         AH     15:58:00            2
+119           AH       15:58:00         AH     16:01:00            2
+82            AH       16:01:00       AHAR     16:10:00            2
+160         AHAR       16:10:00       sink            2            2
+159       source              2       AHAR     10:12:00            2
+Programme Terminated! Took 22.90409 seconds
