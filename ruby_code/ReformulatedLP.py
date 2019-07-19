@@ -7,7 +7,7 @@
 import sys
 
 # change local PATH environment for Python
-# sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
+sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
 
 import cplex
 import networkx as nx
@@ -20,6 +20,9 @@ import numpy as np
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
+import pandas as pd
+
+from copy import deepcopy
 
 from tools import *
 from OD_matrix import *
@@ -82,10 +85,12 @@ print('Finished! Took {:.5f} seconds'.format(t2-t1))
 #================================ OD Estimation ===============================
 print("Estimating OD Matrix ...", end = " ")
 
-T, OD = generate_OD_matrix(graph)
+#new_graph = deepcopy(graph)
+
+T, OD = generate_OD_matrix(deepcopy(graph))
 
 # preliminary data needed
-all_paths, path_idx = enumerate_all_shortest_paths(graph, OD)
+all_paths, path_idx = enumerate_all_shortest_paths(deepcopy(graph), OD)
 
 # create variable names
 for (source, sink), value in all_paths.items():
@@ -130,8 +135,11 @@ graph = nx.freeze(graph)
 
 print('successors of FFU@10:51:00')
 
-for node in graph.successors('FFU@10:51:00'):
-    print(node)
+#count = 0
+#for edge in graph.edges():
+    #if edge['num_passengers'] == 0:
+        #count+=1
+#print('num edges: {}'.format(count))
 
 #================================== START CPLEX =================================================
 

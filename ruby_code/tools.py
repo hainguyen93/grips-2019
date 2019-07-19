@@ -81,7 +81,7 @@ def enumerate_all_shortest_paths(graph, OD):
     for source, value in shortest_paths.items():
         for sink, path in value.items():
             # exclude paths from nodes to themselves
-            if source != sink and OD[(source, sink)] != 0:
+            if source != sink and (OD[(source, sink)] > 0.001):
                 all_paths[(source, sink)] = path
     path_idx = {path:i for i,path in enumerate(all_paths)}
     return all_paths, path_idx

@@ -7,12 +7,15 @@ import networkx as nx
 from scipy.sparse import *
 from scipy import *
 
+# relative error
+EPSILON = 0.02
+
 
 def create_arc_paths(G):
-    #remove waiting edges from our graph
+    #remove edges without any passenger from our graph
     waiting_edges = [];
     for u,v in G.edges():
-        if G[u][v]['num_passengers'] == 0:
+        if G.edges[u,v]['num_passengers'] == 0:
             waiting_edges.append((u,v))
     G.remove_edges_from(waiting_edges)
 
@@ -33,15 +36,16 @@ def create_arc_paths(G):
                     arc_paths[u + '-->' + v].append(paths[source][sink])
     return paths, arc_paths
 
-def does_converge(V, V_hat, epsilon = 0.05):
+def does_converge(V, V_hat):
     '''
     check to see if passes the convergence criterion:
     relative error needs to be less than 5%
     '''
-    relative_error = np.abs(V_hat - V)/V_hat
-    if (relative_error < epsilon).all():
-        return True
-    return False
+    
+    relative_error = np.abs(V_hat - V)/np.abs(V_hat)
+    return (relative_error < EPSILON).all()
+        #return True
+    #return False
 
 def multiproportional(arc_paths):
     '''
