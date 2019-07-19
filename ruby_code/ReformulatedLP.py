@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
 
-from tools import *
+# from tools import *
 from OD_matrix import *
 
 # networkx start
@@ -37,9 +37,6 @@ flow_var_names = []
 # dictionary with keys being var_M and values being upper-bounds
 var_passengers_inspected = {}
 # new reformulation variable
-# has length = # of types of passengers
-# need to enumerate types of passengers
-# keys are var_M and values are upper bounds which should all be 1
 var_portion_of_passengers_inspected = np.array([])
 
 HOUR_TO_SECONDS = 3600
@@ -84,12 +81,19 @@ print("Estimating OD Matrix ...", end = " ")
 
 T, OD = generate_OD_matrix(graph)
 
+def enumerate_all_shortest_paths(graph, OD):
+    shortest_paths, arc_paths = create_arc_paths(graph)
+    all_paths = {}
+    for source, value in shortest_paths.items():
+        for sink, path in value.items():
+            # exclude paths from nodes to themselves
+            if source != sink and OD[(source, sink)] != 0:
+                all_paths[(source, sink)] = path
+    path_idx = {path:i for i,path in enumerate(all_paths)}
+    return all_paths, path_idx
+
 # preliminary data needed
 all_paths, path_idx = enumerate_all_shortest_paths(graph, OD)
-
-# create variable names
-for (source, sink), value in all_paths.items():
-    var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
 
 t2a = time.time()
 # print(new_weights)
@@ -155,6 +159,10 @@ c.variables.add(
     types = [ c.variables.type.binary ] * len(flow_var_names)
 )
 
+# create variable names
+for (source, sink), value in all_paths.items():
+    var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
+
 # defining the objective function coefficients
 obj = [OD[(source, sink)] for source, sink in OD.keys()]
 c.variables.add(
@@ -180,15 +188,13 @@ for k in inspectors:
             in_indices = []
 
             for p in graph.predecessors(node):
-                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k): # not a sink/source
-                    in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
+                in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
             in_vals = [1] * len(in_indices)
 
             out_indices = []
 
             for p in graph.successors(node):
-                if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k):
-                    out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
+                out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
 
             out_vals = [-1] * len(out_indices)
 
