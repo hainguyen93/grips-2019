@@ -2,7 +2,7 @@
 # Output: Digraph object
 # Function: This file will be used to read in information to
 # create the DiGraph object and write it to another file
-# @author: Ruby Abrams, Hai Nguyen
+# @author: Ruby Abrams, Hai Nguyen, Nate May
 
 from __future__ import division
 

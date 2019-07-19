@@ -1,6 +1,6 @@
 # Implementation of Multiproportional algorithm
 # for OD matrix estimation
-# author: Ruby Abrams
+# author: Ruby Abrams, Hai Nguyen, Nate May
 
 import numpy as np
 import networkx as nx
