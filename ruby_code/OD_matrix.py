@@ -7,12 +7,15 @@ import networkx as nx
 from scipy.sparse import *
 from scipy import *
 
+# relative error
+EPSILON = 0.02
+
 
 def create_arc_paths(G):
-    #remove waiting edges from our graph
+    #remove edges without any passenger from our graph
     waiting_edges = [];
     for u,v in G.edges():
-        if G[u][v]['num_passengers'] == 0:
+        if G.edges[u,v]['num_passengers'] == 0:
             waiting_edges.append((u,v))
     G.remove_edges_from(waiting_edges)
 
@@ -27,21 +30,24 @@ def create_arc_paths(G):
     ##compute proportions by finding shortest paths
     for source in paths:
         for sink in paths[source]:
+            if source == sink: 
+                continue
             for u,v in zip(paths[source][sink],paths[source][sink][1:]):
                 # excluding paths from nodes to themselves
-                if source != sink:
-                    arc_paths[u + '-->' + v].append(paths[source][sink])
+                #if source != sink:
+                arc_paths[u + '-->' + v].append(paths[source][sink])
     return paths, arc_paths
 
-def does_converge(V, V_hat, epsilon = 0.05):
+def does_converge(V, V_hat):
     '''
     check to see if passes the convergence criterion:
     relative error needs to be less than 5%
     '''
-    relative_error = np.abs(V_hat - V)/V_hat
-    if (relative_error < epsilon).all():
-        return True
-    return False
+    
+    relative_error = np.abs(V_hat - V)/np.abs(V_hat)
+    return (relative_error < EPSILON).all()
+        #return True
+    #return False
 
 def multiproportional(arc_paths):
     '''
@@ -89,7 +95,7 @@ def multiproportional(arc_paths):
         n+=1
     return X
 
-def generate_OD_matrix(graph):
+def generate_OD_matrix(graph, shortest_paths, arc_paths):
     '''
     This will generate a sparse matrix of the OD generate_OD_matrix.
     Given the X vector and arc_paths, all non-zero entries will be returned in
@@ -99,7 +105,7 @@ def generate_OD_matrix(graph):
     nodes = graph.nodes()
     N = len(nodes)
     nod_idx = {node: i for i,node in enumerate(nodes)}
-    shortest_paths, arc_paths = create_arc_paths(graph)
+    #shortest_paths, arc_paths = create_arc_paths(graph)
     X = multiproportional(arc_paths)
     T = dok_matrix((N,N))
     arc_idx = {arc: i for i,arc in enumerate(arc_paths)}
