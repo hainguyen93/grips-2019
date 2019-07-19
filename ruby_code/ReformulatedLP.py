@@ -23,10 +23,8 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
 import pandas as pd
-
 from copy import deepcopy
 
-from tools import *
 from OD_matrix import *
 
 # networkx start
@@ -42,8 +40,6 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
 KAPPA = 12
 flow_var_names = []
 
-# dictionary with keys being var_M and values being upper-bounds
-var_passengers_inspected = {}
 # new reformulation variable
 var_portion_of_passengers_inspected = np.array([])
 
@@ -59,8 +55,6 @@ input_dir = '../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
 print("Building graph ...", end = " ")
 t1 = time.time()
 
-# build_graph(input_dir, graph, inspectors, flow_var_names, var_passengers_inspected)
-
 with open(input_dir, "r") as f:
     for line in f.readlines()[:-1]:
         line = line.replace('\n','').split(' ')
@@ -69,8 +63,6 @@ with open(input_dir, "r") as f:
 
         for k in inspectors:
             flow_var_names.append('var_x_{}_{}_{}'.format(start, end, k))
-
-        var_passengers_inspected['var_M_{}_{}'.format(start, end)] = int(line[4])
 
         graph.add_node(start, station = line[0], time_stamp = line[1])
         graph.add_node(end, station = line[2], time_stamp = line[3])
@@ -91,11 +83,13 @@ print("Estimating OD Matrix ...", end = " ")
 # create a deep copy of the graph
 new_graph = deepcopy(graph)
 
+nodes = graph.nodes()
+
 shortest_paths, arc_paths = create_arc_paths(new_graph)
 
-T, OD = generate_OD_matrix(new_graph, shortest_paths, arc_paths)
+T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
 
-# Create a dictionary
+# Create a dictionary of all Origin-Destinations
 all_paths = {}
 for source, value in shortest_paths.items():
     for sink, path in value.items():
@@ -104,18 +98,14 @@ for source, value in shortest_paths.items():
             all_paths[(source, sink)] = path
 path_idx = {path:i for i,path in enumerate(all_paths)}
 
-# # preliminary data needed
-# all_paths, path_idx = enumerate_all_shortest_paths(OD, shortest_paths)
 
 t2a = time.time()
-# print(new_weights)
 print('Finished! Took {:.5f} seconds'.format(t2a-t2))
 
 #============================== ADDING SOURCE/SINK NODES ==========================================
 
 print("Adding Sinks/Sources...", end=" ")
 
-# add_sources_and_sinks(graph, inspectors, flow_var_names, var_passengers_inspected)
 for k, vals in inspectors.items():
     source = "source_" + str(k)
     sink = "sink_"+str(k)
@@ -123,14 +113,11 @@ for k, vals in inspectors.items():
     graph.add_node(sink, station = vals['base'], time_stamp = None)
     for node in graph.nodes():
         if (graph.nodes[node]['station'] == vals['base']) and (graph.nodes[node]['time_stamp'] is not None):
-
             # adding edge between sink and events and adding to the variable dictionary
             graph.add_edge(source, node, num_passengers = 0, travel_time = 0)
             flow_var_names.append('var_x_{}_{}_{}'.format(source, node, k))
-            var_passengers_inspected['var_M_{}_{}'.format(source, node)] = 0
             graph.add_edge(node, sink, num_passengers=0, travel_time = 0 )
             flow_var_names.append('var_x_{}_{}_{}'.format(node, sink, k))
-            var_passengers_inspected['var_M_{}_{}'.format(node, sink)] = 0
 
 
 t3 = time.time()
@@ -145,6 +132,8 @@ print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 graph = nx.freeze(graph)
 
 #================================== START CPLEX =================================================
+#                           Establish Maximization Problem
+#================================================================================================
 
 print("Start CPLEX")
 
@@ -157,7 +146,7 @@ c.objective.set_sense(c.objective.sense.maximize)	# formulated as a maximization
 
 print("Adding variables...", end=" ")
 
-# adding objective function and declaring variable types
+# declaring variable types for binary variables
 c.variables.add(
     names = flow_var_names,
     types = [ c.variables.type.binary ] * len(flow_var_names)
@@ -167,8 +156,8 @@ c.variables.add(
 for (source, sink), value in all_paths.items():
     var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
 
-# defining the objective function coefficients
-#obj = [OD[(source, sink)] for source, sink in OD.keys()]
+
+# Adding the objective function coefficients
 
 c.variables.add(
     names = var_portion_of_passengers_inspected,
@@ -182,8 +171,9 @@ t4 = time.time()
 print("Finished! Took {:.5f} seconds".format(t4-t3))
 
 #=================================== CONSTRAINT 6 ===================================================
-
-print("Adding Constraint (6)...", end=" ")
+#                              Mass - Balance Constraint
+#================================================================================================
+print("Adding Constraint (6) [Mass - Balance Constraint] ...", end=" ")
 
 for k in inspectors:
     for node in graph.nodes():
@@ -220,8 +210,10 @@ print('Finished! Took {:.5f} seconds'.format(t5-t4))
 
 
 #=================================== CONSTRAINT 7 ===============================================
+#                              Sink and Source Constraint
+#================================================================================================
 
-print("Adding constraint (7) ...", end=" ")
+print("Adding constraint (7) [Sink and Source Constraint]...", end=" ")
 
 # constr_sink_source(c, graph, inspectors)
 for k, vals in inspectors.items():
@@ -253,10 +245,11 @@ print('Finished! Took {:.5f} seconds'.format(t6-t5))
 
 
 #===================================== CONSTRAINT 8 ==================================================
+#                        Time Flow/Number of Working Hours Constraint
+#================================================================================================
 
-print("Adding Constraint (8)...", end=" ")
+print("Adding Constraint (8)[Time Flow Constraint]...", end=" ")
 
-# constr_working_hours(c, graph, inspectors)
 for k, vals in inspectors.items():
     source = "source_" + str(k) + ""
     sink = "sink_" + str(k)
@@ -279,8 +272,10 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 
 
 #================================== CONSTRAINT 9 ==========================================
+#                   Minimum Constraint (Linearizing the Objective Function)
+#================================================================================================
 
-print('Adding Constraint (9)...', end = " ")
+print('Adding Constraint (9)[Minimum Constraint]...', end = " ")
 
 # new constraint
 # constr_reformulated(c, graph, inspectors, arc_paths)
@@ -296,8 +291,6 @@ for (u, v), path in all_paths.items():
             # range_values = [0],
             names = ['percentage_inspected_on_({},{})'.format(u, v)]
         )
-# old constraint
-# constraint_9(c, graph, inspectors)
 
 t8 = time.time()
 print("Finished! Took {:.5f} seconds".format(t8-t7))

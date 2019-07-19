@@ -84,14 +84,14 @@ def multiproportional(arc_paths):
         n+=1
     return X
 
-def generate_OD_matrix(graph, shortest_paths, arc_paths):
+def generate_OD_matrix(nodes, shortest_paths, arc_paths):
     '''
     This will generate a sparse matrix of the OD generate_OD_matrix.
     Given the X vector and arc_paths, all non-zero entries will be returned in
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-    nodes = graph.nodes()
+
     N = len(nodes)
     nod_idx = {node: i for i,node in enumerate(nodes)}
     #shortest_paths, arc_paths = create_arc_paths(graph)
