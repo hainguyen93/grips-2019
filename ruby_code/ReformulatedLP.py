@@ -7,7 +7,7 @@
 import sys
 
 # change local PATH environment for Python
-# sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
+sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
 
 import cplex
 import networkx as nx
@@ -20,6 +20,9 @@ import numpy as np
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
+import pandas as pd
+
+from copy import deepcopy
 
 # from tools import *
 from OD_matrix import *
@@ -79,7 +82,12 @@ print('Finished! Took {:.5f} seconds'.format(t2-t1))
 #================================ OD Estimation ===============================
 print("Estimating OD Matrix ...", end = " ")
 
-T, OD = generate_OD_matrix(graph)
+# create a deep copy of the graph
+new_graph = deepcopy(graph)
+
+shortest_paths, arc_paths = create_arc_paths(new_graph)
+
+T, OD = generate_OD_matrix(new_graph, shortest_paths, arc_paths)
 
 def enumerate_all_shortest_paths(graph, OD):
     shortest_paths, arc_paths = create_arc_paths(graph)
@@ -93,7 +101,7 @@ def enumerate_all_shortest_paths(graph, OD):
     return all_paths, path_idx
 
 # preliminary data needed
-all_paths, path_idx = enumerate_all_shortest_paths(graph, OD)
+all_paths, path_idx = enumerate_all_shortest_paths(new_graph, OD, shortest_paths, arc_paths)
 
 t2a = time.time()
 # print(new_weights)
@@ -134,8 +142,11 @@ graph = nx.freeze(graph)
 
 print('successors of FFU@10:51:00')
 
-for node in graph.successors('FFU@10:51:00'):
-    print(node)
+#count = 0
+#for edge in graph.edges():
+    #if edge['num_passengers'] == 0:
+        #count+=1
+#print('num edges: {}'.format(count))
 
 #================================== START CPLEX =================================================
 
