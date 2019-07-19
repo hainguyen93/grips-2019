@@ -101,7 +101,7 @@ def enumerate_all_shortest_paths(graph, OD):
     return all_paths, path_idx
 
 # preliminary data needed
-all_paths, path_idx = enumerate_all_shortest_paths(new_graph, OD, shortest_paths, arc_paths)
+all_paths, path_idx = enumerate_all_shortest_paths(OD, shortest_paths)
 
 t2a = time.time()
 # print(new_weights)
@@ -140,7 +140,7 @@ print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 # freeze graph to prevent further changes
 graph = nx.freeze(graph)
 
-print('successors of FFU@10:51:00')
+#print('successors of FFU@10:51:00')
 
 #count = 0
 #for edge in graph.edges():
@@ -175,12 +175,13 @@ for (source, sink), value in all_paths.items():
     var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
 
 # defining the objective function coefficients
-obj = [OD[(source, sink)] for source, sink in OD.keys()]
+#obj = [OD[(source, sink)] for source, sink in OD.keys()]
+
 c.variables.add(
     names = var_portion_of_passengers_inspected,
     lb = [0] * len(var_portion_of_passengers_inspected),
     ub = [1] * len(var_portion_of_passengers_inspected),
-    obj = obj,
+    obj = OD.values(),
     types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
 )
 
