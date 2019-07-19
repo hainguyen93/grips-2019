@@ -2,7 +2,7 @@
 # Output: Digraph object
 # Function: This file will be used to read in information to
 # create the DiGraph object and write it to another file
-# @author: Ruby Abrams, Hai Nguyen
+# @author: Ruby Abrams, Hai Nguyen, Nate May
 
 from __future__ import division
 
@@ -23,10 +23,8 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
 import pandas as pd
-
 from copy import deepcopy
 
-from tools import *
 from OD_matrix import *
 
 # networkx start
@@ -293,8 +291,6 @@ for (u, v), path in all_paths.items():
             # range_values = [0],
             names = ['percentage_inspected_on_({},{})'.format(u, v)]
         )
-# old constraint
-# constraint_9(c, graph, inspectors)
 
 t8 = time.time()
 print("Finished! Took {:.5f} seconds".format(t8-t7))
