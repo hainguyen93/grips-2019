@@ -21,6 +21,7 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
 import pandas as pd
+from __future__ import division
 
 from copy import deepcopy
 
@@ -89,16 +90,16 @@ shortest_paths, arc_paths = create_arc_paths(new_graph)
 
 T, OD = generate_OD_matrix(new_graph, shortest_paths, arc_paths)
 
-def enumerate_all_shortest_paths(graph, OD):
-    shortest_paths, arc_paths = create_arc_paths(graph)
-    all_paths = {}
-    for source, value in shortest_paths.items():
-        for sink, path in value.items():
-            # exclude paths from nodes to themselves
-            if source != sink and OD[(source, sink)] != 0:
-                all_paths[(source, sink)] = path
-    path_idx = {path:i for i,path in enumerate(all_paths)}
-    return all_paths, path_idx
+#def enumerate_all_shortest_paths(graph, OD):
+    #shortest_paths, arc_paths = create_arc_paths(graph)
+    #all_paths = {}
+    #for source, value in shortest_paths.items():
+        #for sink, path in value.items():
+            ## exclude paths from nodes to themselves
+            #if source != sink and OD[(source, sink)] != 0:
+                #all_paths[(source, sink)] = path
+    #path_idx = {path:i for i,path in enumerate(all_paths)}
+    #return all_paths, path_idx
 
 # preliminary data needed
 all_paths, path_idx = enumerate_all_shortest_paths(OD, shortest_paths)
@@ -294,13 +295,14 @@ print('Adding Constraint (9)...', end = " ")
 
 for (u, v), path in all_paths.items():
     if not ("source_" in u+v or "sink_" in u+v):
-        indices = ['portion_of_({},{})'.format(u,v)] + ['var_x_{}_{}_{}'.format(i,j,k) for k in inspectors for i,j in zip(path, path[1:])]
-        values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for k in inspectors for i,j in zip(path, path[1:])]
+        indices = ['portion_of_({},{})'.format(u,v)] 
+                    + ['var_x_{}_{}_{}'.format(i,j,k) for i,j in zip(path, path[1:]) for k in inspectors]
+        values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
         c.linear_constraints.add(
             lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
             senses = ['L'],
             rhs = [0],
-            range_values = [0],
+            #range_values = [0],
             names = ['bdd_by_inspector_count_{}_{}'.format(u, v)]
         )
 # old constraint

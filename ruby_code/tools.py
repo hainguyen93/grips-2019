@@ -75,6 +75,7 @@ def start_cplex(c, flow_var_names, var_passengers_inspected):
         obj = [1] * len(var_passengers_inspected),
         types = [ c.variables.type.continuous ] * len(var_passengers_inspected))
 
+
 def enumerate_all_shortest_paths(OD, shortest_paths):
     #shortest_paths, arc_paths = create_arc_paths(graph)
     all_paths = {}
