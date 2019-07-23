@@ -171,7 +171,6 @@ for (source, sink), value in all_paths.items():
 
 
 # Adding the objective function coefficients
-
 c.variables.add(
     names = var_portion_of_passengers_inspected,
     lb = [0] * len(var_portion_of_passengers_inspected),
@@ -228,7 +227,6 @@ print('Finished! Took {:.5f} seconds'.format(t5-t4))
 
 print("Adding [Sink and Source Constraint]...", end=" ")
 
-# constr_sink_source(c, graph, inspectors)
 for k, vals in inspectors.items():
     sink = "sink_" + str(k)
     source = "source_" + str(k)
@@ -289,9 +287,6 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 #================================================================================================
 
 print('Adding [Minimum Constraint]...', end = " ")
-
-# new constraint
-# constr_reformulated(c, graph, inspectors, arc_paths)
 
 for (u, v), path in all_paths.items():
     if not ("source_" in u+v or "sink_" in u+v):

@@ -109,7 +109,7 @@ def generate_OD_matrix(nodes, shortest_paths, arc_paths):
             if sink != source:
                 # collect the X_a values for all arcs in the path
                 X_a = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
-                T[ nod_idx[source] , nod_idx[sink] ] = X_a
+                T[ nod_idx[source] , nod_idx[sink] ] = np.round(X_a)
                 # populate a dictionary of the non-zero entries too
-                OD[(source, sink)] = X_a
+                OD[(source, sink)] = np.round(X_a)
     return T, OD
