@@ -91,11 +91,10 @@ T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
 
 # Create a dictionary of all Origin-Destinations
 all_paths = {}
-for source, value in shortest_paths.items():
-    for sink, path in value.items():
-        # exclude paths from nodes to themselves
-        if source != sink and OD[(source, sink)] != 0:
-            all_paths[(source, sink)] = path
+for source, sink in OD.keys():
+    if source != sink:
+        all_paths[(source, sink)] = shortest_paths[source][sink]
+
 path_idx = {path:i for i,path in enumerate(all_paths)}
 
 
@@ -153,7 +152,7 @@ c.variables.add(
 )
 
 # create variable names
-for (source, sink), value in all_paths.items():
+for (source, sink) in all_paths.keys():
     var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
 
 
@@ -246,7 +245,7 @@ print('Finished! Took {:.5f} seconds'.format(t6-t5))
 #                        Time Flow/Number of Working Hours Constraint
 #================================================================================================
 
-print("Adding Constraint (8)[Time Flow Constraint]...", end=" ")
+print("Adding Constraint (8) [Time Flow Constraint]...", end=" ")
 
 for k, vals in inspectors.items():
     source = "source_" + str(k) + ""
@@ -273,7 +272,7 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 #                   Minimum Constraint (Linearizing the Objective Function)
 #================================================================================================
 
-print('Adding Constraint (9)[Minimum Constraint]...', end = " ")
+print('Adding Constraint (9) [Minimum Constraint]...', end = " ")
 
 for (u, v), path in all_paths.items():
     if not ("source_" in u+v or "sink_" in u+v):
