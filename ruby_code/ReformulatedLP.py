@@ -29,7 +29,7 @@ from OD_matrix import *
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
 inspectors = { 
-              #0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
+              0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
               }
@@ -38,10 +38,13 @@ inspectors = {
               #1: {"base": 'A', "working_hours":1}}
 # Assumption: rate of inspection remains constant
 KAPPA = 12
+
 flow_var_names = []
 
 # new reformulation variable
-var_portion_of_passengers_inspected = np.array([])
+var_Ms = {}
+var_Ns = []
+
 
 HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
@@ -91,11 +94,14 @@ T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
 
 # Create a dictionary of all Origin-Destinations
 all_paths = {}
+
 for source, value in shortest_paths.items():
     for sink, path in value.items():
         # exclude paths from nodes to themselves
         if source != sink and OD[(source, sink)] > 0.0001:
             all_paths[(source, sink)] = path
+            
+            
 path_idx = {path:i for i,path in enumerate(all_paths)}
 
 # round up OD matrix
@@ -166,17 +172,33 @@ c.variables.add(
 )
 
 # create variable names
-for (source, sink), value in all_paths.items():
-    var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
+for (source, sink), val in all_paths.items():
+    var_Ms['var_M_({},{})'.format(source, sink)] = int(OD[ (source, sink) ])
+    var_Ns.extend(['var_N_({},{})_({},{})'.format(source,sink,i,j) for i,j in zip(val, val[1:])])
+    
+c.variables.add(
+    names = var_Ns, 
+    types = [ c.variables.type.continuous ] * len(var_Ns),
+    lb = [0] * len(var_Ns),
+    ub = [1] * len(var_Ns)
+)
 
 
 # Adding the objective function coefficients
+#c.variables.add(
+    #names = var_Ms,
+    #lb = [0] * len(var_portion_of_passengers_inspected),
+    #ub = [1] * len(var_portion_of_passengers_inspected),
+    #obj = list(OD.values()),
+    #types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
+#)
+
 c.variables.add(
-    names = var_portion_of_passengers_inspected,
-    lb = [0] * len(var_portion_of_passengers_inspected),
-    ub = [1] * len(var_portion_of_passengers_inspected),
-    obj = list(OD.values()),
-    types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
+    names = list(var_Ms.keys()),
+    types = [ c.variables.type.continuous ] * len(var_Ms),
+    lb = [0] * len(var_Ms),
+    ub = [1] * len(var_Ms),
+    obj = list(var_Ms.values())
 )
 
 t4 = time.time()
@@ -289,15 +311,27 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 print('Adding [Minimum Constraint]...', end = " ")
 
 for (u, v), path in all_paths.items():
-    if not ("source_" in u+v or "sink_" in u+v):
-        indices = ['portion_of_({},{})'.format(u,v)] + ['var_x_{}_{}_{}'.format(i,j,k) for i,j in zip(path, path[1:]) for k in inspectors]
-        values = [1] + [-round(KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'],4) for i,j in zip(path, path[1:]) for k in inspectors]
+    #if not ("source_" in u+v or "sink_" in u+v):
+    indices = ['var_M_({},{})'.format(u,v)] + ['var_N_({},{})_({},{})'.format(u,v,i,j) for (i,j) in zip(path, path[1:])]
+    values = [1] + [-1 for i,j in zip(path, path[1:])]
+    c.linear_constraints.add(
+        lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
+        senses = ['L'],
+        rhs = [0],
+        # range_values = [0],
+        names = ['percentage_inspected_on_({},{})'.format(u, v)]
+    )
+    
+    for (i,j) in zip(path, path[1:]):    
+        fe = KAPPA * graph.edges[i,j]['travel_time'] / graph.edges[i,j]['num_passengers']
         c.linear_constraints.add(
-            lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
+            lin_expr = [cplex.SparsePair(
+                ind = ['var_N_({},{})_({},{})'.format(u,v,i,j)] + ['var_x_{}_{}_{}'.format(i,j,k) for k in inspectors],
+                val = [1] + [-fe] * len(inspectors)
+            )],
             senses = ['L'],
             rhs = [0],
-            # range_values = [0],
-            names = ['percentage_inspected_on_({},{})'.format(u, v)]
+            names = ['new_constr_on_edge_({},{})'.format(i,j)]
         )
 
 t8 = time.time()
