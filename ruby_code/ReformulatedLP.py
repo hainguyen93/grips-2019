@@ -338,4 +338,5 @@ for k, vals in inspectors.items():
 t11= time.time()
 print("Programme Terminated! Took {:.5f} seconds".format(t11-t1))
 
-#print(flow_var_names[:10])
+# obtain method used in CPLEX
+print("CPLEX method used in solver is: {}".format(c.solution.get_method()))
