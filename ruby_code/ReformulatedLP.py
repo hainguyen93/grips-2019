@@ -5,6 +5,7 @@
 # @author: Ruby Abrams, Hai Nguyen, Nate May
 
 from __future__ import division
+
 import sys
 
 # change local PATH environment for Python
@@ -23,28 +24,24 @@ from dateutil.parser import parse
 import matplotlib.pyplot as plt
 import pandas as pd
 from copy import deepcopy
+
 from OD_matrix import *
 
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-inspectors = { 
-              0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
+inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
-              }
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
 
 #inspectors = {0: {"base": 'C', "working_hours":1},
               #1: {"base": 'A', "working_hours":1}}
 # Assumption: rate of inspection remains constant
 KAPPA = 12
-
 flow_var_names = []
 
 # new reformulation variable
-var_Ms = {}
-var_Ns = []
-
+var_portion_of_passengers_inspected = np.array([])
 
 HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
@@ -94,17 +91,13 @@ T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
 
 # Create a dictionary of all Origin-Destinations
 all_paths = {}
-           
-
 for source, sink in OD.keys():
     if source != sink:
         all_paths[(source, sink)] = shortest_paths[source][sink]
 
 path_idx = {path:i for i,path in enumerate(all_paths)}
 
-# round up OD matrix
-OD = {edge:int(val) for edge, val in OD.items()}
-    
+
 t2a = time.time()
 print('Finished! Took {:.5f} seconds'.format(t2a-t2))
 
@@ -114,7 +107,7 @@ print("Adding Sinks/Sources...", end=" ")
 
 for k, vals in inspectors.items():
     source = "source_" + str(k)
-    sink = "sink_" + str(k)
+    sink = "sink_"+str(k)
     graph.add_node(source, station = vals['base'], time_stamp = None)
     graph.add_node(sink, station = vals['base'], time_stamp = None)
     for node in graph.nodes():
@@ -136,17 +129,6 @@ print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 
 # freeze graph to prevent further changes
 graph = nx.freeze(graph)
-#print(graph.nodes())
-
-#print('Pred: ', list(graph.predecessors("HJD@07:53:00")))
-#print('Source_0: ', list(graph.successors("source_0")))
-#print("source_0 length: ", len(list(graph.successors("source_0"))))
-
-#print('Sink_0: ', list(graph.predecessors("sink_0")))
-#print('Sink_0 length: ', len(list(graph.predecessors("sink_0"))))
-
-
-
 
 #================================== START CPLEX =================================================
 #                           Establish Maximization Problem
@@ -169,25 +151,18 @@ c.variables.add(
     types = [ c.variables.type.binary ] * len(flow_var_names)
 )
 
+# create variable names
 for (source, sink) in all_paths.keys():
     var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
 
 
 # Adding the objective function coefficients
-#c.variables.add(
-    #names = var_Ms,
-    #lb = [0] * len(var_portion_of_passengers_inspected),
-    #ub = [1] * len(var_portion_of_passengers_inspected),
-    #obj = list(OD.values()),
-    #types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
-#)
-
 c.variables.add(
-    names = list(var_Ms.keys()),
-    types = [ c.variables.type.continuous ] * len(var_Ms),
-    lb = [0] * len(var_Ms),
-    ub = [1] * len(var_Ms),
-    obj = list(var_Ms.values())
+    names = var_portion_of_passengers_inspected,
+    lb = [0] * len(var_portion_of_passengers_inspected),
+    ub = [1] * len(var_portion_of_passengers_inspected),
+    obj = list(OD.values()),
+    types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
 )
 
 t4 = time.time()
@@ -196,7 +171,7 @@ print("Finished! Took {:.5f} seconds".format(t4-t3))
 #=================================== CONSTRAINT 6 ===================================================
 #                              Mass - Balance Constraint
 #================================================================================================
-print("Adding [Mass - Balance Constraint] ...", end=" ")
+print("Adding Constraint (6) [Mass - Balance Constraint] ...", end=" ")
 
 for k in inspectors:
     for node in graph.nodes():
@@ -236,7 +211,7 @@ print('Finished! Took {:.5f} seconds'.format(t5-t4))
 #                              Sink and Source Constraint
 #================================================================================================
 
-print("Adding [Sink and Source Constraint]...", end=" ")
+print("Adding constraint (7) [Sink and Source Constraint]...", end=" ")
 
 for k, vals in inspectors.items():
     sink = "sink_" + str(k)
@@ -270,8 +245,7 @@ print('Finished! Took {:.5f} seconds'.format(t6-t5))
 #                        Time Flow/Number of Working Hours Constraint
 #================================================================================================
 
-print("Adding [Time Flow Constraint]...", end=" ")
-
+print("Adding Constraint (8) [Time Flow Constraint]...", end=" ")
 
 for k, vals in inspectors.items():
     source = "source_" + str(k) + ""
@@ -298,31 +272,18 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 #                   Minimum Constraint (Linearizing the Objective Function)
 #================================================================================================
 
-print('Adding [Minimum Constraint]...', end = " ")
-
+print('Adding Constraint (9) [Minimum Constraint]...', end = " ")
 
 for (u, v), path in all_paths.items():
-    #if not ("source_" in u+v or "sink_" in u+v):
-    indices = ['var_M_({},{})'.format(u,v)] + ['var_N_({},{})_({},{})'.format(u,v,i,j) for (i,j) in zip(path, path[1:])]
-    values = [1] + [-1 for i,j in zip(path, path[1:])]
-    c.linear_constraints.add(
-        lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
-        senses = ['L'],
-        rhs = [0],
-        # range_values = [0],
-        names = ['percentage_inspected_on_({},{})'.format(u, v)]
-    )
-    
-    for (i,j) in zip(path, path[1:]):    
-        fe = KAPPA * graph.edges[i,j]['travel_time'] / graph.edges[i,j]['num_passengers']
+    if not ("source_" in u+v or "sink_" in u+v):
+        indices = ['portion_of_({},{})'.format(u,v)] + ['var_x_{}_{}_{}'.format(i,j,k) for i,j in zip(path, path[1:]) for k in inspectors]
+        values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
         c.linear_constraints.add(
-            lin_expr = [cplex.SparsePair(
-                ind = ['var_N_({},{})_({},{})'.format(u,v,i,j)] + ['var_x_{}_{}_{}'.format(i,j,k) for k in inspectors],
-                val = [1] + [-fe] * len(inspectors)
-            )],
+            lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
             senses = ['L'],
             rhs = [0],
-            names = ['new_constr_on_edge_({},{})'.format(i,j)]
+            # range_values = [0],
+            names = ['percentage_inspected_on_({},{})'.format(u, v)]
         )
 
 t8 = time.time()
@@ -366,10 +327,10 @@ df_paths = pd.DataFrame(paths, columns=['from_station', 'departure_time', 'to_st
 
 for k, vals in inspectors.items():
     print("Solution for Inspector ", k)
-    path_k = df_paths[df_paths['inspector_id'] == str(k)]
-    path_k = path_k.sort_values(by=['departure_time'])
-    print(path_k.to_string())
-    path_k.to_csv('inspector_0_path.csv', index = False)
+    path = df_paths[df_paths['inspector_id'] == str(k)]
+    path = path.sort_values(by=['departure_time'])
+    print(path.to_string())
+    path.to_csv('inspector_0_path.csv', index = False)
 
 #print(len(paths))
 
