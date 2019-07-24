@@ -29,7 +29,7 @@ from OD_matrix import *
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
 inspectors = { 
-              0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
+              #0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
               }
@@ -362,7 +362,7 @@ except cplex.exceptions.errors.CplexSolverError:
 print("Test: Do 'flow_var_names' and 'res' have same size? ", len(flow_var_names)==len(res))
 
 # post-processing
-paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if x_val]
+paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if abs(x_val-1) < 0.001]
 
 print("Edges Number = ", len(paths))
 
