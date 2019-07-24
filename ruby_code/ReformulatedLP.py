@@ -297,9 +297,18 @@ c.write('inspectors.lp')
 t9 =time.time()
 print('Finished! Took {:.5f} seconds'.format(t9-t8))
 
+# check for feasibility
+print("Problem type: {}".format(c.get_problem_type()))
+# problem stats
+print("Problem stats: {}".format(c.get_stats()))
+
+
 
 print("Now solving ...", end = " ")
 c.solve()
+# get method
+print("Problem method: {}".format(c.solution.get_method()))
+
 print("Solution Status: ", c.solution.get_status())
 t10 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t10-t9))
