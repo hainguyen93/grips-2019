@@ -94,12 +94,14 @@ T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
 
 # Create a dictionary of all Origin-Destinations
 all_paths = {}
-           
 
-for source, sink in OD.keys():
-    if source != sink:
-        all_paths[(source, sink)] = shortest_paths[source][sink]
-
+for source, value in shortest_paths.items():
+    for sink, path in value.items():
+        # exclude paths from nodes to themselves
+        if source != sink and OD[(source, sink)] > 0.0001:
+            all_paths[(source, sink)] = path
+            
+            
 path_idx = {path:i for i,path in enumerate(all_paths)}
 
 # round up OD matrix
@@ -169,8 +171,17 @@ c.variables.add(
     types = [ c.variables.type.binary ] * len(flow_var_names)
 )
 
-for (source, sink) in all_paths.keys():
-    var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
+# create variable names
+for (source, sink), val in all_paths.items():
+    var_Ms['var_M_({},{})'.format(source, sink)] = int(OD[ (source, sink) ])
+    var_Ns.extend(['var_N_({},{})_({},{})'.format(source,sink,i,j) for i,j in zip(val, val[1:])])
+    
+c.variables.add(
+    names = var_Ns, 
+    types = [ c.variables.type.continuous ] * len(var_Ns),
+    lb = [0] * len(var_Ns),
+    ub = [1] * len(var_Ns)
+)
 
 
 # Adding the objective function coefficients
@@ -272,7 +283,6 @@ print('Finished! Took {:.5f} seconds'.format(t6-t5))
 
 print("Adding [Time Flow Constraint]...", end=" ")
 
-
 for k, vals in inspectors.items():
     source = "source_" + str(k) + ""
     sink = "sink_" + str(k)
@@ -299,7 +309,6 @@ print("Finished! Took {:.5f} seconds".format(t7-t6))
 #================================================================================================
 
 print('Adding [Minimum Constraint]...', end = " ")
-
 
 for (u, v), path in all_paths.items():
     #if not ("source_" in u+v or "sink_" in u+v):
