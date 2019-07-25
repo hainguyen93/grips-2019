@@ -1,5 +1,5 @@
 # XML PARSER FOR THE INPUT DATE
-# @AUTHOR(s): HAI
+# @author: Hai Nguyen
 
 import xml.etree.ElementTree as ET
 import datetime
@@ -9,17 +9,16 @@ from dateutil.parser import parse
 from datetime import datetime, timedelta
 
 # GLOBAL CONFIGURATIONS
-USERNAME = 'bzfnguye'
 
 ICE_NAMES = [ "401", "402", "403", "411" ]
 
 DAY_DICT = { "Mon" : 0, 
-            "Tue" : 1, 
-            "Wed" : 2, 
-            "Thu" : 3, 
-            "Fri" : 4, 
-            "Sat" : 5, 
-            "Sun" : 6  }
+             "Tue" : 1, 
+             "Wed" : 2, 
+             "Thu" : 3, 
+             "Fri" : 4, 
+             "Sat" : 5, 
+             "Sun" : 6  }
 
 FOLLOWING_DAY =  { "Mon" : "Tue", 
             "Tue" : "Wed", 
