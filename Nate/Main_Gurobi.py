@@ -148,7 +148,6 @@ M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB
 
 
 # Adding the objective function coefficients
-#objective = LinExpr(OD.values,M.sum())
 model.setObjective(M.prod(OD),GRB.MAXIMIZE)
 
 t4 = time.time()
@@ -255,15 +254,22 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 
 
 
-try:
-    model.optimize()
-    model.write("Gurobi_Solution.lp")
 
-    for v in model.getVars():
-        print('%s %g' % (v.varName, v.x))
+model.optimize()
+model.write("Gurobi_Solution.lp")
 
-    print('Obj: %g' % model.objVal)
-except:
-    print("No solution exists.")
+    #for v in model.getVars():
+        #print('%s %g' % (v.varName, v.x))
+
+    #print('Obj: %g' % model.objVal)
+
+
+vars = [var.getAttr("VarName") for var in model.getVars()]
+print(vars)
+
+    #for var in vars:
+        #if var.x != 0:
+            #print(var.getAttr("VarName"))
+
 
 

@@ -571,3 +571,1496 @@ Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
 Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
 Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
 Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 03:20:21
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.93s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.33 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    3s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    7s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    8s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8    9s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8    9s
+    29    24 11581.1169   14  611 11197.6235 11847.3410  5.80%  25.4   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   10s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   11s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   12s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   13s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   13s
+   748   148 infeasible   53      11576.3071 11701.4182  1.08%  13.9   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 16.75 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 03:38:14
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.95s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.34 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   431    89 11640.8597   33  184 11576.3071 11739.9802  1.41%  16.1   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.11 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 03:41:36
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.95s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.33 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   454    95 11690.7848   40  263 11576.3071 11739.1795  1.41%  16.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.89 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 03:43:07
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.95s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.34 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   454    95 11690.7848   40  263 11576.3071 11739.1795  1.41%  16.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.90 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:22:01
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.96s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.33 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    7s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    7s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    8s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    8s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   387    83 infeasible   30      11576.3071 11744.5192  1.45%  16.1   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.29 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:23:18
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.93s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.32 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    3s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    7s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    8s
+    24    25 11586.1530   12  555 11067.4971 11847.3410  7.05%  28.2   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   13s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   550   118 11628.3444   49  169 11576.3071 11730.5840  1.33%  14.8   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.40 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:24:15
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.92s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.32 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    3s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    7s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    8s
+    26    26 11582.6782   13  611 11067.4971 11847.3410  7.05%  27.5   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   10s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   11s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   12s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   13s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   13s
+   683   132 11647.6278   42  156 11576.3071 11714.7495  1.20%  14.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.03 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:29:21
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 2.04s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.38 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    4s
+H    0     0                    5997.4680372 12206.9256   104%     -    4s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    4s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    4s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    4s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    7s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    7s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    8s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    8s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   14s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+   371    86 11618.3726   32  268 11576.3063 11751.6472  1.51%  15.9   15s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.57 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:30:17
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 2.12s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.55 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    4s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    4s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    4s
+H    0     0                    5135.7754896 12303.5845   140%     -    4s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    4s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    4s
+H    0     0                    5997.4680372 12206.9256   104%     -    4s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    4s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    4s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    4s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    7s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    7s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    7s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    8s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    8s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   11s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   11s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   12s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   13s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   14s
+   295    58 11678.6080   33  405 11576.3062 11770.7026  1.68%  17.5   15s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   15s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.96 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:32:14
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.94s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.33 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    7s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    8s
+    26    26 11582.6782   13  611 11067.4971 11847.3410  7.05%  27.5   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   10s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   11s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   12s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   13s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   13s
+   683   132 11647.6278   42  156 11576.3071 11714.7495  1.20%  14.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.01 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:34:02
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.95s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.34 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    8s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    8s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   454    95 11690.7848   40  263 11576.3071 11739.1795  1.41%  16.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.13 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:35:11
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 2.17s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.36 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    4s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    4s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    4s
+H    0     0                    5997.4680372 12206.9256   104%     -    4s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    4s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    4s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    4s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    7s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    7s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    8s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    8s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   454    95 11690.7848   40  263 11576.3071 11739.1795  1.41%  16.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.06 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:36:48
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.92s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.31 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    3s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    24    25 11586.1530   12  555 11067.4971 11847.3410  7.05%  28.2   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   496   106 11666.6191   32  157 11576.3071 11736.6368  1.38%  15.2   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.61 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:37:43
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.95s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.34 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    3s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    7s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    8s
+    26    26 11582.6782   13  611 11067.4971 11847.3410  7.05%  27.5   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   10s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   11s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   12s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   13s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   13s
+   683   132 11647.6278   42  156 11576.3071 11714.7495  1.20%  14.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 16.98 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:54:49
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.97s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.35 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    4s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   454    95 11690.7848   40  263 11576.3071 11739.1795  1.41%  16.0   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.98 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:56:23
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 1.99s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.33 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    3s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    3s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    4s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    6s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    6s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    7s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    7s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   13s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   550   118 11628.3444   49  169 11576.3071 11730.5840  1.33%  14.8   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 17.35 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 05:57:32
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 2.04s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.36 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    4s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    4s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    4s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    7s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    7s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    8s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    8s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   10s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   10s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   12s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   13s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   14s
+   387    83 infeasible   30      11576.3071 11744.5192  1.45%  16.1   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.31 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (win64, Python) logging started 07/25/19 06:02:20
+
+Academic license - for non-commercial use only
+Optimize a model with 24959 rows, 35587 columns and 183908 nonzeros
+Variable types: 10580 continuous, 25007 integer (25007 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 19848 rows and 28421 columns
+Presolve time: 2.03s
+Presolved: 5111 rows, 7166 columns, 33140 nonzeros
+Variable types: 533 continuous, 6633 integer (6554 binary)
+
+Root relaxation: objective 1.279412e+04, 13662 iterations, 1.34 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12794.1216    0  511   -0.00000 12794.1216      -     -    3s
+     0     0 12675.0919    0  591   -0.00000 12675.0919      -     -    3s
+     0     0 12495.6617    0  484   -0.00000 12495.6617      -     -    3s
+H    0     0                    1439.8636764 12495.6617   768%     -    3s
+     0     0 12489.9606    0  436 1439.86368 12489.9606   767%     -    3s
+     0     0 12303.5845    0  523 1439.86368 12303.5845   754%     -    3s
+H    0     0                    5135.7754896 12303.5845   140%     -    3s
+     0     0 12263.6535    0  546 5135.77549 12263.6535   139%     -    3s
+     0     0 12206.9256    0  574 5135.77549 12206.9256   138%     -    3s
+H    0     0                    5997.4680372 12206.9256   104%     -    3s
+     0     0 12053.2675    0  404 5997.46804 12053.2675   101%     -    4s
+H    0     0                    8002.2193160 12053.2675  50.6%     -    4s
+     0     0 12047.0734    0  402 8002.21932 12047.0734  50.5%     -    4s
+     0     0 11993.1081    0  442 8002.21932 11993.1081  49.9%     -    4s
+     0     0 11949.0403    0  570 8002.21932 11949.0403  49.3%     -    4s
+     0     0 11948.7137    0  559 8002.21932 11948.7137  49.3%     -    4s
+     0     0 11935.5809    0  544 8002.21932 11935.5809  49.2%     -    4s
+H    0     0                    8287.6452230 11935.5809  44.0%     -    4s
+     0     0 11926.0354    0  543 8287.64522 11926.0354  43.9%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    4s
+     0     0 11882.4771    0  590 8287.64522 11882.4771  43.4%     -    6s
+H    0     2                    8790.8927608 11882.4771  35.2%     -    7s
+     0     2 11882.4771    0  590 8790.89276 11882.4771  35.2%     -    7s
+H    7     9                    9447.7322368 11847.3410  25.4%  15.3    8s
+H    8     9                    9634.0701309 11847.3410  23.0%  16.3    8s
+H    9    10                    10606.392830 11847.3410  11.7%  15.9    8s
+H   16    17                    11067.497132 11847.3410  7.05%  34.4    9s
+    22    24 11591.9830   11  551 11067.4971 11847.3410  7.05%  29.1   10s
+H   28    27                    11073.627034 11847.3410  6.99%  25.8   11s
+H   28    25                    11197.623536 11847.3410  5.80%  25.8   11s
+H   62    32                    11435.228088 11847.3410  3.60%  20.3   11s
+H  155    55                    11436.073015 11801.4017  3.19%  16.8   13s
+H  245    45                    11576.306178 11782.8021  1.78%  18.1   14s
+*  344    70              33    11576.306280 11766.0066  1.64%  15.9   14s
+   371    86 11618.3726   32  268 11576.3063 11751.6472  1.51%  15.9   15s
+H  385    88                    11576.307120 11746.6160  1.47%  16.1   15s
+
+Cutting planes:
+  Gomory: 7
+  Cover: 7
+  Implied bound: 10
+  Clique: 45
+  MIR: 17
+  StrongCG: 1
+  GUB cover: 12
+  Inf proof: 1
+  Mod-K: 4
+
+Explored 1213 nodes (31950 simplex iterations) in 18.64 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 10: 11576.3 11576.3 11576.3 ... 9634.07
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.157630712027e+04, best bound 1.157630712027e+04, gap 0.0000%
+Warning: variable name "x[XSZH@19:00:00,XSB@19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
