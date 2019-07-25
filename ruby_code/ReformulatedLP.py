@@ -32,7 +32,8 @@ graph = nx.DiGraph() # nx.MultiDiGraph()
 
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
+              3 : {"base": 'XSI', "working_hours": 7, "rate": 13}}
 
 #inspectors = {0: {"base": 'C', "working_hours":1},
               #1: {"base": 'A', "working_hours":1}}
@@ -218,16 +219,6 @@ for k, vals in inspectors.items():
     source = "source_" + str(k)
 
     c.linear_constraints.add(
-        lin_expr = [cplex.SparsePair(
-                        ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)],
-                        val = [1] * graph.in_degree(sink)
-                    )],
-        senses = ['E'],
-        rhs = [1],
-        names = ['sink_constr_{}'.format(k)]
-    )
-
-    c.linear_constraints.add(
         lin_expr = [ cplex.SparsePair(
                         ind = ['var_x_{}_{}_{}'.format(source, u, k) for u in graph.successors(source)] ,
                         val = [1] * graph.out_degree(source)
@@ -235,6 +226,16 @@ for k, vals in inspectors.items():
         senses = ['E'],
         rhs = [1],
         names = ['source_constr_{}'.format(k)]
+    )
+
+    c.linear_constraints.add(
+        lin_expr = [cplex.SparsePair(
+                        ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)],
+                        val = [1] * graph.in_degree(sink)
+                    )],
+        senses = ['E'],
+        rhs = [1],
+        names = ['sink_constr_{}'.format(k)]
     )
 
 t6 = time.time()
@@ -293,16 +294,17 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 #================================== POST-PROCESSING ================================================
 
 print('Write to inspectors.lp ...', end=" ")
-c.write('inspectors.lp')
+c.write('inspectors_4.lp')
 t9 =time.time()
 print('Finished! Took {:.5f} seconds'.format(t9-t8))
-
+quit()
 # check for feasibility
 print("Problem type: {}".format(c.get_problem_type()))
 # problem stats
 print("Problem stats: {}".format(c.get_stats()))
 
-
+print("Is primal feasible: {}".format(c.solution.is_primal_feasible()))
+print("Is dual feasible: {}".format(c.solution.is_dual_feasible()))
 
 print("Now solving ...", end = " ")
 c.solve()
