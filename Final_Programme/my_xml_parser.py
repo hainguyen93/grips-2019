@@ -129,7 +129,27 @@ def create_waiting_edges(waiting_edges, events):
             travel_time_minutes = (travel_time_seconds % 3600) // 60
             new_edge = tuple((station, timestamps[i], station, timestamps[i+1], 0, travel_time_minutes))
             waiting_edges.add(new_edge)    
-            #print(new_edge)            
+            #print(new_edge)    
+            
+            
+def extract_edges_from_timetable(timetable, chosen_day):
+    # List of 5-tuples 
+    # E.G., (from_station, departure_time, to_station, arrival_time, passenger_number)
+    driving_edges = list()
+    waiting_edges = set() # implemented as a set to avoid duplicate
+        
+    # dictionary with station as keys and list of timestamps as values
+    events = dict()
+    
+    tree = ET.parse(timetable)
+    root = tree.getroot()
+    
+    create_driving_edges(root, chosen_day, driving_edges)
+    create_list_of_events(driving_edges, events)
+    create_waiting_edges(waiting_edges, events)
+    
+    return driving_edges + list(waiting_edges)      
+    
 
                 
 def main():
