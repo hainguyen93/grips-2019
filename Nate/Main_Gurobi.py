@@ -33,11 +33,11 @@ graph = nx.DiGraph() # nx.MultiDiGraph()
 
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
-              3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
-              4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
-              5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
-              }
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
+              #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+              #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+              #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+              #}
 
 #inspectors = {0: {"base": 'C', "working_hours":1},
               #1: {"base": 'A', "working_hours":1}}
@@ -262,36 +262,28 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 model.optimize()
 model.write("Gurobi_Solution.lp")
 
-<<<<<<< HEAD:Nate/Main_Gurobi.py
-    #for v in model.getVars():
-        #print('%s %g' % (v.varName, v.x))
-=======
-# post-processing
-paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if abs(1-x_val) < 0.01]
->>>>>>> 569a52d27c813d0229ba9ee3f8f3838ea0b673fc:ruby_code/ReformulatedLP.py
+#Write Solution:
+#----------------------------------------------------------------------------------------------
 
-    #print('Obj: %g' % model.objVal)
+with open("Gurobi_Solution.txt", "w") as f:
+    
+    f.write()
 
+#Print Solution Paths:
+#----------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD:Nate/Main_Gurobi.py
-vars = [var.getAttr("VarName") for var in model.getVars()]
-print(vars)
-=======
-df_paths = pd.DataFrame(paths, columns=['from_station', 'departure_time', 'to_station', 'arrival_time', 'inspector_id'])
+for k in inspectors:
+    print("Inspector {} Path:".format(k))
+    print("------------------------------------------------------------------\n")
+    start = "source_{}".format(k)
+    while(start != "sink_{}".format(k)):
+        arcs = x.select((start,'*',k))
+        match = [x for x in arcs if x.getAttr("x") != 0]
 
-#df_paths['inspector_id'].astype('int8')
+        arc = match[0].getAttr("VarName").split(",")
+        start = arc[1]
+        arc[0] = arc[0].split("[")[1]
+        arc = arc[:-1]
 
-for k, vals in inspectors.items():
-    print("Solution for Inspector ", k)
-    path = df_paths[df_paths['inspector_id'] == str(k)]
-    path = path.sort_values(by=['departure_time'])
-    print(path.to_string())
-    #path.to_csv('inspector_0_path.csv', index = False)
->>>>>>> 569a52d27c813d0229ba9ee3f8f3838ea0b673fc:ruby_code/ReformulatedLP.py
-
-    #for var in vars:
-        #if var.x != 0:
-            #print(var.getAttr("VarName"))
-
-
-
+        print(arc)
+    print("\n------------------------------------------------------------------")
