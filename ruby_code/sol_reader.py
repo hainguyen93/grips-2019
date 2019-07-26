@@ -3,10 +3,10 @@ import pandas as pd
 
 lines = []
 
-with open('inspectors.sol', "r") as f:
+with open('six_inspectors.sol', "r") as f:
     for line in f.readlines()[2:]:
         line = line.replace("\n","").split(" ")
-        if 'var_x' in line[0] and line[1] == '1':
+        if 'var_x' in line[0] and abs(1-float(line[1])) < 0.1:
             lines.append(line)
             #print(line)
             
@@ -23,11 +23,26 @@ for l in lines:
 df = pd.DataFrame(paths, columns=['from', 'departure', 'to', 'arrival', 'inspector_id'])  
 df.astype({'inspector_id':'int64'})
 
-df.to_csv('sol.csv', index=False)
+for i in range(6):
+    path = df[df['inspector_id']==str(i)].sort_values(by=['departure'])
+    print(path.to_string())
+    
+    
+
+
+
+
+
+
+#df.groupby(['inspector_id']).apply(lambda x: x.sort_values(by=["departure"]))
 
 #print(df)
 
-print(df.dtypes)
+#df.to_csv('sol.csv', index=False)
+
+##print(df)
+
+#print(df.dtypes)
 
 
     
