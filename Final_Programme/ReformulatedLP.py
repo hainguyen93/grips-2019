@@ -32,7 +32,11 @@ graph = nx.DiGraph() # nx.MultiDiGraph()
 
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
+              #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+              #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+              #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+              }
 
 KAPPA = 12
 flow_var_names = []
@@ -42,7 +46,6 @@ var_portion_of_passengers_inspected = np.array([])
 
 HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
-
 
 #============================= CONSTRUCTING THE GRAPH ============================================
 
@@ -63,7 +66,7 @@ with open(input_dir, "r") as f:
         graph.add_node(start, station = line[0], time_stamp = line[1])
         graph.add_node(end, station = line[2], time_stamp = line[3])
 
-        ## we assume a unique edge between events for now
+        # we assume a unique edge between events for now
         if not graph.has_edge(start, end):
             graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
 
