@@ -1,0 +1,367 @@
+Log begins at 2019-7-25-18-2-21
+Lese csv Datei ../../doc/zib/tex/tristan2016/GRIPS2019_411.xml ...
+Lese csv Datei zugbegleiter_edith_montag_plan.csv ...
+Total number of shifts 183
+Total number of central locations 24
+Number of shifts at central location FMZ Z:     3
+	 Number of first trains at FMZ  :     3
+Number of shifts at central location UE  Z:     7
+	 Number of first trains at UE  P:     5
+	 Number of first trains at KA   :     2
+Number of shifts at central location FF  Z:    14
+	 Number of first trains at FF   :    12
+	 Number of first trains at BGS  :     2
+Number of shifts at central location BLS Z:     6
+	 Number of first trains at MH   :     2
+	 Number of first trains at BL   :     4
+Number of shifts at central location FFU Z:    11
+	 Number of first trains at FFU  :    11
+Number of shifts at central location NN  Z:    18
+	 Number of first trains at MH   :     2
+	 Number of first trains at NN   :    14
+	 Number of first trains at FW   :     2
+Number of shifts at central location NPA Z:    12
+	 Number of first trains at FF   :     2
+	 Number of first trains at NPA  :    10
+Number of shifts at central location WSR Z:    10
+	 Number of first trains at FKW  :     2
+	 Number of first trains at BL   :     2
+	 Number of first trains at WSR  :     6
+Number of shifts at central location EMSTZ:     5
+	 Number of first trains at EMSTP:     5
+Number of shifts at central location RM  Z:     1
+	 Number of first trains at RM   :     1
+Number of shifts at central location LL  Z:    12
+	 Number of first trains at LL   :    12
+Number of shifts at central location MH  Z:     7
+	 Number of first trains at MH   :     7
+Number of shifts at central location RK  Z:     7
+	 Number of first trains at RK   :     7
+Number of shifts at central location KK  Z:     3
+	 Number of first trains at KK   :     3
+Number of shifts at central location DH  Z:    12
+	 Number of first trains at DH   :    10
+	 Number of first trains at FW   :     2
+Number of shifts at central location AH  Z:    10
+	 Number of first trains at UJP  :     2
+	 Number of first trains at AH   :     8
+Number of shifts at central location FKW Z:     4
+	 Number of first trains at FKW  :     4
+Number of shifts at central location HB  Z:     2
+	 Number of first trains at HB   :     2
+Number of shifts at central location EDO Z:     9
+	 Number of first trains at EDO  :     9
+Number of shifts at central location RB  Z:     4
+	 Number of first trains at FF   :     2
+	 Number of first trains at RB   :     2
+Number of shifts at central location AA  Z:    10
+	 Number of first trains at AA   :    10
+Number of shifts at central location TS  Z:     2
+	 Number of first trains at TS   :     2
+Number of shifts at central location HH  Z:     4
+	 Number of first trains at RK   :     2
+	 Number of first trains at HH   :     2
+Number of shifts at central location BHF Z:    10
+	 Number of first trains at BHF  :    10
+Shifts for train number  1540:    0
+Shifts for train number  1541:    0
+Shifts for train number  1542:    0
+Shifts for train number  1543:    0
+Shifts for train number  1544:    0
+Shifts for train number  1545:    0
+Shifts for train number  1547:    0
+Shifts for train number  1548:    0
+Shifts for train number  1549:    0
+Shifts for train number  1554:    4
+Shifts for train number    20:    3
+Shifts for train number  1557:    8
+Shifts for train number    22:    0
+Shifts for train number    23:    6
+Shifts for train number    26:    9
+Shifts for train number    27:    9
+Shifts for train number    28:    4
+Shifts for train number  1114:    2
+Shifts for train number    91:   11
+Shifts for train number  1572:    2
+Shifts for train number  1574:    5
+Shifts for train number  1715:    0
+Shifts for train number  1590:    4
+Shifts for train number  1592:    4
+Shifts for train number  1593:    3
+Shifts for train number  1082:    0
+Shifts for train number  1597:    0
+Shifts for train number  1600:   12
+Shifts for train number  1602:    0
+Shifts for train number  1603:    0
+Shifts for train number  1604:    6
+Shifts for train number  1206:    0
+Shifts for train number  1606:    6
+Shifts for train number  1607:    6
+Shifts for train number  1608:    0
+Shifts for train number  1609:    0
+Shifts for train number  1610:    0
+Shifts for train number  1611:    0
+Shifts for train number  1612:    0
+Shifts for train number  1614:    0
+Shifts for train number  1615:    0
+Shifts for train number  1616:    0
+Shifts for train number  1617:    7
+Shifts for train number  1618:    2
+Shifts for train number  1619:    0
+Shifts for train number  1620:    0
+Shifts for train number  1721:    0
+Shifts for train number  1625:    0
+Shifts for train number    90:   10
+Shifts for train number  1627:    5
+Shifts for train number  1640:    0
+Shifts for train number  1641:    0
+Shifts for train number  1642:    0
+Shifts for train number  1643:    0
+Shifts for train number  1644:    0
+Shifts for train number  1647:    0
+Shifts for train number  1651:   12
+Shifts for train number  1654:   10
+Shifts for train number  1657:    6
+Shifts for train number    21:    2
+Shifts for train number  1558:   12
+Shifts for train number  1672:    7
+Shifts for train number  1132:    0
+Shifts for train number  1674:    3
+Shifts for train number  1676:    8
+Shifts for train number  1677:    5
+Shifts for train number  1679:    0
+Shifts for train number  1692:    4
+Shifts for train number  1696:    0
+Shifts for train number  1697:    4
+Shifts for train number  1698:    0
+Shifts for train number  1699:    8
+Shifts for train number  1189:    0
+Shifts for train number  1702:    0
+Shifts for train number  1703:    0
+Shifts for train number  1192:    0
+Shifts for train number  1193:    4
+Shifts for train number  1706:    0
+Shifts for train number  1708:    0
+Shifts for train number  1709:    0
+Shifts for train number    29:    3
+Shifts for train number  1713:    0
+Shifts for train number  1714:    0
+Shifts for train number  1139:    0
+Shifts for train number  1716:    0
+Shifts for train number  1717:    0
+Shifts for train number  1718:    0
+Shifts for train number  1207:    0
+Shifts for train number  1720:    0
+Shifts for train number  1209:    0
+Shifts for train number  1722:    0
+Shifts for train number  1723:    0
+Shifts for train number  1724:    0
+Shifts for train number  1725:    0
+Shifts for train number  1727:    0
+Shifts for train number   209:   13
+Shifts for train number  1746:    0
+Shifts for train number  1747:    0
+Shifts for train number  1749:    0
+Shifts for train number   228:    2
+Shifts for train number   229:    2
+Shifts for train number  1745:    0
+Shifts for train number  2795:    0
+Shifts for train number  1587:    0
+Shifts for train number  1341:    0
+Shifts for train number  1342:    0
+Shifts for train number  1351:    0
+Shifts for train number  1352:    0
+Shifts for train number  1594:    0
+Shifts for train number  1719:    0
+Shifts for train number  1208:    0
+Shifts for train number  1184:    0
+Shifts for train number  1500:    0
+Shifts for train number  1501:    2
+Shifts for train number  1502:    6
+Shifts for train number  1503:    0
+Shifts for train number  1504:    0
+Shifts for train number  1506:    0
+Shifts for train number  1507:    0
+Shifts for train number  1508:    0
+Shifts for train number  1509:    0
+Shifts for train number  1511:    0
+Shifts for train number  1512:    0
+Shifts for train number  1514:    0
+Shifts for train number  1515:    0
+Shifts for train number  1516:    0
+Shifts for train number  1517:    0
+Shifts for train number  1518:    0
+Shifts for train number  1521:    0
+Shifts for train number  1522:    0
+Shifts for train number  1525:    0
+Shifts for train number  1529:    0
+Found crews for 41 of 132 trains
+Number of Stops 167
+Stops at MIH  :   23
+Stops at WE   :    3
+Stops at XAWIF:   13
+Stops at WA   :    2
+Stops at XAWIE:   14
+Stops at BL   :   85
+Stops at NAH  :    5
+Stops at WL   :   10
+Stops at TS   :    4
+Stops at WW   :    6
+Stops at BGS  :   30
+Stops at WR   :    6
+Stops at WP   :    3
+Stops at EPD  :    2
+Stops at HBS  :    3
+Stops at ELPP :    2
+Stops at EHM  :    7
+Stops at LBT  :   25
+Stops at FBHF :   18
+Stops at DRKA :   21
+Stops at RM   :    6
+Stops at RN   :    2
+Stops at RH   :    5
+Stops at RK   :    4
+Stops at UE  P:   30
+Stops at WRB  :    1
+Stops at XAP  :   14
+Stops at XAS  :    4
+Stops at UJP  :   51
+Stops at WZS  :    2
+Stops at ALBG :    1
+Stops at XAI  :    6
+Stops at MRO  :    2
+Stops at XAL  :   14
+Stops at MKBN :    2
+Stops at DZN  :    1
+Stops at NPL  :   18
+Stops at FFU  :   40
+Stops at LMDR :    1
+Stops at FFS  :   16
+Stops at FB   :    2
+Stops at KK   :   11
+Stops at LLMO :    2
+Stops at MTZ  :    1
+Stops at NPA  :   18
+Stops at HU   :    1
+Stops at HH   :   14
+Stops at EMSTP:    3
+Stops at HB   :    4
+Stops at SKL  :    2
+Stops at KSO  :    3
+Stops at MWH  :    2
+Stops at HG   :   14
+Stops at UGO  :   23
+Stops at LMAC :   10
+Stops at EBILP:    3
+Stops at FNI  :    1
+Stops at WNT  :    6
+Stops at NLF  :   29
+Stops at HWAR :    2
+Stops at LLB  :    1
+Stops at XAKN :    2
+Stops at NWH  :   22
+Stops at RWS  :    3
+Stops at EE   :   11
+Stops at EG   :    1
+Stops at MHUG :    2
+Stops at BLS  :    5
+Stops at WGW  :    3
+Stops at SSH  :    2
+Stops at MKLA :    2
+Stops at SHO  :    2
+Stops at MA   :   23
+Stops at RWE  :    1
+Stops at WWR  :    6
+Stops at FH  S:   14
+Stops at UW   :    2
+Stops at MOP  :    2
+Stops at MH   :   54
+Stops at MOU  :    4
+Stops at KKO  :    8
+Stops at MXM  :    4
+Stops at MP   :   23
+Stops at UWM  :   24
+Stops at WWM  :    4
+Stops at KFKB :    2
+Stops at KKB  :    1
+Stops at FW   :   11
+Stops at BGFB :    3
+Stops at BPAF :   83
+Stops at BSPD :   44
+Stops at FFLF :   35
+Stops at FD   :    8
+Stops at FF   :   44
+Stops at NER  :   29
+Stops at KKDZ :    1
+Stops at MECH :    2
+Stops at UEI  :   29
+Stops at NN   :   76
+Stops at MGZB :    1
+Stops at KDA  :    1
+Stops at WPL  :    3
+Stops at NBA  :   47
+Stops at MDT  :   15
+Stops at LLEL :    2
+Stops at FRA  :    2
+Stops at FMZ  :   21
+Stops at BRGBT:   21
+Stops at ADF  :   46
+Stops at ESOT :    2
+Stops at UNM  :   57
+Stops at MWKR :    2
+Stops at KB   :   10
+Stops at EDG  :   11
+Stops at KD   :   11
+Stops at MMU  :    4
+Stops at MMW  :    4
+Stops at EDO  :   13
+Stops at ALA  :   32
+Stops at KW   :    5
+Stops at XAJB :    2
+Stops at AHAR :    8
+Stops at EGLO :    1
+Stops at FBH  :    4
+Stops at DN   :   21
+Stops at EBO  :   10
+Stops at DH   :   23
+Stops at EDOB :    6
+Stops at ERE  :    1
+Stops at WSR  :    3
+Stops at US   :   32
+Stops at LLWP :    2
+Stops at WAK  :    3
+Stops at DR   :   22
+Stops at FHP  :    1
+Stops at HWOB :    4
+Stops at AE  F:   10
+Stops at HA   :    2
+Stops at XAWE :   14
+Stops at HO  O:    3
+Stops at TV   :    3
+Stops at LL  T:    2
+Stops at LL   :   77
+Stops at TU   :    1
+Stops at XAWL :    2
+Stops at UO   :   10
+Stops at LH   :   24
+Stops at LF  N:    1
+Stops at LW   :   46
+Stops at MGP  :    4
+Stops at LS   :    1
+Stops at FH  N:   11
+Stops at AA   :   48
+Stops at FWIR :    1
+Stops at AH   :   52
+Stops at BBKB :    3
+Stops at MTL  :    6
+Stops at FKW  :   17
+Stops at NRH  :   18
+Stops at EHG  :    5
+Stops at LGC  :    5
+Stops at XAWG :   14
+Stops at BHF  :    5
+Stops at KKDT :    2
+Stops at AA  G:    1
+Stops at KDFF :    5
+Stops at HHI  :    3
+Log closed at 2019-7-25-18-2-22
