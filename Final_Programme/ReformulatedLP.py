@@ -32,15 +32,12 @@ graph = nx.DiGraph() # nx.MultiDiGraph()
 
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
-              3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
-              4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
-              5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
+              #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+              #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+              #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
               }
 
-#inspectors = {0: {"base": 'C', "working_hours":1},
-              #1: {"base": 'A', "working_hours":1}}
-# Assumption: rate of inspection remains constant
 KAPPA = 12
 flow_var_names = []
 
@@ -50,14 +47,12 @@ var_portion_of_passengers_inspected = np.array([])
 HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
 
-
-input_dir = '../hai_code/Mon_Arcs.txt' # /home/optimi/bzfnguye/grips-2019
-#input_dir = '../Nate/Small_Train_Schedule.txt'
-
 #============================= CONSTRUCTING THE GRAPH ============================================
 
 print("Building graph ...", end = " ")
 t1 = time.time()
+
+input_dir = 'new_arcs.txt'
 
 with open(input_dir, "r") as f:
     for line in f.readlines()[:-1]:

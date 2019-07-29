@@ -1,32 +1,21 @@
-# XML PARSER FOR THE INPUT DATE
+# timetable extractor from the input dateset (in xml format)
 # @author: Hai Nguyen
 
 import xml.etree.ElementTree as ET
 import datetime
 import sys, os
+import time
 
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 
-# GLOBAL CONFIGURATIONS
 
-ICE_NAMES = [ "401", "402", "403", "411" ]
+DAY_DICT = { "Mon":0, "Tue":1, "Wed":2, "Thu":3, "Fri":4, "Sat":5, "Sun":6 }
 
-DAY_DICT = { "Mon" : 0, 
-             "Tue" : 1, 
-             "Wed" : 2, 
-             "Thu" : 3, 
-             "Fri" : 4, 
-             "Sat" : 5, 
-             "Sun" : 6  }
-
-FOLLOWING_DAY =  { "Mon" : "Tue", 
-            "Tue" : "Wed", 
-            "Wed" : "Thu", 
-            "Thu" : "Fri", 
-            "Fri" : "Sat", 
-            "Sat" : "Sun", 
-            "Sun" : "Mon"  }
+FOLLOWING_DAY =  { "Mon" : "Tue", "Tue" : "Wed", "Wed" : "Thu", 
+                   "Thu" : "Fri", "Fri" : "Sat", "Sat" : "Sun", 
+                   "Sun" : "Mon"  
+                 }
 
 
 def create_driving_edges(xml_root, day, driving_edges):
@@ -38,60 +27,43 @@ def create_driving_edges(xml_root, day, driving_edges):
         driving_edges   : list of driving edges
         ice :  ice fleet
     """   
-    for train in xml_root.iter('Train'):
-        train_id = int(train.get('TrainID_'))
+    for train in xml_root.iter('Train'):        
+        train_id = int(train.get('TrainID_'))  
         
-        for trip in train.iter('Trip'):
+        for trip in train.iter('Trip'):            
             trip_validity = trip.find('Validity').get('BitString')
             
-            if trip_validity[DAY_DICT[day]] is not "1":
+            if not trip_validity[DAY_DICT[day]]:
                 continue
             
-            next_day = False
-            
+            next_day = False            
             stop_list = list(trip.iter('Stop'))
-            stop_number = len(stop_list)
-            
-            for i in range(1, stop_number): 
+                        
+            for i in range(1, len(stop_list)): 
                 from_station = stop_list[i-1].get('StationID').replace(" ", "")
                 departure_time = stop_list[i-1].get('DepartureTime')
                 to_station = stop_list[i].get('StationID').replace(" ", "")
                 arrival_time = stop_list[i].get('ArrivalTime')           		
                 passenger_number = int(stop_list[i-1].get('Passagiere'))
                 
-                if departure_time > arrival_time: # overnight, removed for now 
-                    break
-                
-                """
-                if departure_time > arrival_time: #overnight
+                if departure_time > arrival_time: # overnight
                     next_day = True
-                    t1 = parse(departure_time)
-                    t2 = parse(arrival_time) + timedelta(days=1) 
-                    #travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
-                    travel_time_minutes = ((t2-t1).seconds % 3600) // 60    
-                else:
-                    t1 = parse(departure_time)
-                    t2 = parse(arrival_time)
-                    #travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
-                    travel_time_minutes = ((t2-t1).seconds % 3600) // 60  
-                    
-                if not next_day:
-                    departure_time = day + ":" + departure_time
-                    arrival_time = day + ":" + arrival_time                    
-                else:
-                    departure_time = FOLLOWING_DAY[day] + ":" + departure_time
-                    arrival_time = FOLLOWING_DAY[day] + ":" + arrival_time
-                   """
-
+                    departure_time = day + departure_time
+                    arrival_time = FOLLOWING_DAY[day] + arrival_time
+                elif not next_day:
+                    departure_time = day + departure_time
+                    arrival_time = day + arrival_time
+                elif next_day:
+                    departure_time = FOLLOWING_DAY[day] + departure_time
+                    arrival_time = FOLLOWING_DAY[day] + arrival_time                                    
+                
                 # calculating the travelling time (i.e., datetime.timedelta objects)
                 travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
                 travel_time_minutes = (travel_time_seconds % 3600) // 60                    
                 new_edge = tuple((from_station, departure_time, to_station, arrival_time, passenger_number, travel_time_minutes))
                 driving_edges.append(new_edge)
-                #print(new_edge)
 
     
-
 def create_list_of_events(driving_edges, events):
     """ Create list of events 
     
@@ -109,11 +81,15 @@ def create_list_of_events(driving_edges, events):
                 
     for station in events:
         unduplicate_timestamps = list(set(events[station]))
-        events[station] = sorted(unduplicate_timestamps)
+        events[station] = sorted(unduplicate_timestamps, key=timestamp_to_seconds)
     
    
         
-                
+def timestamp_to_seconds(timestamp):
+    """Convert timestamp into seconds"""    
+    return time.mktime(parse(timestamp).timetuple())
+
+    
                 
 def create_waiting_edges(waiting_edges, events):
     """ Create all waiting edges for a day
@@ -128,7 +104,26 @@ def create_waiting_edges(waiting_edges, events):
             travel_time_minutes = (travel_time_seconds % 3600) // 60
             new_edge = tuple((station, timestamps[i], station, timestamps[i+1], 0, travel_time_minutes))
             waiting_edges.add(new_edge)    
-            #print(new_edge)            
+            
+            
+def extract_edges_from_timetable(timetable, chosen_day):
+    # List of 5-tuples 
+    # E.G., (from_station, departure_time, to_station, arrival_time, passenger_number)
+    driving_edges = list()
+    waiting_edges = set() # implemented as a set to avoid duplicate
+        
+    # dictionary with station as keys and list of timestamps as values
+    events = dict()
+    
+    tree = ET.parse(timetable)
+    root = tree.getroot()
+    
+    create_driving_edges(root, chosen_day, driving_edges)
+    create_list_of_events(driving_edges, events)
+    create_waiting_edges(waiting_edges, events)
+    
+    return driving_edges + list(waiting_edges)      
+    
 
                 
 def main():
@@ -146,47 +141,15 @@ def main():
     chosen_day = "Mon" # select a day here
     
     ice = '401'
-    input_dir = "/home/optimi/" + USERNAME +"/inputData/EN_GRIPS2019_" + ice + ".xml"
+    input_dir = "EN_GRIPS2019_" + ice + ".xml"
     tree = ET.parse(input_dir)
     root = tree.getroot()
     create_driving_edges(root, chosen_day, driving_edges)
     create_list_of_events(driving_edges, events)
-    create_waiting_edges(waiting_edges, events)
-        
-    #for ice in ICE_NAMES: 
-        #input_dir = "/home/optimi/" + USERNAME +"/inputData/EN_GRIPS2019_" + ice + ".xml"
-        #tree = ET.parse(input_dir)
-        #root = tree.getroot()
-        #create_driving_edges(root, chosen_day, driving_edges)
-        #create_list_of_events(driving_edges, events)
-        #create_waiting_edges(waiting_edges, events)
-            
-    test_station = "FFU"
-    print(events[test_station])
-    #number_of_edges = len(driving_edges)+len(waiting_edges)
-    #number_of_nodes = sum([len(timestamps) for _, timestamps in events.items()])
-        
-    #print("{}: Edges: {} Nodes: {}".format(day, number_of_edges, number_of_nodes))
-
-    #new_list = [a+b+c+d+str(e)+str(f)+g for a, b, c, d, e, f, g in driving_edges]    
-    #print(len(driving_edges) == len(set(new_list)))
-    
-    #new_driving_edges = set(["".join(str(i) for i in edge[:4]) for edge in driving_edges])
-    
-    #for edge1 in list(new_driving_edges):
-     #   for edge in driving_edges:
-	#	string = "".join(i for i in edge[:4])
-	#	if string == edge1:
-	#		print(edge) 
-            
-	
-    #print("Driving edge checked: {}".format(len(driving_edges) == len(set(driving_edges))))
-    #print("Waiting edge checked: {}".format(len(waiting_edges) == len(set(waiting_edges))))
-    #print("Waiting edge checked: {}".format(len(waiting_edges) - len(set(waiting_edges))))
-    
+    create_waiting_edges(waiting_edges, events)     
        	
 	# print to a file
-    with open("Mon_Arcs.txt", "w+") as file:
+    with open("new_arcs.txt", "w+") as file:
         for edge in driving_edges:
             file.write(" ".join(str(i) for i in edge) + "\n")
         for edge in waiting_edges:
@@ -197,7 +160,3 @@ def main():
                         
 if __name__ == "__main__":
     main()
-                        
-                        
-                        
-                        
