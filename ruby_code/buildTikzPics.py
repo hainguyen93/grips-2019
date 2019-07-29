@@ -300,10 +300,10 @@ def main(argv):
         print( "Coordinates for {} not found!".format( name ))
 
   print( locations )
-  # inserting ruby code here
-  import json
-  with open('locations.json', 'w') as f:
-      json.dump(locations, f)
+  # # inserting ruby code here
+  # import json
+  # with open('locations.json', 'w') as f:
+  #     json.dump(locations, f)
 
   graph = Graph(0, [],[],{})
 
@@ -438,6 +438,14 @@ def main(argv):
 
   for edge in graph.edges:
     print( "{} from {} to {}".format( edge, graph.nodes[edge.tailNodeId].name, graph.nodes[edge.headNodeId].name ) )
+
+# inserted some ruby code
+  # edge_data = {}
+  # for edge in graph.edges:
+  #     edge_data[edge.id] = [graph.nodes[edge.tailNodeId].name, graph.nodes[edge.headNodeId].name]
+  # import json
+  # with open("edge_data.json", "w") as f:
+  #     json.dump(edge_data, f)
 
   print(" Total Number Passengers per Instance = {} passengerKM = {}", passengers, passengerKM )
 
