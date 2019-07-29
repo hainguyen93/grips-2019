@@ -14,23 +14,25 @@ def main(argv):
     try:
         # raise error if command-line arguments do not match
         if len(argv) != 3:
-            raise CommandLineArguments('ERROR: Command-line arguments do not match')
+            raise CommandLineArgumentsNotMatch('ERROR: Command-line arguments do not match')
 
         timetable_file = argv[0]
         inspectors_file = argv[1]
         selected_day = argv[2]
 
         if not selected_day in DAY_DICT:
-            raise DayNotFound('ERROR: Selected day is not found. Please check for case-sensitivity')
+            raise DayNotFound('ERROR: Selected day is not found')
 
+        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
         all_edges = extract_edges_from_timetable(timetable_file, selected_day)
         
+        # dictionary of id (key) and base/max_hours
         inspectors = extract_inspectors_data(inspectors_file)
 
 
 
 
-    except CommandLineArguments as error:
+    except CommandLineArgumentsNotMatch as error:
         print(error)
         print('USAGE: {} timetable inspectors day'.format(os.path.basename(__file__)))
 
