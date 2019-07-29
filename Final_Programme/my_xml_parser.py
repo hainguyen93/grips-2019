@@ -137,7 +137,7 @@ def main():
     # dictionary with station as keys and list of timestamps as values
     events = dict()
     
-    chosen_day = "Tue" # select a day here
+    chosen_day = "Mon" # select a day here
     
     ice = '401'
     input_dir = "EN_GRIPS2019_" + ice + ".xml"

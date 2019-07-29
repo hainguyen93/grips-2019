@@ -30,6 +30,10 @@ from OD_matrix import *
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
+inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
+              1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}
+
 KAPPA = 12
 flow_var_names = []
 
@@ -45,33 +49,23 @@ MINUTE_TO_SECONDS = 60
 print("Building graph ...", end = " ")
 t1 = time.time()
 
+input_dir = 'new_arcs.txt'
 
-for edge in all_edges:
-    for k in inspectors:
+with open(input_dir, "r") as f:
+    for line in f.readlines()[:-1]:
+        line = line.replace('\n','').split(' ')
+        start = line[0]+'@'+line[1]
+        end = line[2]+'@'+line[3]
+
+        for k in inspectors:
             flow_var_names.append('var_x_{}_{}_{}'.format(start, end, k))
 
         graph.add_node(start, station = line[0], time_stamp = line[1])
         graph.add_node(end, station = line[2], time_stamp = line[3])
 
-        # we assume a unique edge between events for now
+        ## we assume a unique edge between events for now
         if not graph.has_edge(start, end):
             graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
-
-#with open(input_dir, "r") as f:
-    #for line in f.readlines()[:-1]:
-        #line = line.replace('\n','').split(' ')
-        #start = line[0]+'@'+line[1]
-        #end = line[2]+'@'+line[3]
-
-        #for k in inspectors:
-            #flow_var_names.append('var_x_{}_{}_{}'.format(start, end, k))
-
-        #graph.add_node(start, station = line[0], time_stamp = line[1])
-        #graph.add_node(end, station = line[2], time_stamp = line[3])
-
-        ## we assume a unique edge between events for now
-        #if not graph.has_edge(start, end):
-            #graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
 
 
 # time to build graph
