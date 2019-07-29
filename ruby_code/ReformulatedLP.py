@@ -33,7 +33,10 @@ graph = nx.DiGraph() # nx.MultiDiGraph()
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
-              3 : {"base": 'XSI', "working_hours": 7, "rate": 13}}
+              3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+              4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+              5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+              }
 
 #inspectors = {0: {"base": 'C', "working_hours":1},
               #1: {"base": 'A', "working_hours":1}}
@@ -325,7 +328,7 @@ except cplex.exceptions.errors.CplexSolverError:
 print("Test: Do 'flow_var_names' and 'res' have same size? ", len(flow_var_names)==len(res))
 
 # post-processing
-paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if x_val]
+paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if abs(1-x_val) < 0.01]
 
 print("Edges Number = ", len(paths))
 
@@ -341,7 +344,7 @@ for k, vals in inspectors.items():
     path = df_paths[df_paths['inspector_id'] == str(k)]
     path = path.sort_values(by=['departure_time'])
     print(path.to_string())
-    path.to_csv('inspector_0_path.csv', index = False)
+    #path.to_csv('inspector_0_path.csv', index = False)
 
 #print(len(paths))
 
