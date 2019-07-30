@@ -12,6 +12,7 @@ EPSILON = 0.02
 
 
 def create_arc_paths(G):
+    # Complexity Estimation: O(|V|^4)
     #remove edges without any passenger from our graph
     waiting_edges = [];
     for u,v in G.edges():
@@ -45,8 +46,9 @@ def multiproportional(arc_paths):
     and output a vector X which will be used to determine
     entries of OD matrix
     '''
+    # Complexity Estimation: O(n|E|^2), n- number of iterations
     # will create a dictionary refering to the index of each arc
-    arc_idx = {arc: i for i,arc in enumerate(arc_paths)}
+    arc_idx = {arc: i for i,arc in enumerate(arc_paths)} #O(|E|)
 
     # local variables
     n = 0 # iteration number
@@ -56,12 +58,12 @@ def multiproportional(arc_paths):
     V_hat = np.ones(L) # true weights
 
     # collect all true weights for every arc
-    for arc, value in arc_paths.items():
+    for arc, value in arc_paths.items(): #O(|E|)
         V_hat[arc_idx[arc]] = value[0]
 
     while not (np.abs(V_hat - V)/np.abs(V_hat) < EPSILON).all():
         # for each arc a
-        for arc, value in arc_paths.items():
+        for arc, value in arc_paths.items(): #O(|E|)
             total = 0 # used to collect sums of products of X_a's
             num_paths = len(value) - 1
             # sum over all products of X_a's for each path running through this arc
@@ -69,7 +71,7 @@ def multiproportional(arc_paths):
                 path = value[path_index+1] # this is one path through the arc
                 # iterate through each pair of nodes in the path
                 # and collect X_a values
-                X_temp = np.array([ X[arc_idx[node1+'-->'+node2]] for node1,node2 in zip(path, path[1:]) ])
+                X_temp = np.array([ X[arc_idx[node1+'-->'+node2]] for node1,node2 in zip(path, path[1:]) ])# O(|E|^2)
                 # for each path, compute the product of X_a's
                 # and add it to the running total for each arc
                 total += np.product(X_temp)
@@ -91,24 +93,23 @@ def generate_OD_matrix(nodes, shortest_paths, arc_paths):
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-
+    # Complexity Estimation: O(n|E|^2+|V|^2|E|)
     N = len(nodes)
     nod_idx = {node: i for i,node in enumerate(nodes)}
-    #shortest_paths, arc_paths = create_arc_paths(graph)
-    X = multiproportional(arc_paths)
+    X = multiproportional(arc_paths) #O(n|E|^2)
     T = dok_matrix((N,N))
     arc_idx = {arc: i for i,arc in enumerate(arc_paths)}
 
     # OD matrix dictionary
     OD = {}
     # iterate through all sources
-    for source, val in shortest_paths.items():
+    for source, val in shortest_paths.items(): #O(|V|)
         # for every sink
-        for sink, path in val.items():
+        for sink, path in val.items(): #O(|V|)
             # dont add include paths from a node to itself
             if sink != source:
                 # collect the X_a values for all arcs in the path
-                X_a = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ]))
+                X_a = np.product(np.array([ X[ arc_idx[node1+'-->'+node2] ] for node1,node2 in zip(path, path[1:]) ])) #O(|E|)
                 T[ nod_idx[source] , nod_idx[sink] ] = np.round(X_a)
                 # populate a dictionary of the non-zero entries too
                 OD[(source, sink)] = np.round(X_a)
