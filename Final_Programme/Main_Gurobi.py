@@ -200,7 +200,7 @@ def main():
     print("Building graph ...", end = " ")
     t1 = time.time()
 
-    graph, flow_var_names = construct_graph_from_file(input_dir)
+    graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
 
     # time to build graph
     t2 = time.time()
