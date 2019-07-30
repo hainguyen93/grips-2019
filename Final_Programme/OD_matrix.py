@@ -1,6 +1,5 @@
-# Implementation of Multiproportional algorithm
-# for OD matrix estimation
-# author: Ruby Abrams, Hai Nguyen, Nate May
+# Implementation of Multiproportional algorithm for OD matrix estimation
+# @author: Ruby Abrams, Hai Nguyen, Nate May
 
 import numpy as np
 import networkx as nx
@@ -59,7 +58,7 @@ def multiproportional(arc_paths):
     for arc, value in arc_paths.items():
         V_hat[arc_idx[arc]] = value[0]
 
-    while not (np.abs(V_hat - V)/np.abs(V_hat) < EPSILON).all():
+    while not is_convergence(V_hat, V):
         # for each arc a
         for arc, value in arc_paths.items():
             total = 0 # used to collect sums of products of X_a's
@@ -84,6 +83,13 @@ def multiproportional(arc_paths):
         n+=1
     return X
 
+
+def is_convergence(V_hat, V):
+    """ Check if the multi-proportional does converge    
+    """
+    return (np.abs(V_hat - V)/np.abs(V_hat) < EPSILON).all()
+
+
 def generate_OD_matrix(nodes, shortest_paths, arc_paths):
     '''
     This will generate a sparse matrix of the OD generate_OD_matrix.
@@ -91,7 +97,6 @@ def generate_OD_matrix(nodes, shortest_paths, arc_paths):
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-
     N = len(nodes)
     nod_idx = {node: i for i,node in enumerate(nodes)}
     #shortest_paths, arc_paths = create_arc_paths(graph)
