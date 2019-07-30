@@ -8,48 +8,16 @@ import xml.etree.ElementTree as ET
 from exceptions import *
 from my_xml_parser import *
 from ReformulatedLP import *
+from Main_Gurobi import *
 
 
-def main(argv):
-    try:
-        # raise error if command-line arguments do not match
-        if len(argv) != 3:
-            raise CommandLineArgumentsNotMatch('ERROR: Command-line arguments do not match')
-
-        timetable_file = argv[0]
-        inspectors_file = argv[1]
-        selected_day = argv[2]
-
-        if not selected_day in DAY_DICT:
-            raise DayNotFound('ERROR: Selected day is not found')
-
-        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
-        all_edges = extract_edges_from_timetable(timetable_file, selected_day)
-        
-        # dictionary of id (key) and base/max_hours (value)
-        inspectors = extract_inspectors_data(inspectors_file)
-
-
-
-
-    except CommandLineArgumentsNotMatch as error:
-        print(error)
-        print('USAGE: {} timetable inspectors day'.format(os.path.basename(__file__)))
-
-    except ET.ParseError as error:
-        print(error)
-
-    except DayNotFound as error:
-        print(error)
-
-    except FileNotFoundError as error:
-        print(error)
-
-
-
-# extract a dictionary containing information for inspectors
-# (id, max_hours) from the inspectors.csv file
 def extract_inspectors_data(inspectors_file):
+    """Extract a dictionary containing information for inspectors 
+    from the input file for inspectors 
+    
+    Attribute:
+        inspector_file : name of inspectors input file
+    """
     inspectors = {}
     with open(inspectors_file, "r") as f:
         for line in f.readlines()[1:]:
@@ -60,6 +28,39 @@ def extract_inspectors_data(inspectors_file):
             inspectors[inspector_id] = {"base": depot, 'working_hours': max_hours}
     return inspectors
 
+
+def main(argv):    
+    """Main function
+    """
+    
+    try:        
+        # raise error if command-line arguments do not match
+        if len(argv) != 4:
+            raise CommandLineArgumentsNotMatch('ERROR: Command-line arguments do not match')
+
+        timetable_file = argv[0]
+        inspector_file = argv[1]
+        chosen_day = argv[2]
+        output_file = argv[3]
+
+        if not chosen_day in DAYS:
+            raise DayNotFound('ERROR: Day not found! PLease check for case-sensitivity (e.g. Mon, Tue,...)')
+
+        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
+        all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+        
+        # dictionary of id (key) and base/max_hours (value)
+        inspectors = extract_inspectors_data(inspectors_file)
+
+
+
+
+    except CommandLineArgumentsNotMatch as error:
+        print(error)
+        print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
+
+    except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
+        print(error)
 
 
 if __name__ == "__main__":
