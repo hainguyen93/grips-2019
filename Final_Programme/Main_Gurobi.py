@@ -114,6 +114,14 @@ def load_data(name):
     print(name+'.json has been loaded.')
     return data
 
+def save_variable_names(obj, name):
+    np.save(name, obj)
+    print(name+" has been saved." )
+
+def load_variable_names(name):
+    print(name+" has been loaded.")
+    return np.load(name)
+
 def add_sinks_and_sources(graph, inspectors, flow_var_names):
     for k, vals in inspectors.items():
         source = "source_" + str(k)

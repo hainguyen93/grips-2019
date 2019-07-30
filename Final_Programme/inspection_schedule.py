@@ -44,7 +44,7 @@ def main(argv):
         inspector_file = argv[1]
         chosen_day = argv[2]
         output_file = argv[3]
-        options = argv[4]
+        options = '' if argv[4]
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
@@ -52,22 +52,28 @@ def main(argv):
         shortest_paths = {}
         OD = {}
         graph = None
+        flow_var_names = []
+        inspectors = []
 
         if options == '--load-data':
             try:
+                # list of 6-tuples (from, depart, to, arrival, num passengers, time)
+                all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+                # dictionary of id (key) and base/max_hours (value)
+                inspectors = extract_inspectors_data(inspector_file)
+
                 shortest_paths = load_data("shortest_paths.json")
                 OD = load_data("OD.json")
                 graph = load_graph("graph.gexf")
+                flow_var_names = load_variable_names("flow_var_names.npy")
+
             except FileNotFoundError as error:
                 print(error)
                 print("Run the program without '--load-data' option.")
                 print("Next time the program is run, '--load-data' can be omitted.")
                 print("The saved data will be automatically loaded")
         else:
-            # list of 6-tuples (from, depart, to, arrival, num passengers, time)
-            all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
-            # dictionary of id (key) and base/max_hours (value)
-            inspectors = extract_inspectors_data(inspector_file)
+
             print("Building graph ...", end = " ")
             t1 = time.time()
 
@@ -111,11 +117,12 @@ def main(argv):
             graph = nx.freeze(graph)
 
             save_graph(graph, "graph.gexf")
+            save_variable_names(flow_var_names, "flow_var_names.npy")
 
         #================================== START Gurobi ================================================
         #                           Establish Maximization Problem
         #================================================================================================
-
+        t3 = time.time()
         print("Start Gurobi")
 
         model = Model("DB_MIP");
