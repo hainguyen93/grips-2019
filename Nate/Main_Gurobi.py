@@ -27,13 +27,14 @@ import pandas as pd
 from copy import deepcopy
 
 from OD_matrix import *
+from read_inspector_data import *
 
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-              1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
+#inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
+              #1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+              #2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
               #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
               #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
               #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
@@ -41,6 +42,8 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
 
 #inspectors = {0: {"base": 'C', "working_hours":1},
               #1: {"base": 'A', "working_hours":1}}
+
+inspectors = inspectors("GRIPS2019_401.csv")
 # Assumption: rate of inspection remains constant
 KAPPA = 12
 flow_var_names = []
@@ -93,6 +96,8 @@ nodes = graph.nodes()
 shortest_paths, arc_paths = create_arc_paths(new_graph)
 
 T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
+
+numPassengers = sum(list(OD.values()))
 
 # Create a dictionary of all Origin-Destinations
 all_paths = {}
@@ -153,6 +158,7 @@ M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB
 
 # Adding the objective function coefficients
 model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+model.addConstr(M.prod(OD),GRB.LESS_EQUAL,numPassengers*(0.8),"objective upper-bound") #TEST!
 
 t4 = time.time()
 print("Finished! Took {:.5f} seconds".format(t4-t3))
@@ -204,11 +210,14 @@ for k, vals in inspectors.items():
     sink = "sink_" + str(k)
     source = "source_" + str(k)
 
-    sink_constr = LinExpr([1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
-    model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
+    sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
+    #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
 
     source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
-    model.addConstr(source_constr, GRB.EQUAL, 1,"source_constr_{}".format(k))
+    sink_constr.add(source_constr) #combine
+
+    model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
+    model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
 
 t6 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t6-t5))
@@ -266,24 +275,16 @@ model.write("Gurobi_Solution.lp")
 #----------------------------------------------------------------------------------------------
 
 with open("Gurobi_Solution.txt", "w") as f:
-    
-    f.write()
+    for k in inspectors:
+        start = "source_{}".format(k)
+        while(start != "sink_{}".format(k)):
+            arcs = x.select((start,'*',k))
+            match = [x for x in arcs if x.getAttr("x") != 0]
 
-#Print Solution Paths:
-#----------------------------------------------------------------------------------------------
+            arc = match[0].getAttr("VarName").split(",")
+            start = arc[1]
+            arc[0] = arc[0].split("[")[1]
+            arc = arc[:-1]
 
-for k in inspectors:
-    print("Inspector {} Path:".format(k))
-    print("------------------------------------------------------------------\n")
-    start = "source_{}".format(k)
-    while(start != "sink_{}".format(k)):
-        arcs = x.select((start,'*',k))
-        match = [x for x in arcs if x.getAttr("x") != 0]
-
-        arc = match[0].getAttr("VarName").split(",")
-        start = arc[1]
-        arc[0] = arc[0].split("[")[1]
-        arc = arc[:-1]
-
-        print(arc)
-    print("\n------------------------------------------------------------------")
+            f.write(" ".join(arc)+"\n")
+f.close()
