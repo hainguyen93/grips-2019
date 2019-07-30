@@ -5,6 +5,7 @@ import numpy as np
 import networkx as nx
 from scipy.sparse import *
 from scipy import *
+import time
 
 # relative error
 EPSILON = 0.02
@@ -97,8 +98,13 @@ def generate_OD_matrix(nodes, shortest_paths, arc_paths):
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
+    
+    print("Estimating OD Matrix ...", end = " ")
+    t1 = time.time()        
+        
     N = len(nodes)
     nod_idx = {node: i for i,node in enumerate(nodes)}
+    
     #shortest_paths, arc_paths = create_arc_paths(graph)
     X = multiproportional(arc_paths)
     T = dok_matrix((N,N))
@@ -117,4 +123,7 @@ def generate_OD_matrix(nodes, shortest_paths, arc_paths):
                 T[ nod_idx[source] , nod_idx[sink] ] = np.round(X_a)
                 # populate a dictionary of the non-zero entries too
                 OD[(source, sink)] = np.round(X_a)
+                
+    t2 = time.time()
+    print('Finished! Took {:.5f} seconds'.format(t2-t1))
     return T, OD

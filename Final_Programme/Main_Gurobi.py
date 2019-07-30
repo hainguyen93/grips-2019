@@ -30,11 +30,16 @@ HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
 
 
-#============================= PROGRAM FUNCTIONS ============================================
-
 def construct_graph_from_file(input_dir, inspectors):
-    """Construct graph from external file
+    """Construct graph from an external file
+
+    Attributes:
+        input_dir : name of the external file
+        inspectors : dictionary of inspectors
     """
+    print("Building graph ...", end = " ")
+    t1 = time.time()
+
     graph = nx.DiGraph() # nx.MultiDiGraph()
     flow_var_names = []
 
@@ -53,7 +58,12 @@ def construct_graph_from_file(input_dir, inspectors):
             # we assume a unique edge between events for now
             if not graph.has_edge(start, end):
                 graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
+
+    t2 = time.time()
+    print('Finished! Took {:.5f} seconds'.format(t2-t1))
+
     return graph, flow_var_names
+
 
 
 def construct_graph(all_edges, inspectors):
@@ -61,7 +71,11 @@ def construct_graph(all_edges, inspectors):
 
     Attribute:
         all_edges : list of 6-tuples (from, depart, to, arrival, num passengers, time)
+        inspectors : dict of inspectors
     """
+    print("Building graph ...", end = " ")
+    t1 = time.time()
+
     graph = nx.DiGraph() # nx.MultiDiGraph()
     flow_var_names = []
 
@@ -80,11 +94,18 @@ def construct_graph(all_edges, inspectors):
         if not graph.has_edge(start, end):
             graph.add_edge(start, end, num_passengers= int(edge[4]), travel_time =int(edge[5]))
 
+    t2 = time.time()
+    print('Finished! Took {:.5f} seconds'.format(t2-t1))
+
     return graph, flow_var_names
+
+
 
 def save_graph(graph, file_name):
     nx.write_gexf(graph, file_name)
     print("graph.gexf has been saved.")
+
+
 
 def load_graph(file_name):
     print("graph.gexf has been loaded.")
@@ -123,6 +144,16 @@ def load_variable_names(name):
     return np.load(name)
 
 def add_sinks_and_sources(graph, inspectors, flow_var_names):
+    """Add sinks/sources (for each inspector) to the graph
+
+    Attributes:
+        graph : directed graph
+        inspectors : dict of inspectors
+        flow_var_names : list of all variables
+    """
+    print("Adding Sinks/Sources...", end=" ")
+    t1 = time.time()
+
     for k, vals in inspectors.items():
         source = "source_" + str(k)
         sink = "sink_"+str(k)
@@ -136,8 +167,23 @@ def add_sinks_and_sources(graph, inspectors, flow_var_names):
                 graph.add_edge(node, sink, num_passengers=0, travel_time = 0 )
                 flow_var_names.append((node, sink, k))
 
+    t2 = time.time()
+    print('Finished! Took {:.5f} seconds'.format(t2-t1))
+
+
 
 def add_mass_balance_constraint(graph, model, inspectors, x):
+    """Add the flow conservation constraints
+
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        inspectors : dict of inspectors
+        x : list of (binary) decision variables
+    """
+    print("Adding [Mass - Balance Constraint] ...", end=" ")
+    t1 = time.time()
+
     for k in inspectors:
         for node in graph.nodes():
             if graph.nodes[node]['time_stamp']:
@@ -163,8 +209,23 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
                 in_exp.add(out_exp) #combine in-arc & out-arc linear expressions
                 model.addConstr(in_exp,GRB.EQUAL,0,"mass_bal_{}_{}".format(node,str(k))) #add constraint to model
 
+    t2 = time.time()
+    print('Finished! Took {:.5f} seconds'.format(t2-t1))
+
+
 
 def add_sinks_and_source_constraint(graph, model, inspectors, x):
+    """Add sink/source constraint for each inspector
+
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        inspectors : dict of inspectors
+        x : list of binary decision variables
+    """
+    print("Adding [Sink and Source Constraint]...", end=" ")
+    t1 = time.time()
+
     for k, vals in inspectors.items():
         sink = "sink_" + str(k)
         source = "source_" + str(k)
@@ -175,8 +236,23 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
         source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
         model.addConstr(source_constr, GRB.EQUAL, 1,"source_constr_{}".format(k))
 
+    t2 = time.time()
+    print('Finished! Took {:.5f} seconds'.format(t2-t1))
+
+
 
 def add_time_flow_constraint(graph, model, inspectors, x):
+    """Add time flow constraint (maximum number of working hours)
+
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        inspectors : dict of inspectors
+        x : list of binary decision variables
+    """
+    print("Adding [Time Flow Constraint]...", end=" ")
+    t1 = time.time()
+
     for k, vals in inspectors.items():
         source = "source_" + str(k) + ""
         sink = "sink_" + str(k)
@@ -187,8 +263,24 @@ def add_time_flow_constraint(graph, model, inspectors, x):
         time_flow = LinExpr(val,ind)
         model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
 
+    t2 = time.time()
+    print("Finished! Took {:.5f} seconds".format(t2-t1))
+
+
 
 def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
+    """Add dummy variables to get rid of 'min' operators
+
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        OD : origin-destination matrix
+        shortest_paths : dict of edges and associated paths
+    """
+
+    print('Adding [Minimum Constraint]...', end = " ")
+    t1 = time.time()
+
     # Create a dictionary of all Origin-Destinations
     all_paths = {}
     for source, sink in OD.keys():
@@ -204,8 +296,17 @@ def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
             min_constr = LinExpr(values,indices)
             model.addConstr(min_constr,GRB.LESS_EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
 
+    t2 = time.time()
+    print("Finished! Took {:.5f} seconds".format(t2-t1))
+
+
 
 def print_solution_paths(inspectors, x):
+    """Print solutions
+    Attributes:
+        inspectors : dict of inspectors
+        x : list of binary decision variables
+    """
     solution = ""
     for k in inspectors:
         solution += "Inspector {} Path:".format(k)+"\n"
@@ -228,6 +329,7 @@ def print_solution_paths(inspectors, x):
     return solution
 
 
+
 def main():
     """main function"""
 
@@ -241,139 +343,51 @@ def main():
 
     input_dir = '../hai_code/Mon_Arcs.txt'
 
-    print("Building graph ...", end = " ")
-    t1 = time.time()
-
     graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
 
-    # time to build graph
-    t2 = time.time()
+    # OD Estimation
+    shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
+    T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)
 
-    print('Finished! Took {:.5f} seconds'.format(t2-t1))
-
-    #================================ OD Estimation ===============================
-    print("Estimating OD Matrix ...", end = " ")
-
-    # create a deep copy of the graph
-    new_graph = deepcopy(graph)
-
-    nodes = graph.nodes()
-
-    shortest_paths, arc_paths = create_arc_paths(new_graph)
-
-    T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
-
-
-    t2a = time.time()
-    print('Finished! Took {:.5f} seconds'.format(t2a-t2))
-
-    #============================== ADDING SOURCE/SINK NODES ==========================================
-
-    print("Adding Sinks/Sources...", end=" ")
-
+    # adding sources/sinks nodes
     add_sinks_and_sources(graph, inspectors, flow_var_names)
 
-    t3 = time.time()
-
-    print('Finished! Took {:.5f} seconds'.format(t3-t2a))
-
-    # test edge source to sinks
-    # print('TEST: Unique edge between two nodes: ', num_edges == graph.number_of_edges())
-    # print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
-
-    # freeze graph to prevent further changes
+    #freeze graph to prevent further changes
     graph = nx.freeze(graph)
 
-    #================================== START Gurobi ================================================
-    #                           Establish Maximization Problem
-    #================================================================================================
-
+    # start Gurobi
     print("Start Gurobi")
-
     model = Model("DB_MIP");
 
-    #========================= ADDING VARIABLES AND OBJECTIVE FUNCTION ==============================
-
+    # adding variables and objective functions
     print("Adding variables...", end=" ")
-
     x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
     M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
 
     # Adding the objective function coefficients
     model.setObjective(M.prod(OD),GRB.MAXIMIZE)
 
-    t4 = time.time()
-    print("Finished! Took {:.5f} seconds".format(t4-t3))
-
-    #=================================== CONSTRAINT 6 ===================================================
-    #                              Mass - Balance Constraint
-    #================================================================================================
-    print("Adding Constraint (6) [Mass - Balance Constraint] ...", end=" ")
-
+    # adding flow conservation constraints
     add_mass_balance_constraint(graph, model, inspectors)
 
-    t5 = time.time()
-
-    print('Finished! Took {:.5f} seconds'.format(t5-t4))
-
-
-    #=================================== CONSTRAINT 7 ===============================================
-    #                              Sink and Source Constraint
-    #================================================================================================
-
-    print("Adding constraint (7) [Sink and Source Constraint]...", end=" ")
-
+    # adding sink/source constraints
     add_sinks_and_source_constraint(graph, model, inspectors)
 
-    t6 = time.time()
-    print('Finished! Took {:.5f} seconds'.format(t6-t5))
-
-
-    #===================================== CONSTRAINT 8 ==================================================
-    #                        Time Flow/Number of Working Hours Constraint
-    #================================================================================================
-
-    print("Adding Constraint (8) [Time Flow Constraint]...", end=" ")
-
+    # add working_hours restriction constraints
     add_time_flow_constraint(graph, model, inspectors)
 
-    t7 = time.time()
-    print("Finished! Took {:.5f} seconds".format(t7-t6))
-
-
-    #================================== CONSTRAINT 9 ==========================================
-    #                   Minimum Constraint (Linearizing the Objective Function)
-    #================================================================================================
-
-    print('Adding Constraint (9) [Minimum Constraint]...', end = " ")
-
-
+    # adding dummy variables to get rid of 'min' in objective function
     minimization_constraint(graph, model, inspectors, OD, shortest_paths)
 
-    t8 = time.time()
-    print("Finished! Took {:.5f} seconds".format(t8-t7))
-
-
-    #================================== POST-PROCESSING ================================================
-
+    # start solving using Gurobi
     model.optimize()
     model.write("Gurobi_Solution.lp")
 
-    #Write Solution:
-    #----------------------------------------------------------------------------------------------
+    # write Solution:
     solution  = print_solution_paths(inspectors, x)
+
     with open("Gurobi_Solution.txt", "w") as f:
         f.write(solution)
-
-    #with open("Gurobi_Solution.txt", "w") as f:
-    #f.write()
-
-
-    #Print Solution Paths:
-    #----------------------------------------------------------------------------------------------
-
-
-
 
 
 

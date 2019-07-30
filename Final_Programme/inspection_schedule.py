@@ -44,7 +44,7 @@ def main(argv):
         inspector_file = argv[1]
         chosen_day = argv[2]
         output_file = argv[3]
-        options = '' if argv[4]
+        options = argv[4]
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
@@ -72,7 +72,7 @@ def main(argv):
                 print("Run the program without '--load-data' option.")
                 print("Next time the program is run, '--load-data' can be omitted.")
                 print("The saved data will be automatically loaded")
-        else:
+        elif options == '--make-data':
 
             print("Building graph ...", end = " ")
             t1 = time.time()
@@ -124,87 +124,37 @@ def main(argv):
         #================================================================================================
         t3 = time.time()
         print("Start Gurobi")
-
         model = Model("DB_MIP");
 
-        #========================= ADDING VARIABLES AND OBJECTIVE FUNCTION ==============================
-
+        # adding variables and objective functions
         print("Adding variables...", end=" ")
-
-        x = model.addVars(list(set(flow_var_names)),ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+        x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
         M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
 
         # Adding the objective function coefficients
         model.setObjective(M.prod(OD),GRB.MAXIMIZE)
 
-        t4 = time.time()
-        print("Finished! Took {:.5f} seconds".format(t4-t3))
+        # adding flow conservation constraints
+        add_mass_balance_constraint(graph, model, inspectors)
 
-        #=================================== CONSTRAINT 6 ===================================================
-        #                              Mass - Balance Constraint
-        #================================================================================================
-        print("Adding Constraint (6) [Mass - Balance Constraint] ...", end=" ")
+        # adding sink/source constraints
+        add_sinks_and_source_constraint(graph, model, inspectors)
 
-        add_mass_balance_constraint(graph, model, inspectors, x)
+        # add working_hours restriction constraints
+        add_time_flow_constraint(graph, model, inspectors)
 
-        t5 = time.time()
+        # adding dummy variables to get rid of 'min' in objective function
+        minimization_constraint(graph, model, inspectors, OD, shortest_paths)
 
-        print('Finished! Took {:.5f} seconds'.format(t5-t4))
-
-
-        #=================================== CONSTRAINT 7 ===============================================
-        #                              Sink and Source Constraint
-        #================================================================================================
-
-        print("Adding constraint (7) [Sink and Source Constraint]...", end=" ")
-
-        add_sinks_and_source_constraint(graph, model, inspectors, x)
-
-        t6 = time.time()
-        print('Finished! Took {:.5f} seconds'.format(t6-t5))
-
-
-        #===================================== CONSTRAINT 8 ==================================================
-        #                        Time Flow/Number of Working Hours Constraint
-        #================================================================================================
-
-        print("Adding Constraint (8) [Time Flow Constraint]...", end=" ")
-
-        add_time_flow_constraint(graph, model, inspectors, x)
-
-        t7 = time.time()
-        print("Finished! Took {:.5f} seconds".format(t7-t6))
-
-
-        #================================== CONSTRAINT 9 ==========================================
-        #                   Minimum Constraint (Linearizing the Objective Function)
-        #================================================================================================
-
-        print('Adding Constraint (9) [Minimum Constraint]...', end = " ")
-
-
-        minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
-
-        t8 = time.time()
-        print("Finished! Took {:.5f} seconds".format(t8-t7))
-
-
-        #================================== POST-PROCESSING ================================================
-
+        # start solving using Gurobi
         model.optimize()
         model.write("Gurobi_Solution.lp")
 
-        #Write Solution:
-        #----------------------------------------------------------------------------------------------
+        # write Solution:
+        solution  = print_solution_paths(inspectors, x)
 
-        #with open("Gurobi_Solution.txt", "w") as f:
-        #f.write()
-
-        #Print Solution Paths:
-        #----------------------------------------------------------------------------------------------
-        print_solution_paths(inspectors, x)
-
-
+        with open("Gurobi_Solution.txt", "w") as f:
+            f.write(solution)
 
     except CommandLineArgumentsNotMatch as error:
         print(error)
@@ -212,6 +162,7 @@ def main(argv):
 
     except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
         print(error)
+
 
 
 if __name__ == "__main__":
