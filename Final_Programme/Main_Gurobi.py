@@ -144,7 +144,10 @@ def minimization_constraint(graph, model, inspectors, OD, shortest_paths):
             model.addConstr(min_constr,GRB.EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
 
 def print_solution_paths(inspectors, x):
+    solution = ""
     for k in inspectors:
+        solution += "Inspector {} Path:".format(k)+"\n"
+        solution += "------------------------------------------------------------------\n"
         print("Inspector {} Path:".format(k))
         print("------------------------------------------------------------------\n")
         start = "source_{}".format(k)
@@ -156,9 +159,11 @@ def print_solution_paths(inspectors, x):
             start = arc[1]
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
-
+            solution += str(arc) + "\n"
             print(arc)
-        print("\n------------------------------------------------------------------\n")
+        print("------------------------------------------------------------------\n")
+        solution += "------------------------------------------------------------------\n"
+    return solution
 #============================= CONSTRUCTING THE GRAPH ============================================
 
 # networkx start
@@ -283,13 +288,13 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 model.optimize()
 model.write("Inspectors_LP.lp")
 
+#Print Solution Paths:
+#----------------------------------------------------------------------------------------------
+solution = print_solution_paths(inspectors, x)
+
+
 #Write Solution:
 #----------------------------------------------------------------------------------------------
 
 with open("Gurobi_Solution.txt", "w") as f:
-    f.write()
-
-#Print Solution Paths:
-#----------------------------------------------------------------------------------------------
-
-print_solution_paths(inspectors, x)
+    f.write(solution)
