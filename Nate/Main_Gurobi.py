@@ -32,18 +32,19 @@ from read_inspector_data import *
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-#inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-              #1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              #2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
-              #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
-              #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
-              #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
-              #}
+inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
+              1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
+              3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+              4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+              5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+              }
 
 #inspectors = {0: {"base": 'C', "working_hours":1},
               #1: {"base": 'A', "working_hours":1}}
 
-inspectors = inspectors("GRIPS2019_401.csv")
+#inspectors = inspectors("GRIPS2019_401.csv")
+
 # Assumption: rate of inspection remains constant
 KAPPA = 12
 flow_var_names = []
@@ -158,7 +159,7 @@ M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB
 
 # Adding the objective function coefficients
 model.setObjective(M.prod(OD),GRB.MAXIMIZE)
-model.addConstr(M.prod(OD),GRB.LESS_EQUAL,numPassengers*(0.8),"objective upper-bound") #TEST!
+#model.addConstr(M.prod(OD),GRB.LESS_EQUAL,numPassengers*(0.8),"objective upper-bound") #TEST!
 
 t4 = time.time()
 print("Finished! Took {:.5f} seconds".format(t4-t3))
@@ -257,7 +258,7 @@ for (u, v), path in all_paths.items():
         values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
 
         min_constr = LinExpr(values,indices)
-        model.addConstr(min_constr,GRB.EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
+        model.addConstr(min_constr,GRB.LESS_EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
 
 t8 = time.time()
 print("Finished! Took {:.5f} seconds".format(t8-t7))
