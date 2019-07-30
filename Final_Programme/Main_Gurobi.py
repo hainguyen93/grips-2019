@@ -32,7 +32,7 @@ MINUTE_TO_SECONDS = 60
 
 #============================= PROGRAM FUNCTIONS ============================================
 
-def construct_graph_from_file(input_dir):
+def construct_graph_from_file(input_dir, inspectors):
     """Construct graph from external file
     """
     graph = nx.DiGraph() # nx.MultiDiGraph()
@@ -56,7 +56,7 @@ def construct_graph_from_file(input_dir):
     return graph, flow_var_names
 
 
-def construct_graph(all_edges):
+def construct_graph(all_edges, inspectors):
     """ Construct the graph from a list of edges
     
     Attribute:
