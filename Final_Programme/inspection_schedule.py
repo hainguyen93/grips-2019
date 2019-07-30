@@ -44,7 +44,7 @@ def main(argv):
         inspector_file = argv[1]
         chosen_day = argv[2]
         output_file = argv[3]
-        # options = argv[4]
+        options = argv[4]
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
@@ -53,12 +53,17 @@ def main(argv):
         OD = {}
         graph = None
 
-        # if options == '--load-data':
-        try:
-            shortest_paths = load_data("shortest_paths.json")
-            OD = load_data("OD.json")
-            graph = load_graph("graph.gexf")
-        except FileNotFoundError as error:
+        if options == '--load-data':
+            try:
+                shortest_paths = load_data("shortest_paths.json")
+                OD = load_data("OD.json")
+                graph = load_graph("graph.gexf")
+            except FileNotFoundError as error:
+                print(error)
+                print("Run the program without '--load-data' option.")
+                print("Next time the program is run, '--load-data' can be omitted.")
+                print("The saved data will be automatically loaded")
+        else:
             # list of 6-tuples (from, depart, to, arrival, num passengers, time)
             all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
             # dictionary of id (key) and base/max_hours (value)
@@ -106,9 +111,6 @@ def main(argv):
             graph = nx.freeze(graph)
 
             save_graph(graph, "graph.gexf")
-            print(error)
-            print("Data has been saved. Run the program again.")
-
 
         #================================== START Gurobi ================================================
         #                           Establish Maximization Problem
