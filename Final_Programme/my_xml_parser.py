@@ -8,14 +8,13 @@ import time
 
 from dateutil.parser import parse
 from datetime import datetime, timedelta
+from exceptions import *
 
+# global constants
 
-DAY_DICT = { "Mon":0, "Tue":1, "Wed":2, "Thu":3, "Fri":4, "Sat":5, "Sun":6 }
+DAYS = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
 
-FOLLOWING_DAY =  { "Mon" : "Tue", "Tue" : "Wed", "Wed" : "Thu", 
-                   "Thu" : "Fri", "Fri" : "Sat", "Sat" : "Sun", 
-                   "Sun" : "Mon"  
-                 }
+FOLLOWING_DAY =  dict(zip(DAYS, DAYS[1:]+DAYS[:1]))
 
 
 def create_driving_edges(xml_root, day, driving_edges):
@@ -28,38 +27,43 @@ def create_driving_edges(xml_root, day, driving_edges):
         ice :  ice fleet
     """   
     for train in xml_root.iter('Train'):        
-        train_id = int(train.get('TrainID_'))  
+        #train_id = int(train.get('TrainID_'))  
         
-        for trip in train.iter('Trip'):            
+        for trip in train.iter('Trip'):             
             trip_validity = trip.find('Validity').get('BitString')
             
-            if not trip_validity[DAY_DICT[day]]:
+            if not trip_validity[DAYS.index(day)]:
                 continue
             
-            next_day = False            
+            is_next_day = False # overnight or not?
+            
             stop_list = list(trip.iter('Stop'))
                         
             for i in range(1, len(stop_list)): 
+                
                 from_station = stop_list[i-1].get('StationID').replace(" ", "")
                 departure_time = stop_list[i-1].get('DepartureTime')
+                
                 to_station = stop_list[i].get('StationID').replace(" ", "")
-                arrival_time = stop_list[i].get('ArrivalTime')           		
+                arrival_time = stop_list[i].get('ArrivalTime')    
+                
                 passenger_number = int(stop_list[i-1].get('Passagiere'))
                 
                 if departure_time > arrival_time: # overnight
-                    next_day = True
+                    is_next_day = True
                     departure_time = day + departure_time
                     arrival_time = FOLLOWING_DAY[day] + arrival_time
-                elif not next_day:
+                elif not is_next_day:
                     departure_time = day + departure_time
                     arrival_time = day + arrival_time
-                elif next_day:
+                elif is_next_day:
                     departure_time = FOLLOWING_DAY[day] + departure_time
                     arrival_time = FOLLOWING_DAY[day] + arrival_time                                    
                 
-                # calculating the travelling time (i.e., datetime.timedelta objects)
+                # calculating the travelling time (in minutes)
                 travel_time_seconds = (parse(arrival_time)-parse(departure_time)).seconds
-                travel_time_minutes = (travel_time_seconds % 3600) // 60                    
+                travel_time_minutes = (travel_time_seconds % 3600) // 60    
+                
                 new_edge = tuple((from_station, departure_time, to_station, arrival_time, passenger_number, travel_time_minutes))
                 driving_edges.append(new_edge)
 
@@ -122,41 +126,48 @@ def extract_edges_from_timetable(timetable, chosen_day):
     create_list_of_events(driving_edges, events)
     create_waiting_edges(waiting_edges, events)
     
-    return driving_edges + list(waiting_edges)      
+    return driving_edges + list(waiting_edges)       
     
 
                 
-def main():
-    """ Main function 
-    """   
+def main(argv):
+    """ Main function """
     
-    # List of 5-tuples 
-    # E.G., (from_station, departure_time, to_station, arrival_time, passenger_number)
-    driving_edges = list()
-    waiting_edges = set() # implemented as a set to avoid duplicate
+    try: 
+        if len(argv) != 3:
+            print('USAGE: {} xmlFileName chosenDay outputFile'.format(os.path.basename(__file__)))
+            sys.exit()
         
-    # dictionary with station as keys and list of timestamps as values
-    events = dict()
-    
-    chosen_day = "Mon" # select a day here
-    
-    ice = '401'
-    input_dir = "EN_GRIPS2019_" + ice + ".xml"
-    tree = ET.parse(input_dir)
-    root = tree.getroot()
-    create_driving_edges(root, chosen_day, driving_edges)
-    create_list_of_events(driving_edges, events)
-    create_waiting_edges(waiting_edges, events)     
-       	
-	# print to a file
-    with open("new_arcs.txt", "w+") as file:
-        for edge in driving_edges:
-            file.write(" ".join(str(i) for i in edge) + "\n")
-        for edge in waiting_edges:
-            file.write(" ".join(str(i) for i in edge) + "\n")
+        if not argv[1] in DAYS:
+            raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue, ...)')
+        
+        # List of 5-tuples 
+        # E.G., (from_station, departure_time, to_station, arrival_time, passenger_number)
+        driving_edges = list()
+        waiting_edges = set() # implemented as a set to avoid duplicate
             
-    print("Print Completed.")
+        # dictionary with station as keys and list of timestamps as values
+        events = dict()
         
+        tree = ET.parse(argv[0])
+        root = tree.getroot()
+        
+        create_driving_edges(root, argv[1], driving_edges)
+        create_list_of_events(driving_edges, events)
+        create_waiting_edges(waiting_edges, events)     
+            
+        # print to a file
+        with open(argv[2], "w+") as file:
+            for edge in driving_edges:
+                file.write(" ".join(str(i) for i in edge) + "\n")
+            for edge in waiting_edges:
+                file.write(" ".join(str(i) for i in edge) + "\n")
+                
+        print("Print Completed.")
+    
+    except (ET.ParseError, DayNotFound) as error:
+        print(error)
+         
                         
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

@@ -5,21 +5,17 @@
 # @author: Ruby Abrams, Hai Nguyen, Nate May
 
 from __future__ import division
-
+from gurobipy import *
+from scipy import *
+from scipy.sparse import *
 import sys
 
-# change local PATH environment for Python
-sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
-
-import cplex
-from gurobipy import *
 import networkx as nx
 import time
 import re
-from scipy import *
-from scipy.sparse import *
+
 import numpy as np
-#import Logger  # print out to file
+
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 import matplotlib.pyplot as plt
@@ -39,9 +35,7 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
               #}
 
-#inspectors = {0: {"base": 'C', "working_hours":1},
-              #1: {"base": 'A', "working_hours":1}}
-# Assumption: rate of inspection remains constant
+
 KAPPA = 12
 flow_var_names = []
 
@@ -287,3 +281,4 @@ for k in inspectors:
 
         print(arc)
     print("\n------------------------------------------------------------------")
+    

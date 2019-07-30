@@ -26,7 +26,7 @@ def main(argv):
         # list of 6-tuples (from, depart, to, arrival, num passengers, time)
         all_edges = extract_edges_from_timetable(timetable_file, selected_day)
         
-        # dictionary of id (key) and base/max_hours
+        # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspectors_file)
 
 
