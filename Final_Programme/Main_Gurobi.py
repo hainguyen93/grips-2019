@@ -7,6 +7,7 @@
 from __future__ import division
 
 import sys
+sys.path.append(['/Library/gurobi811/mac64/lib/python3.6/'])
 from gurobipy import *
 import networkx as nx
 import time
@@ -157,7 +158,7 @@ def print_solution_paths(inspectors, x):
             arc = arc[:-1]
 
             print(arc)
-        print("\n------------------------------------------------------------------")
+        print("\n------------------------------------------------------------------\n")
 #============================= CONSTRUCTING THE GRAPH ============================================
 
 # networkx start
@@ -280,7 +281,7 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 #================================== POST-PROCESSING ================================================
 
 model.optimize()
-model.write("Gurobi_Solution.lp")
+model.write("Inspectors_LP.lp")
 
 #Write Solution:
 #----------------------------------------------------------------------------------------------
