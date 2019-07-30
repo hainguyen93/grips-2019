@@ -59,7 +59,7 @@ def multiproportional(arc_paths):
     for arc, value in arc_paths.items():
         V_hat[arc_idx[arc]] = value[0]
 
-    while not (np.abs(V_hat - V)/np.abs(V_hat) < EPSILON).all():
+    while not is_convergence(V_hat, V):
         # for each arc a
         for arc, value in arc_paths.items():
             total = 0 # used to collect sums of products of X_a's
@@ -83,6 +83,13 @@ def multiproportional(arc_paths):
         # update iteration number n
         n+=1
     return X
+
+
+def is_convergence(V_hat, V):
+    """ Check if the multi-proportional does converge    
+    """
+    return (np.abs(V_hat - V)/np.abs(V_hat) < EPSILON).all()
+
 
 def generate_OD_matrix(nodes, shortest_paths, arc_paths):
     '''
