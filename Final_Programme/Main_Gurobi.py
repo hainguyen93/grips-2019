@@ -73,15 +73,31 @@ def construct_graph(all_edges, inspectors):
         for k in inspectors:
             flow_var_names.append((start, end, k))
 
-        graph.add_node(start, station = line[0], time_stamp = line[1])
-        graph.add_node(end, station = line[2], time_stamp = line[3])
+        graph.add_node(start, station = edge[0], time_stamp = edge[1])
+        graph.add_node(end, station = edge[2], time_stamp = edge[3])
 
         # we assume a unique edge between events for now
         if not graph.has_edge(start, end):
-            graph.add_edge(start, end, num_passengers= int(line[4]), travel_time =int(line[5]))
+            graph.add_edge(start, end, num_passengers= int(edge[4]), travel_time =int(edge[5]))
 
     return graph, flow_var_names
 
+def save_graph(graph, file_name):
+    nx.write_gexf(graph, file_name)
+
+def load_graph(file_name):
+    return nx.read_gexf(file_name)
+
+def save_data(dict):
+    # save shortest_paths and OD to files to be read in again
+    with open(str(dict)+".json", "w") as f:
+        json.dump(dict, f)
+
+def load_data(dict):
+    data = {}
+    with open(str(dict)+".json", "r") as f:
+        data = json.load(f)
+    return data
 
 def add_sinks_and_sources(graph, inspectors, flow_var_names):
     for k, vals in inspectors.items():
@@ -98,7 +114,7 @@ def add_sinks_and_sources(graph, inspectors, flow_var_names):
                 flow_var_names.append((node, sink, k))
 
 
-def add_mass_balance_constraint(graph, model, inspectors):
+def add_mass_balance_constraint(graph, model, inspectors, x):
     for k in inspectors:
         for node in graph.nodes():
             if graph.nodes[node]['time_stamp']:
@@ -125,7 +141,7 @@ def add_mass_balance_constraint(graph, model, inspectors):
                 model.addConstr(in_exp,GRB.EQUAL,0,"mass_bal_{}_{}".format(node,str(k))) #add constraint to model
 
 
-def add_sinks_and_source_constraint(graph, model, inspectors):
+def add_sinks_and_source_constraint(graph, model, inspectors, x):
     for k, vals in inspectors.items():
         sink = "sink_" + str(k)
         source = "source_" + str(k)
@@ -137,7 +153,7 @@ def add_sinks_and_source_constraint(graph, model, inspectors):
         model.addConstr(source_constr, GRB.EQUAL, 1,"source_constr_{}".format(k))
 
 
-def add_time_flow_constraint(graph, model, inspectors):
+def add_time_flow_constraint(graph, model, inspectors, x):
     for k, vals in inspectors.items():
         source = "source_" + str(k) + ""
         sink = "sink_" + str(k)
@@ -149,7 +165,7 @@ def add_time_flow_constraint(graph, model, inspectors):
         model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
 
 
-def minimization_constraint(graph, model, inspectors, OD, shortest_paths):
+def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
     # Create a dictionary of all Origin-Destinations
     all_paths = {}
     for source, sink in OD.keys():
@@ -163,7 +179,7 @@ def minimization_constraint(graph, model, inspectors, OD, shortest_paths):
             values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
 
             min_constr = LinExpr(values,indices)
-            model.addConstr(min_constr,GRB.EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
+            model.addConstr(min_constr,GRB.LESS_EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
 
 
 def print_solution_paths(inspectors, x):
@@ -171,8 +187,8 @@ def print_solution_paths(inspectors, x):
     for k in inspectors:
         solution += "Inspector {} Path:".format(k)+"\n"
         solution += "------------------------------------------------------------------\n"
-        print("Inspector {} Path:".format(k))
-        print("------------------------------------------------------------------\n")
+        # print("Inspector {} Path:".format(k))
+        # print("------------------------------------------------------------------\n")
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
             arcs = x.select((start,'*',k))
@@ -183,8 +199,8 @@ def print_solution_paths(inspectors, x):
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
             solution += str(arc) + "\n"
-            print(arc)
-        print("\n------------------------------------------------------------------")
+            # print(arc)
+        # print("\n------------------------------------------------------------------")
         solution += "------------------------------------------------------------------\n"
     return solution
 
