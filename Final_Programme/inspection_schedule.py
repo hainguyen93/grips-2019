@@ -54,136 +54,52 @@ def main(argv):
         # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspector_file)
 
-        print("Building graph ...", end = " ")
-        t1 = time.time()
-
+        # constructing the directed graph
         graph, flow_var_names = construct_graph(all_edges, inspectors)
 
-        # time to build graph
-        t2 = time.time()
+        # OD Estimation     
+        shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
+        T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)   
 
-        print('Finished! Took {:.5f} seconds'.format(t2-t1))
-
-        #================================ OD Estimation ===============================
-        print("Estimating OD Matrix ...", end = " ")
-
-        # create a deep copy of the graph
-        new_graph = deepcopy(graph)
-
-        nodes = graph.nodes()
-
-        shortest_paths, arc_paths = create_arc_paths(new_graph)
-
-        T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
-
-        t2a = time.time()
-        print('Finished! Took {:.5f} seconds'.format(t2a-t2))
-
-        #============================== ADDING SOURCE/SINK NODES ==========================================
-
-        print("Adding Sinks/Sources...", end=" ")
-
+        # adding sources/sinks nodes  
         add_sinks_and_sources(graph, inspectors, flow_var_names)
-
-        t3 = time.time()
-
-        print('Finished! Took {:.5f} seconds'.format(t3-t2a))
-
-        # test edge source to sinks
-        # print('TEST: Unique edge between two nodes: ', num_edges == graph.number_of_edges())
-        # print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
-
-        # freeze graph to prevent further changes
+        
+        #freeze graph to prevent further changes    
         graph = nx.freeze(graph)
 
-        #================================== START Gurobi ================================================
-        #                           Establish Maximization Problem
-        #================================================================================================
-
+        # start Gurobi
         print("Start Gurobi")
-
         model = Model("DB_MIP");
 
-        #========================= ADDING VARIABLES AND OBJECTIVE FUNCTION ==============================
-
+        # adding variables and objective functions
         print("Adding variables...", end=" ")
-
-        x = model.addVars(list(set(flow_var_names)),ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+        x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
         M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
 
         # Adding the objective function coefficients
         model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+        
+        # adding flow conservation constraints
+        add_mass_balance_constraint(graph, model, inspectors)
 
-        t4 = time.time()
-        print("Finished! Took {:.5f} seconds".format(t4-t3))
+        # adding sink/source constraints
+        add_sinks_and_source_constraint(graph, model, inspectors)
+        
+        # add working_hours restriction constraints
+        add_time_flow_constraint(graph, model, inspectors)
 
-        #=================================== CONSTRAINT 6 ===================================================
-        #                              Mass - Balance Constraint
-        #================================================================================================
-        print("Adding Constraint (6) [Mass - Balance Constraint] ...", end=" ")
+        # adding dummy variables to get rid of 'min' in objective function
+        minimization_constraint(graph, model, inspectors, OD, shortest_paths)   
 
-        add_mass_balance_constraint(graph, model, inspectors, x)
-
-        t5 = time.time()
-
-        print('Finished! Took {:.5f} seconds'.format(t5-t4))
-
-
-        #=================================== CONSTRAINT 7 ===============================================
-        #                              Sink and Source Constraint
-        #================================================================================================
-
-        print("Adding constraint (7) [Sink and Source Constraint]...", end=" ")
-
-        add_sinks_and_source_constraint(graph, model, inspectors, x)
-
-        t6 = time.time()
-        print('Finished! Took {:.5f} seconds'.format(t6-t5))
-
-
-        #===================================== CONSTRAINT 8 ==================================================
-        #                        Time Flow/Number of Working Hours Constraint
-        #================================================================================================
-
-        print("Adding Constraint (8) [Time Flow Constraint]...", end=" ")
-
-        add_time_flow_constraint(graph, model, inspectors, x)
-
-        t7 = time.time()
-        print("Finished! Took {:.5f} seconds".format(t7-t6))
-
-
-        #================================== CONSTRAINT 9 ==========================================
-        #                   Minimum Constraint (Linearizing the Objective Function)
-        #================================================================================================
-
-        print('Adding Constraint (9) [Minimum Constraint]...', end = " ")
-
-
-        minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
-
-        t8 = time.time()
-        print("Finished! Took {:.5f} seconds".format(t8-t7))
-
-
-        #================================== POST-PROCESSING ================================================
-
+        # start solving using Gurobi
         model.optimize()
         model.write("Gurobi_Solution.lp")
 
-        #Write Solution:
-        #----------------------------------------------------------------------------------------------
-
-        #with open("Gurobi_Solution.txt", "w") as f:
-        #f.write()
-
-        #Print Solution Paths:
-        #----------------------------------------------------------------------------------------------
-        print_solution_paths(inspectors, x)
-
-
-
-
+        # write Solution:
+        solution  = print_solution_paths(inspectors, x)
+        
+        with open("Gurobi_Solution.txt", "w") as f:
+            f.write(solution)
 
     except CommandLineArgumentsNotMatch as error:
         print(error)
@@ -193,5 +109,7 @@ def main(argv):
         print(error)
 
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])
+    
