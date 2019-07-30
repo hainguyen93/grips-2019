@@ -36,7 +36,7 @@ def main(argv):
 
     try:
         # raise error if command-line arguments do not match
-        if len(argv) != 4:
+        if len(argv) < 4:
             raise CommandLineArgumentsNotMatch('ERROR: Command-line arguments do not match')
             sys.exit()
 
@@ -44,57 +44,71 @@ def main(argv):
         inspector_file = argv[1]
         chosen_day = argv[2]
         output_file = argv[3]
+        # options = argv[4]
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
 
-        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
-        all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+        shortest_paths = {}
+        OD = {}
+        graph = None
 
-        # dictionary of id (key) and base/max_hours (value)
-        inspectors = extract_inspectors_data(inspector_file)
+        # if options == '--load-data':
+        try:
+            shortest_paths = load_data("shortest_paths.json")
+            OD = load_data("OD.json")
+            graph = load_graph("graph.gexf")
+        except FileNotFoundError as error:
+            # list of 6-tuples (from, depart, to, arrival, num passengers, time)
+            all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+            # dictionary of id (key) and base/max_hours (value)
+            inspectors = extract_inspectors_data(inspector_file)
+            print("Building graph ...", end = " ")
+            t1 = time.time()
 
-        print("Building graph ...", end = " ")
-        t1 = time.time()
+            graph, flow_var_names = construct_graph(all_edges, inspectors)
 
-        graph, flow_var_names = construct_graph(all_edges, inspectors)
+            # time to build graph
+            t2 = time.time()
 
-        # time to build graph
-        t2 = time.time()
+            print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
-        print('Finished! Took {:.5f} seconds'.format(t2-t1))
+            #================================ OD Estimation ===============================
+            print("Estimating OD Matrix ...", end = " ")
 
-        #================================ OD Estimation ===============================
-        print("Estimating OD Matrix ...", end = " ")
+            # create a deep copy of the graph
+            new_graph = deepcopy(graph)
 
-        # create a deep copy of the graph
-        new_graph = deepcopy(graph)
+            nodes = graph.nodes()
 
-        nodes = graph.nodes()
+            shortest_paths, arc_paths = create_arc_paths(new_graph)
 
-        shortest_paths, arc_paths = create_arc_paths(new_graph)
+            T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
 
-        T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
+            # save shortest_paths and OD coefficients data
+            save_data("shortest_paths",shortest_paths)
+            save_data("OD", OD)
 
-        t2a = time.time()
-        print('Finished! Took {:.5f} seconds'.format(t2a-t2))
+            t2a = time.time()
+            print('Finished! Took {:.5f} seconds'.format(t2a-t2))
 
-        #============================== ADDING SOURCE/SINK NODES ==========================================
+            #============================== ADDING SOURCE/SINK NODES ==========================================
 
-        print("Adding Sinks/Sources...", end=" ")
+            print("Adding Sinks/Sources...", end=" ")
 
-        add_sinks_and_sources(graph, inspectors, flow_var_names)
+            add_sinks_and_sources(graph, inspectors, flow_var_names)
 
-        t3 = time.time()
+            t3 = time.time()
 
-        print('Finished! Took {:.5f} seconds'.format(t3-t2a))
+            print('Finished! Took {:.5f} seconds'.format(t3-t2a))
 
-        # test edge source to sinks
-        # print('TEST: Unique edge between two nodes: ', num_edges == graph.number_of_edges())
-        # print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
+            # freeze graph to prevent further changes
+            graph = nx.freeze(graph)
 
-        # freeze graph to prevent further changes
-        graph = nx.freeze(graph)
+            save_graph(graph, "graph.gexf")
+            print(error)
+            print("Data has been saved. Run the program again.")
+
 
         #================================== START Gurobi ================================================
         #                           Establish Maximization Problem
@@ -180,8 +194,6 @@ def main(argv):
         #Print Solution Paths:
         #----------------------------------------------------------------------------------------------
         print_solution_paths(inspectors, x)
-
-
 
 
 
