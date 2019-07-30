@@ -222,16 +222,6 @@ for k, vals in inspectors.items():
     source = "source_" + str(k)
 
     c.linear_constraints.add(
-        lin_expr = [cplex.SparsePair(
-                        ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)],
-                        val = [1] * graph.in_degree(sink)
-                    )],
-        senses = ['E'],
-        rhs = [1],
-        names = ['sink_constr_{}'.format(k)]
-    )
-
-    c.linear_constraints.add(
         lin_expr = [ cplex.SparsePair(
                         ind = ['var_x_{}_{}_{}'.format(source, u, k) for u in graph.successors(source)] ,
                         val = [1] * graph.out_degree(source)
@@ -239,6 +229,16 @@ for k, vals in inspectors.items():
         senses = ['E'],
         rhs = [1],
         names = ['source_constr_{}'.format(k)]
+    )
+
+    c.linear_constraints.add(
+        lin_expr = [cplex.SparsePair(
+                        ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)],
+                        val = [1] * graph.in_degree(sink)
+                    )],
+        senses = ['E'],
+        rhs = [1],
+        names = ['sink_constr_{}'.format(k)]
     )
 
 t6 = time.time()
@@ -297,13 +297,23 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 #================================== POST-PROCESSING ================================================
 
 print('Write to inspectors.lp ...', end=" ")
-c.write('inspectors.lp')
+c.write('inspectors_4.lp')
 t9 =time.time()
 print('Finished! Took {:.5f} seconds'.format(t9-t8))
+quit()
+# check for feasibility
+print("Problem type: {}".format(c.get_problem_type()))
+# problem stats
+print("Problem stats: {}".format(c.get_stats()))
 
+print("Is primal feasible: {}".format(c.solution.is_primal_feasible()))
+print("Is dual feasible: {}".format(c.solution.is_dual_feasible()))
 
 print("Now solving ...", end = " ")
 c.solve()
+# get method
+print("Problem method: {}".format(c.solution.get_method()))
+
 print("Solution Status: ", c.solution.get_status())
 t10 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t10-t9))
@@ -342,4 +352,5 @@ for k, vals in inspectors.items():
 t11= time.time()
 print("Programme Terminated! Took {:.5f} seconds".format(t11-t1))
 
-#print(flow_var_names[:10])
+# obtain method used in CPLEX
+print("CPLEX method used in solver is: {}".format(c.solution.get_method()))
