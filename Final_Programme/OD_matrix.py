@@ -1,6 +1,5 @@
-# Implementation of Multiproportional algorithm
-# for OD matrix estimation
-# author: Ruby Abrams, Hai Nguyen, Nate May
+# Implementation of Multiproportional algorithm for OD matrix estimation
+# @author: Ruby Abrams, Hai Nguyen, Nate May
 
 import numpy as np
 import networkx as nx
@@ -98,7 +97,6 @@ def generate_OD_matrix(nodes, shortest_paths, arc_paths):
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-
     N = len(nodes)
     nod_idx = {node: i for i,node in enumerate(nodes)}
     #shortest_paths, arc_paths = create_arc_paths(graph)

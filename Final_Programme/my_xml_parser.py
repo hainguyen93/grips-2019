@@ -1,4 +1,4 @@
-# timetable extractor from the input dateset (in xml format)
+# Timetable extractor from the input dateset (in xml format)
 # @author: Hai Nguyen
 
 import xml.etree.ElementTree as ET
@@ -9,8 +9,6 @@ import time
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 from exceptions import *
-
-# global constants
 
 DAYS = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
 
