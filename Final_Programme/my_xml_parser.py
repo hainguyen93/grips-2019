@@ -25,12 +25,12 @@ def create_driving_edges(xml_root, day, driving_edges):
         ice :  ice fleet
     """
     for train in xml_root.iter('Train'):
-        #train_id = int(train.get('TrainID_'))
+        train_id = int(train.get('TrainID_'))
 
         for trip in train.iter('Trip'):
             trip_validity = trip.find('Validity').get('BitString')
 
-            if not trip_validity[DAYS.index(day)]:
+            if trip_validity[DAYS.index(day)] is not '1':
                 continue
 
             is_next_day = False # overnight or not?

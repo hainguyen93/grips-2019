@@ -74,44 +74,17 @@ def main(argv):
                 print("The saved data will be automatically loaded")
         elif options == '--make-data':
 
-            print("Building graph ...", end = " ")
-            t1 = time.time()
-
             graph, flow_var_names = construct_graph(all_edges, inspectors)
 
-            # time to build graph
-            t2 = time.time()
+            shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
 
-            print('Finished! Took {:.5f} seconds'.format(t2-t1))
-
-            #================================ OD Estimation ===============================
-            print("Estimating OD Matrix ...", end = " ")
-
-            # create a deep copy of the graph
-            new_graph = deepcopy(graph)
-
-            nodes = graph.nodes()
-
-            shortest_paths, arc_paths = create_arc_paths(new_graph)
-
-            T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
+            T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)
 
             # save shortest_paths and OD coefficients data
             save_data("shortest_paths",shortest_paths)
             save_data("OD", OD)
 
-            t2a = time.time()
-            print('Finished! Took {:.5f} seconds'.format(t2a-t2))
-
-            #============================== ADDING SOURCE/SINK NODES ==========================================
-
-            print("Adding Sinks/Sources...", end=" ")
-
             add_sinks_and_sources(graph, inspectors, flow_var_names)
-
-            t3 = time.time()
-
-            print('Finished! Took {:.5f} seconds'.format(t3-t2a))
 
             # freeze graph to prevent further changes
             graph = nx.freeze(graph)
