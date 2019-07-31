@@ -101,7 +101,7 @@ def construct_graph(all_edges, inspectors):
     return graph, flow_var_names
 
 
-# 
+#
 # def save_graph(graph, file_name):
 #     nx.write_gexf(graph, file_name)
 #     print("graph.gexf has been saved.")
@@ -323,7 +323,7 @@ def print_solution_paths(inspectors, x):
             start = arc[1]
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
-            solution += str(arc) + "\n"
+            solution += arc[0]+'-->'+arc[1]+ "\n"
             # print(arc)
         # print("\n------------------------------------------------------------------")
         solution += "------------------------------------------------------------------\n"
