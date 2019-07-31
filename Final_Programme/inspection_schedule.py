@@ -44,53 +44,53 @@ def main(argv):
         inspector_file = argv[1]
         chosen_day = argv[2]
         output_file = argv[3]
-        options = argv[4]
+        # options = argv[4]
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
 
-        shortest_paths = {}
-        OD = {}
-        graph = None
-        flow_var_names = []
-        inspectors = []
+        # shortest_paths = {}
+        # OD = {}
+        # graph = None
+        # flow_var_names = []
+        # inspectors = []
 
-        if options == '--load-data':
-            try:
-                # list of 6-tuples (from, depart, to, arrival, num passengers, time)
-                all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
-                # dictionary of id (key) and base/max_hours (value)
-                inspectors = extract_inspectors_data(inspector_file)
+        # if options == '--load-data':
+        #     try:
+        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
+        all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+        # dictionary of id (key) and base/max_hours (value)
+        inspectors = extract_inspectors_data(inspector_file)
 
-                shortest_paths = load_data("shortest_paths.json")
-                OD = load_data("OD.json")
-                graph = load_graph("graph.gexf")
-                flow_var_names = load_variable_names("flow_var_names.npy")
+        # shortest_paths = load_data("shortest_paths.json")
+        # OD = load_data("OD.json")
+        # graph = load_graph("graph.gexf")
+        # flow_var_names = load_variable_names("flow_var_names.npy")
 
-            except FileNotFoundError as error:
-                print(error)
-                print("Run the program without '--load-data' option.")
-                print("Next time the program is run, '--load-data' can be omitted.")
-                print("The saved data will be automatically loaded")
-        elif options == '--make-data':
+        #     except FileNotFoundError as error:
+        #         print(error)
+        #         print("Run the program without '--load-data' option.")
+        #         print("Next time the program is run, '--load-data' can be omitted.")
+        #         print("The saved data will be automatically loaded")
+        # elif options == '--make-data':
 
-            graph, flow_var_names = construct_graph(all_edges, inspectors)
+        graph, flow_var_names = construct_graph(all_edges, inspectors)
 
-            shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
+        shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
 
-            T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)
+        T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)
 
-            # save shortest_paths and OD coefficients data
-            save_data("shortest_paths",shortest_paths)
-            save_data("OD", OD)
+        # save shortest_paths and OD coefficients data
+        # save_data("shortest_paths",shortest_paths)
+        # save_data("OD", OD)
 
-            add_sinks_and_sources(graph, inspectors, flow_var_names)
+        add_sinks_and_sources(graph, inspectors, flow_var_names)
 
-            # freeze graph to prevent further changes
-            graph = nx.freeze(graph)
+        # freeze graph to prevent further changes
+        graph = nx.freeze(graph)
 
-            save_graph(graph, "graph.gexf")
-            save_variable_names(flow_var_names, "flow_var_names.npy")
+        # save_graph(graph, "graph.gexf")
+        # save_variable_names(flow_var_names, "flow_var_names.npy")
 
         #================================== START Gurobi ================================================
         #                           Establish Maximization Problem
@@ -108,16 +108,16 @@ def main(argv):
         model.setObjective(M.prod(OD),GRB.MAXIMIZE)
 
         # adding flow conservation constraints
-        add_mass_balance_constraint(graph, model, inspectors)
+        add_mass_balance_constraint(graph, model, inspectors, x)
 
         # adding sink/source constraints
-        add_sinks_and_source_constraint(graph, model, inspectors)
+        add_sinks_and_source_constraint(graph, model, inspectors, x)
 
         # add working_hours restriction constraints
-        add_time_flow_constraint(graph, model, inspectors)
+        add_time_flow_constraint(graph, model, inspectors, x)
 
         # adding dummy variables to get rid of 'min' in objective function
-        minimization_constraint(graph, model, inspectors, OD, shortest_paths)
+        minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
         # start solving using Gurobi
         model.optimize()
