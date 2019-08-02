@@ -260,7 +260,7 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspe
         x : list of binary decision variables
         max_num_inspectors : upper bound on number of inspectors allowed to work
     """
-    coefs = [1 for _ in inspectors for _ in graph.successors("source_"+str(k))]
+    coefs = [1 for k in inspectors for _ in graph.successors("source_"+str(k))]
     variables = [x["source_"+str(k),u,k] for k in inspectors for u in graph.successors("source_"+str(k))]
     constr = LinExpr(coefs, variables)
     model.addConstr(constr, GRB.EQUAL, max_num_inspectors, "max_inspectors_constr")
