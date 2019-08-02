@@ -36,7 +36,7 @@ def main(argv):
 
     try:
         # raise error if command-line arguments do not match
-        if len(argv) < 4:
+        if len(argv) != 5:
             raise CommandLineArgumentsNotMatch('ERROR: Command-line arguments do not match')
             sys.exit()
 
@@ -45,6 +45,7 @@ def main(argv):
         chosen_day = argv[2]
         output_file = argv[3]
         # options = argv[4]
+	max_num_inspectors = int(argv[4])
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
@@ -113,6 +114,9 @@ def main(argv):
         # adding sink/source constraints
         add_sinks_and_source_constraint(graph, model, inspectors, x)
 
+	# add max number of inspectors working
+	add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
+
         # add working_hours restriction constraints
         add_time_flow_constraint(graph, model, inspectors, x)
 
@@ -126,7 +130,7 @@ def main(argv):
         # write Solution:
         solution  = print_solution_paths(inspectors, x)
 
-        with open("Gurobi_Solution.txt", "w") as f:
+        with open(output_file, "w") as f:
             f.write(solution)
 
     except CommandLineArgumentsNotMatch as error:
