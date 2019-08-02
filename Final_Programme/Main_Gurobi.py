@@ -230,12 +230,20 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
     for k, vals in inspectors.items():
         sink = "sink_" + str(k)
         source = "source_" + str(k)
+        
+        in_sink_edges = [x[u, sink, k] for u in graph.predecessors(sink)]
+        in_sink_edges_coefs = [1] * graph.in_degree(sink)
+        sink_constr = LinExpr(in_sink_edges_coefs, in_sink_edges)
+        model.addConstr(sink_constr, GRB.LESS_EQUAL, 1,"sink_constr_{}".format(k))
 
-        sink_constr = LinExpr([1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
-        model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
-
-        source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
-        model.addConstr(source_constr, GRB.EQUAL, 1,"source_constr_{}".format(k))
+        out_source_edges = [x[source, u, k] for u in graph.successors(source)]
+        out_source_edges_coefs = [1] * graph.out_degree(source)
+        source_constr = LinExpr(out_source_edges_coefs, out_source_edges)
+        model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
+        
+        coefs = in_sink_edges_coefs + [-1] * graph.out_degree(source)
+        source_sink_balance_constr =  LinExpr(coefs, in_sink_edges + out_source_edges)
+        model.addConstr(source_sink_balance_constr, GRB.EQUAL, 0, "source_sink_balance_constr_{}".format(k))
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
@@ -382,6 +390,10 @@ def main():
 
     # start solving using Gurobi
     model.optimize()
+    
+    
+    
+    
     model.write("Gurobi_Solution.lp")
 
     # write Solution:
