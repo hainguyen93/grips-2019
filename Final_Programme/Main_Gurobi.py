@@ -249,6 +249,23 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
 
+def add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors):
+    """Constraint to restrict the number of inspectors working on a specific day 
+    by an upper bound (max_num_inspectors)
+    
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        inspectors : dict of inspectors 
+        x : list of binary decision variables
+        max_num_inspectors : upper bound on number of inspectors allowed to work
+    """
+    coefs = [1 for _ in inspectors for _ in graph.successors("source_"+str(k))]
+    variables = [x["source_"+str(k),u,k] for k in inspectors for u in graph.successors("source_"+str(k))]
+    constr = LinExpr(coefs, variables)
+    model.addConstr(constr, GRB.EQUAL, max_num_inspectors, "max_inspectors_constr")
+    
+
 
 def add_time_flow_constraint(graph, model, inspectors, x):
     """Add time flow constraint (maximum number of working hours)
@@ -339,12 +356,15 @@ def print_solution_paths(inspectors, x):
 
 
 
-def main():
+def main(argv):
     """main function"""
+    if len(argv) != 1:
+        print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
+        sys.exit()
 
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-                1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-                2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
+                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+                    2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
                 #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
                 #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
                 #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
@@ -377,22 +397,23 @@ def main():
     model.setObjective(M.prod(OD),GRB.MAXIMIZE)
 
     # adding flow conservation constraints
-    add_mass_balance_constraint(graph, model, inspectors)
+    add_mass_balance_constraint(graph, model, inspectors, x)
 
     # adding sink/source constraints
-    add_sinks_and_source_constraint(graph, model, inspectors)
+    add_sinks_and_source_constraint(graph, model, inspectors, x)
+    
+    # add maximum number of inspectors allowed to work
+    add_max_num_inspectors_constraint(graph, model, inspectors, )
 
     # add working_hours restriction constraints
-    add_time_flow_constraint(graph, model, inspectors)
+    add_time_flow_constraint(graph, model, inspectors, x)    
 
     # adding dummy variables to get rid of 'min' in objective function
-    minimization_constraint(graph, model, inspectors, OD, shortest_paths)
+    minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
     # start solving using Gurobi
     model.optimize()
-    
-    
-    
+        
     
     model.write("Gurobi_Solution.lp")
 
@@ -405,4 +426,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
