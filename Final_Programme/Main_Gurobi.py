@@ -361,6 +361,8 @@ def main(argv):
     if len(argv) != 1:
         print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
+    
+    max_num_inspectors = int(argv[0])
 
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
                     1 : {"base": 'HH', "working_hours": 5, "rate": 10},
@@ -403,7 +405,7 @@ def main(argv):
     add_sinks_and_source_constraint(graph, model, inspectors, x)
     
     # add maximum number of inspectors allowed to work
-    add_max_num_inspectors_constraint(graph, model, inspectors, )
+    add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
 
     # add working_hours restriction constraints
     add_time_flow_constraint(graph, model, inspectors, x)    
