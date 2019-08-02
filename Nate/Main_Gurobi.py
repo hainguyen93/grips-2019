@@ -33,12 +33,13 @@ from read_inspector_data import *
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-              1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-              2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
-              3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
-              4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
-              5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
-              }
+              1 : {"base": 'HH', "working_hours": 5, "rate": 10}}#,
+              #2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
+              #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+              #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+              #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+              #}
+maxInspectors = 1;
 
 #inspectors = {0: {"base": 'C', "working_hours":1},
               #1: {"base": 'A', "working_hours":1}}
@@ -207,6 +208,7 @@ print('Finished! Took {:.5f} seconds'.format(t5-t4))
 
 print("Adding constraint (7) [Sink and Source Constraint]...", end=" ")
 
+
 for k, vals in inspectors.items():
     sink = "sink_" + str(k)
     source = "source_" + str(k)
@@ -219,6 +221,13 @@ for k, vals in inspectors.items():
 
     model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
     model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
+
+    if k == 0:
+        maxWorking = source_constr
+    else:
+        maxWorking.add(source_constr)
+
+model.addConstr(maxWorking,GRB.LESS_EQUAL,maxInspectors,"Max_Inspector_Constraint")
 
 t6 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t6-t5))
@@ -270,7 +279,7 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 
 
 model.optimize()
-model.write("Gurobi_Solution.lp")
+#model.write("Gurobi_Solution.lp")
 
 #Write Solution:
 #----------------------------------------------------------------------------------------------
@@ -279,13 +288,16 @@ with open("Gurobi_Solution.txt", "w") as f:
     for k in inspectors:
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
-            arcs = x.select((start,'*',k))
-            match = [x for x in arcs if x.getAttr("x") != 0]
+            arcs = x.select(start,'*',k)
+            try:
+                match = [x for x in arcs if x.getAttr("x") != 0]
 
-            arc = match[0].getAttr("VarName").split(",")
-            start = arc[1]
-            arc[0] = arc[0].split("[")[1]
-            arc = arc[:-1]
+                arc = match[0].getAttr("VarName").split(",")
+                start = arc[1]
+                arc[0] = arc[0].split("[")[1]
+                arc = arc[:-1]
+            except:
+                break
 
             f.write(" ".join(arc)+"\n")
 f.close()
