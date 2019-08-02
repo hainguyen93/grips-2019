@@ -45,7 +45,7 @@ def main(argv):
         chosen_day = argv[2]
         output_file = argv[3]
         # options = argv[4]
-	max_num_inspectors = int(argv[4])
+	    max_num_inspectors = int(argv[4])
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
