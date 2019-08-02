@@ -8,7 +8,6 @@ import json
 
 from exceptions import *
 from my_xml_parser import *
-# from ReformulatedLP import *
 from Main_Gurobi import *
 
 
@@ -44,35 +43,15 @@ def main(argv):
         inspector_file = argv[1]
         chosen_day = argv[2]
         output_file = argv[3]
-        # options = argv[4]
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
 
-        # shortest_paths = {}
-        # OD = {}
-        # graph = None
-        # flow_var_names = []
-        # inspectors = []
-
-        # if options == '--load-data':
-        #     try:
-        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
-        all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
         # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspector_file)
 
-        # shortest_paths = load_data("shortest_paths.json")
-        # OD = load_data("OD.json")
-        # graph = load_graph("graph.gexf")
-        # flow_var_names = load_variable_names("flow_var_names.npy")
-
-        #     except FileNotFoundError as error:
-        #         print(error)
-        #         print("Run the program without '--load-data' option.")
-        #         print("Next time the program is run, '--load-data' can be omitted.")
-        #         print("The saved data will be automatically loaded")
-        # elif options == '--make-data':
+        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
+        all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
 
         graph, flow_var_names = construct_graph(all_edges, inspectors)
 
@@ -119,22 +98,37 @@ def main(argv):
         # adding dummy variables to get rid of 'min' in objective function
         minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
-        # start solving using Gurobi
+        # start solving using Gurobi using heuristic solution
         model.optimize()
-        model.write("Gurobi_Solution.lp")
+        model.write("Inspection_LP.lp")
 
         # write Solution:
-        solution  = print_solution_paths(inspectors, x)
-
-        with open("Gurobi_Solution.txt", "w") as f:
-            f.write(solution)
-
+        solution = print_solution_paths(inspectors, x)
+        
+        # with open("Gurobi_Solution.txt", "w") as f:
+        #     f.write(solution)
     except CommandLineArgumentsNotMatch as error:
         print(error)
         print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
-
     except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
         print(error)
+
+def heuristic_solver(model, inspectors, flow_var_names, x):
+    # To solve problems with more inspectors, use solutions from previous problems.
+
+    # add heuristic solutions to solve for more inspectors
+    def heuristic_solution(model, where):
+        if where == GRB.Callback.MIPNODE:
+            model.cbSolution(flow_var_names, x)
+
+    model.optimize(heuristic_solution)
+    model.write("heuristic_LP.lp")
+
+
+
+
+
+
 
 
 

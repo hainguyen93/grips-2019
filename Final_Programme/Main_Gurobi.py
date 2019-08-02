@@ -308,28 +308,26 @@ def print_solution_paths(inspectors, x):
         inspectors : dict of inspectors
         x : list of binary decision variables
     """
-    solution = ""
+    solution = pd.DataFrame(columns=['start_station_and_time','end_station_and_time','inspector_id'])
     for k in inspectors:
-        solution += "Inspector {} Path:".format(k)+"\n"
-        solution += "------------------------------------------------------------------\n"
-        # print("Inspector {} Path:".format(k))
-        # print("------------------------------------------------------------------\n")
+
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
             arcs = x.select((start,'*',k))
             match = [x for x in arcs if x.getAttr("x") != 0]
-
             arc = match[0].getAttr("VarName").split(",")
-            start = arc[1]
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
-            solution += arc[0]+'-->'+arc[1]+ "\n"
-            # print(arc)
-        # print("\n------------------------------------------------------------------")
-        solution += "------------------------------------------------------------------\n"
+            start = arc[1]
+            solution.append([arc[0],arc[1],k])
+    solution.to_csv("schedule_for_{}_inspectors.csv".format(len(inspectors)))
     return solution
 
-
+def total_number_of_passengers_in_system(OD):
+    total = 0
+    for key, num in OD.items():
+        total += num
+    return total
 
 def main():
     """main function"""
