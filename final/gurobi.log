@@ -1161,3 +1161,29 @@ Iteration    Objective       Primal Inf.    Dual Inf.      Time
   104788    7.0858829e+02   0.000000e+00   2.216066e+08    166s
   104928    7.1174402e+02   0.000000e+00   1.317757e+08    171s
   105068    7.1515562e+02   0.000000e+00   1.788611e+08    177s
+  105208    7.1789707e+02   0.000000e+00   1.173876e+09    183s
+  105348    7.2085322e+02   0.000000e+00   4.422242e+08    191s
+  105488    7.2405585e+02   0.000000e+00   2.040518e+08    200s
+  105628    7.2697104e+02   0.000000e+00   1.874652e+08    205s
+  105758    7.2992447e+02   0.000000e+00   3.559060e+08    211s
+  105908    7.3260608e+02   0.000000e+00   1.852277e+08    217s
+  106048    7.3632381e+02   0.000000e+00   3.857143e+08    223s
+
+
+Root relaxation: interrupted, 106073 iterations, 193.78 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0        -0.00000 371238.714      -     -  224s
+
+Explored 0 nodes (106073 simplex iterations) in 224.61 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: -0 
+
+Solve interrupted
+Best objective -0.000000000000e+00, best bound 3.712387142832e+05, gap -
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format

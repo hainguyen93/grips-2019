@@ -123,7 +123,7 @@ def main(argv):
 
         # start solving using Gurobi using heuristic solution
         model.optimize()
-        model.write("Inspection_LP.lp")
+        # model.write("Inspection_LP.lp")
 
         # write Solution:
         solution  = print_solution_paths(inspectors, x)
@@ -152,7 +152,7 @@ def main(argv):
     print("TESTING HEURSTIC SOLVER")
     print("=======================")
 
-    heuristic_solver(timetable_file, chosen_day, "more_inspectors.csv","schedule_for_1_inspectors.csv", shortest_paths, OD, max_num_inspectors)
+    # heuristic_solver(timetable_file, chosen_day, "more_inspectors.csv","schedule_for_1_inspectors.csv", shortest_paths, OD, max_num_inspectors)
 
 def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_name, shortest_paths, OD, max_num_inspectors):
     # dictionary of id (key) and base/max_hours (value)
