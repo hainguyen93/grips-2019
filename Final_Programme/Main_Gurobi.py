@@ -232,16 +232,41 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
     for k, vals in inspectors.items():
         sink = "sink_" + str(k)
         source = "source_" + str(k)
+        
+        in_sink_edges = [x[u, sink, k] for u in graph.predecessors(sink)]
+        in_sink_edges_coefs = [1] * graph.in_degree(sink)
+        sink_constr = LinExpr(in_sink_edges_coefs, in_sink_edges)
+        model.addConstr(sink_constr, GRB.LESS_EQUAL, 1,"sink_constr_{}".format(k))
 
-        sink_constr = LinExpr([1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
-        model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
-
-        source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
-        model.addConstr(source_constr, GRB.EQUAL, 1,"source_constr_{}".format(k))
+        out_source_edges = [x[source, u, k] for u in graph.successors(source)]
+        out_source_edges_coefs = [1] * graph.out_degree(source)
+        source_constr = LinExpr(out_source_edges_coefs, out_source_edges)
+        model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
+        
+        coefs = in_sink_edges_coefs + [-1] * graph.out_degree(source)
+        source_sink_balance_constr =  LinExpr(coefs, in_sink_edges + out_source_edges)
+        model.addConstr(source_sink_balance_constr, GRB.EQUAL, 0, "source_sink_balance_constr_{}".format(k))
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
+
+def add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors):
+    """Constraint to restrict the number of inspectors working on a specific day 
+    by an upper bound (max_num_inspectors)
+    
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        inspectors : dict of inspectors 
+        x : list of binary decision variables
+        max_num_inspectors : upper bound on number of inspectors allowed to work
+    """
+    coefs = [1 for _ in inspectors for _ in graph.successors("source_"+str(k))]
+    variables = [x["source_"+str(k),u,k] for k in inspectors for u in graph.successors("source_"+str(k))]
+    constr = LinExpr(coefs, variables)
+    model.addConstr(constr, GRB.EQUAL, max_num_inspectors, "max_inspectors_constr")
+    
 
 
 def add_time_flow_constraint(graph, model, inspectors, x):
@@ -333,12 +358,17 @@ def total_number_of_passengers_in_system(OD):
         total += num
     return total
 
-def main():
+def main(argv):
     """main function"""
+    if len(argv) != 1:
+        print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
+        sys.exit()
+    
+    max_num_inspectors = int(argv[0])
 
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-                1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-                2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
+                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+                    2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
                 #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
                 #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
                 #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
@@ -371,19 +401,24 @@ def main():
     model.setObjective(M.prod(OD),GRB.MAXIMIZE)
 
     # adding flow conservation constraints
-    add_mass_balance_constraint(graph, model, inspectors)
+    add_mass_balance_constraint(graph, model, inspectors, x)
 
     # adding sink/source constraints
-    add_sinks_and_source_constraint(graph, model, inspectors)
+    add_sinks_and_source_constraint(graph, model, inspectors, x)
+    
+    # add maximum number of inspectors allowed to work
+    add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
 
     # add working_hours restriction constraints
-    add_time_flow_constraint(graph, model, inspectors)
+    add_time_flow_constraint(graph, model, inspectors, x)    
 
     # adding dummy variables to get rid of 'min' in objective function
-    minimization_constraint(graph, model, inspectors, OD, shortest_paths)
+    minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
     # start solving using Gurobi
     model.optimize()
+        
+    
     model.write("Gurobi_Solution.lp")
 
     # write Solution:
@@ -395,4 +430,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
