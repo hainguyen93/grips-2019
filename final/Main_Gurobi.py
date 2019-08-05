@@ -102,7 +102,8 @@ def construct_variable_names(all_edges, inspectors):
         start = edge[0] + '@' + edge[1]
         end = edge[2] + '@' + edge[3]
         flow_var_names.append([(start, end, k) for k in inspectors])
-    return flow_var_names
+    flat_list = [item for sublist in flow_var_names for item in sublist]
+    return flat_list
 #
 # def save_graph(graph, file_name):
 #     nx.write_gexf(graph, file_name)

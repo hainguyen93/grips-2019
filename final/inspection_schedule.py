@@ -52,8 +52,7 @@ def main(argv):
         # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspector_file)
 
-        file_name = timetable_file+"_graph.gexf"
-        graph = nx.DiGraph()
+
         # if os.path.exists(file_name):
         #     graph = nx.read_gexf(file_name)
         # else:
@@ -73,8 +72,7 @@ def main(argv):
         # save_data("OD", OD)
 
         add_sinks_and_sources(graph, inspectors, flow_var_names)
-        nx.write_gexf(graph, file_name)
-        print("graph.gexf has been saved.")
+
         # freeze graph to prevent further changes
         graph = nx.freeze(graph)
 
@@ -91,6 +89,7 @@ def main(argv):
 
         # adding variables and objective functions
         print("Adding variables...", end=" ")
+        print(flow_var_names[:5])
         x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
         M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
 
@@ -184,6 +183,7 @@ def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_
     def heuristic_solution(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(var_names, [1]*len(var_names))
+        # add a time constraint here too
 
     model.optimize(heuristic_solution)
     model.write("heuristic_LP.lp")
