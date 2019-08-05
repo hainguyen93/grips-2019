@@ -146,7 +146,7 @@ def construct_variable_names(all_edges, inspectors):
 #     print(name+" has been loaded.")
 #     return np.load(name)
 
-def add_sinks_and_sources(graph, inspectors, flow_var_names):
+def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
     """Add sinks/sources (for each inspector) to the graph
 
     Attributes:
@@ -217,7 +217,7 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
 
 
 
-def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x):
+def add_sinks_and_source_constraint(graph, model, inspectors, x):
     """Add sink/source constraint for each inspector
 
     Attributes:
@@ -241,6 +241,44 @@ def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors
 
         model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
         model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
+
+        #if k == 0:
+            #maxWorking = source_constr
+        #else:
+            #maxWorking.add(source_constr)
+
+    #model.addConstr(maxWorking, GRB.LESS_EQUAL, max_num_inspectors,"Max_Inspector_Constraint")
+
+    t2 = time.time()
+    print('Finished! Took {:.5f} seconds'.format(t2-t1))
+    
+
+
+def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspectors, x):
+    """Add sink/source constraint for each inspector
+
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        inspectors : dict of inspectors
+        x : list of binary decision variables
+    """
+
+    print("Adding [Max Working Inspectors Constraint]...", end=" ")
+    t1 = time.time()
+
+    for k, vals in inspectors.items():
+        sink = "sink_" + str(k)
+        source = "source_" + str(k)
+
+        sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
+        #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
+
+        source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
+        #sink_constr.add(source_constr) #combine
+
+        #model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
+        #model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
 
         if k == 0:
             maxWorking = source_constr
@@ -320,9 +358,8 @@ def print_solution_paths(inspectors, x):
         inspectors : dict of inspectors
         x : list of binary decision variables
     """
-    solution = pd.DataFrame(columns = ['start_station_and_time','end_station_and_time','inspector_id'])
+    solution = pd.DataFrame(columns = ['start_station_and_time','end_station_and_time','inspector_id'])    
     for k in inspectors:
-
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
             arcs = x.select((start,'*',k))
@@ -338,6 +375,70 @@ def print_solution_paths(inspectors, x):
     return solution
 
 
+def create_depot_inspectors_dict(inspectors):
+    """Create a new dict with keys being depot and value being a list of 
+    2-tuples (inspector_id, max_working_hours), sorted in descending order according
+    to the max_working_hours
+    
+    Attributes:
+        inspectors : dict of inspectors
+    """
+    res = dict()
+    for inspector, val in inspectors.items():
+        if not val['base'] in res:
+            res[val['base']] = [(inspector, val['working_hours'])]
+        else:
+            res[val['base']].append((inspector, val['working_hours']))
+    
+    for _, val in res.items():
+        val.sort(key=lambda x: return x[1], reverse=True)
+    return res
+        
+        
+
+def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_vars, uncare_vars):
+    """Select the (delta) inspectors with the largest number of working hours 
+    from each depot
+    
+    Attributes: 
+        depot_dict : dict of depot as keys and (inspector_id, max_hours) as values
+        delta : maximum number of inspectors drawn from each depot
+        known_vars : list of vars whose values are known (solved)
+    """
+    
+    for depot, val in depot_dict.items():
+        count = 0
+        for (inspector_id, max_hours) in val:
+            if inspector_id in known_vars:
+                continue
+            if count < delta:
+                if not inspector_id in unknown_vars:
+                    unknown_vars.append(inspector_id) # add to unknown_vars
+                    uncare_vars.remove(inspector_id)  # remove from don't care vars
+                count += 1
+            else:
+                break
+                
+
+
+def update_all_var_lists(known_vars, unknown_vars, x):
+    """Update the lists of variables
+    """
+    for inspector_id in unknown_vars[:]:
+        start = "source_{}".format(inspector_id)
+        source_arcs = x.select(start, '*', inspector_id)
+        source_sols = [clean_up_sol(arc.getAttr('x')) for arc in source_arcs]
+        if sum(source_sols) == 1:  # inspector involves in solution
+            known_vars.append(inspector_id)
+            unknown_vars.remove(inspector_id)
+            #all_arcs = x.select('*', '*', inspector_id)
+            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})    
+            
+                        
+            
+def clean_up_sol(x):
+    return 1 if x > 0.5 else 0
+
 
 def main(argv):
     """main function"""
@@ -345,17 +446,19 @@ def main(argv):
         print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
 
-    max_num_inspectors = int(argv[0])
-
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
                     1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-                    2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
-                #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
-                #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
-                #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
-                #}
+                    2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
+                    3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+                    4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+                    5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+                    }
+    
+    depot_inspector_dict = create_depot_inspectors_dict(inspectors)
+    
+    max_num_inspectors = int(argv[0]) if int(argv[0]) <= len(inspectors) else len(inspectors)
 
-    input_dir = '../hai_code/Mon_Arcs.txt'
+    input_dir = 'Mon_Arcs.txt'
 
     graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
 
@@ -364,18 +467,21 @@ def main(argv):
     T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)
 
     # adding sources/sinks nodes
-    add_sinks_and_sources(graph, inspectors, flow_var_names)
+    add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names)
 
     #freeze graph to prevent further changes
     graph = nx.freeze(graph)
 
     # start Gurobi
     print("Start Gurobi")
+    
     model = Model("DB_MIP");
 
     # adding variables and objective functions
     print("Adding variables...", end=" ")
+    
     x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+    
     M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
 
     # Adding the objective function coefficients
@@ -385,22 +491,49 @@ def main(argv):
     add_mass_balance_constraint(graph, model, inspectors, x)
 
     # adding sink/source constraints
-    add_sinks_and_source_constraint(graph, model, inspectors, x)
-
-    # add maximum number of inspectors allowed to work
-    add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
+    add_sinks_and_source_constraint(graph, model, inspectors, x)    
 
     # add working_hours restriction constraints
     add_time_flow_constraint(graph, model, inspectors, x)
 
     # adding dummy variables to get rid of 'min' in objective function
     minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
+    
+    add_max_num_inspectors_constraint(graph, model, inspectors, 1, x)
 
-    # start solving using Gurobi
-    model.optimize()
-
-
-    model.write("Gurobi_Solution.lp")
+    known_vars = []  # vars with known solutions
+    unknown_vars = []  # vars currently in the model
+    uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
+    
+    delta = 1
+    start = 2
+    
+    prev_sols = {}
+    #curr_sol = []
+    
+    def mycallback(model, where):
+        if where == GRB.Callback.MIPNODE:
+            model.cbSetSolution(list(prev_sols.keys), list(prev_sols.values))
+    
+    for i in range(start, max_num_inspectors, delta):         
+        
+        select_inspectors_from_each_depot(depot_inspector_dict, i, known_vars, unknown_vars, uncare_vars)
+        
+        for uncare_inspector_id in uncare_vars:
+            all_vars = x.select('*', '*', uncare_inspector_id)
+            prev_sols.update({arc.getAttr('VarName'):0 for arc in all_vars})
+        
+        constr = model.getConstrByName("Max_Inspector_Constraint")
+        constr.setAttr(GRB.Attr.RHS, i)  
+        
+        model.update() # implement all pending changes
+        model.write("gurobi_model_{}.lp".format(i))
+        model.optimize(mycallback)
+        
+        update_all_var_lists(known_vars, unknown_vars, x, prev_sols)        
+        
+    
+    #model.write("Gurobi_Solution.lp")
 
     # write Solution:
     solution  = print_solution_paths(inspectors, x)
