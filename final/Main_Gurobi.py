@@ -355,10 +355,11 @@ def print_solution_paths(inspectors, x):
     return solution
 
 def total_number_of_passengers_in_system(OD):
-    total = 0
-    for key, num in OD.items():
-        total += num
-    return total
+    return sum(list(OD.values()))
+    #total = 0
+    #for key, num in OD.items():
+        #total += num
+    #return total
 
 def main(argv):
     """main function"""
