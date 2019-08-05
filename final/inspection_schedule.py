@@ -6,6 +6,7 @@ import os
 import xml.etree.ElementTree as ET
 import json
 import pandas as pd
+import pickle
 
 from exceptions import *
 from my_xml_parser import *
@@ -19,14 +20,17 @@ def extract_inspectors_data(inspectors_file):
     Attribute:
         inspector_file : name of inspectors input file
     """
-    inspectors = {}
-    with open(inspectors_file, "r") as f:
-        for line in f.readlines()[1:]:
-            line = line.split(',')
-            inspector_id = int(line[0])
-            depot = line[1]
-            max_hours = float(line[2])
-            inspectors[inspector_id] = {"base": depot, 'working_hours': max_hours}
+    data = pd.read_csv(inspectors_file)
+    inspectors={ data.loc[i]['Inspector_ID']:
+                    {"base": data.loc[i]['Depot'], "working_hours": data.loc[i]['Max_Hours']}
+                     for i in range(len(data))}
+    # with open(inspectors_file, "r") as f:
+    #     for line in f.readlines()[1:]:
+    #         line = line.split(',')
+    #         inspector_id = int(line[0])
+    #         depot = line[1]
+    #         max_hours = float(line[2])
+    #         inspectors[inspector_id] = {"base": depot, 'working_hours': max_hours}
     return inspectors
 
 
@@ -51,7 +55,7 @@ def main(argv):
 
         # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspector_file)
-
+        print("Number of inspectors: {}".format(len(inspectors)))
 
         # if os.path.exists(file_name):
         #     graph = nx.read_gexf(file_name)
@@ -64,7 +68,11 @@ def main(argv):
         flow_var_names = construct_variable_names(all_edges, inspectors)
 
         T, OD = generate_OD_matrix(deepcopy(graph))
-
+        with open("OD.pickle","w") as f:
+            pickle.dump(OD, f, protocol=pickle.HIGHEST_PROTOCOL)
+        print("OD saved")
+        # np.save("OD", OD)
+        # print("saved OD matrix")
         # save shortest_paths and OD coefficients data
         # save_data("shortest_paths",shortest_paths)
         # save_data("OD", OD)
@@ -87,10 +95,9 @@ def main(argv):
 
         # adding variables and objective functions
         print("Adding variables...", end=" ")
-        print(flow_var_names[:5])
         x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
         M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
-
+        print("Setting the objective functions...", end=" ")
         # Adding the objective function coefficients
         model.setObjective(M.prod(OD),GRB.MAXIMIZE)
 

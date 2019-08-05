@@ -1080,3 +1080,15 @@ Best objective 4.987512391958e+03, best bound 4.987512391958e+03, gap 0.0000%
 Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
 Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
 Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 16:17:29 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 16:33:06 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 16:36:29 2019
+
+Academic license - for non-commercial use only
