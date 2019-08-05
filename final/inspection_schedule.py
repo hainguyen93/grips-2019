@@ -121,7 +121,7 @@ def main(argv):
 
         solution = print_solution_paths(inspectors, x)
         obj_val = float(model.objVal)
-        denominator = float(total_number_of_passengers_in_system(OD))
+        denominator = float(sum(OD.values())(OD))
         print("Approximate number of people in the system: {}".format(denominator))
         percentage = obj_val/denominator*100
         print("Approximate percentage of people inspected today: {}%".format(percentage))
@@ -189,15 +189,10 @@ def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_
     # write Solution:
     solution = print_solution_paths(inspectors, x)
     obj_val = float(model.objVal)
-    denominator = float(total_number_of_passengers_in_system(OD))
+    denominator = float(sum(OD.values())(OD))
     print("Approximate number of people in the system: {}".format(denominator))
     percentage = obj_val/denominator*100
     print("Approximate percentage of people inspected today: {}%".format(percentage))
-
-
-
-
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])

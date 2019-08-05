@@ -337,12 +337,7 @@ def print_solution_paths(inspectors, x):
     solution.to_csv("schedule_for_{}_inspectors.csv".format(len(inspectors)))
     return solution
 
-def total_number_of_passengers_in_system(OD):
-    return sum(list(OD.values()))
-    #total = 0
-    #for key, num in OD.items():
-        #total += num
-    #return total
+
 
 def main(argv):
     """main function"""
