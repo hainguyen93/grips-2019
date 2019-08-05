@@ -72,6 +72,9 @@ def main(argv):
         graph = nx.freeze(graph)
 
         # save_graph(graph, "graph.gexf")
+        file_name = ""
+        nx.write_gexf(graph, file_name)
+        print("graph.gexf has been saved.")
         # save_variable_names(flow_var_names, "flow_var_names.npy")
 
         #================================== START Gurobi ================================================
@@ -165,7 +168,7 @@ def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_
     # add heuristic solutions to solve for more inspectors
     def heuristic_solution(model, where):
         if where == GRB.Callback.MIPNODE:
-            model.cbSolution(var_names, [1]*len(var_names))
+            model.cbSetSolution(var_names, [1]*len(var_names))
 
     model.optimize(heuristic_solution)
     model.write("heuristic_LP.lp")
