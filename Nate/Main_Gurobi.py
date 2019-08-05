@@ -32,19 +32,17 @@ from read_inspector_data import *
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-              1 : {"base": 'HH', "working_hours": 5, "rate": 10}}#,
-              #2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
+#inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 10},
+              #1 : {"base": 'HH', "working_hours": 8, "rate": 10},
+              #2 : {"base": 'AHAR', "working_hours": 8, "rate": 10},
               #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
-              #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
-              #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+              #4 : {"base": 'HSOR', "working_hours": 8, "rate": 10},
+              #5 : {"base": 'RM', 'working_hours': 8, 'rate':10}
               #}
-maxInspectors = 1;
+maxInspectors = 4;
 
-#inspectors = {0: {"base": 'C', "working_hours":1},
-              #1: {"base": 'A', "working_hours":1}}
 
-#inspectors = inspectors("GRIPS2019_401.csv")
+inspectors = inspectors("GRIPS2019_401.csv")
 
 # Assumption: rate of inspection remains constant
 KAPPA = 12
@@ -276,10 +274,14 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 #================================== POST-PROCESSING ================================================
 
 
+#Set Parameters:
 
+model.Param.
 
 model.optimize()
-#model.write("Gurobi_Solution.lp")
+model.write("Gurobi_Solution.mps")
+model.write("Gurobi_Solution.lp")
+model.write("Gurobi_Solution.rlp")
 
 #Write Solution:
 #----------------------------------------------------------------------------------------------
