@@ -67,12 +67,11 @@ def construct_graph_from_file(input_dir, inspectors):
 
 
 
-def construct_graph(all_edges, inspectors):
+def construct_graph(all_edges):
     """ Construct the graph from a list of edges
 
     Attribute:
         all_edges : list of 6-tuples (from, depart, to, arrival, num passengers, time)
-        inspectors : dict of inspectors
     """
     print("Building graph ...", end = " ")
     t1 = time.time()
@@ -85,9 +84,6 @@ def construct_graph(all_edges, inspectors):
         start = edge[0] + '@' + edge[1]
         end = edge[2] + '@' + edge[3]
 
-        for k in inspectors:
-            flow_var_names.append((start, end, k))
-
         graph.add_node(start, station = edge[0], time_stamp = edge[1])
         graph.add_node(end, station = edge[2], time_stamp = edge[3])
 
@@ -98,9 +94,15 @@ def construct_graph(all_edges, inspectors):
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
-    return graph, flow_var_names
+    return graph #, flow_var_names
 
-
+def construct_variable_names(all_edges, inspectors):
+    flow_var_names = []
+    for edge in all_edges:
+        start = edge[0] + '@' + edge[1]
+        end = edge[2] + '@' + edge[3]
+        flow_var_names.append([(start, end, k) for k in inspectors])
+    return flow_var_names
 #
 # def save_graph(graph, file_name):
 #     nx.write_gexf(graph, file_name)
@@ -333,28 +335,33 @@ def print_solution_paths(inspectors, x):
         inspectors : dict of inspectors
         x : list of binary decision variables
     """
-    solution = ""
+    solution = pd.DataFrame(columns = ['start_station_and_time','end_station_and_time','inspector_id'])
     for k in inspectors:
-        solution += "Inspector {} Path:".format(k)+"\n"
-        solution += "------------------------------------------------------------------\n"
-        # print("Inspector {} Path:".format(k))
-        # print("------------------------------------------------------------------\n")
+
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
             arcs = x.select((start,'*',k))
+<<<<<<< HEAD:final/Main_Gurobi.py
             match = [x for x in arcs if abs(x.getAttr("x")-1) < 0.1]
 
+=======
+            match = [x for x in arcs if x.getAttr("x") != 0]
+>>>>>>> ruby:Final_Programme/Main_Gurobi.py
             arc = match[0].getAttr("VarName").split(",")
-            start = arc[1]
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
-            solution += arc[0]+'-->'+arc[1]+ "\n"
-            # print(arc)
-        # print("\n------------------------------------------------------------------")
-        solution += "------------------------------------------------------------------\n"
+            start = arc[1]
+            solution = solution.append({'start_station_and_time': arc[0],
+                                        'end_station_and_time': arc[1],
+                                        'inspector_id':k}, ignore_index=True)
+    solution.to_csv("schedule_for_{}_inspectors.csv".format(len(inspectors)))
     return solution
 
-
+def total_number_of_passengers_in_system(OD):
+    total = 0
+    for key, num in OD.items():
+        total += num
+    return total
 
 def main(argv):
     """main function"""
