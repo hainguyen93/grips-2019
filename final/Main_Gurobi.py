@@ -247,27 +247,10 @@ def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors
         else:
             maxWorking.add(source_constr)
 
-    model.addConstr(maxWorking,GRB.LESS_EQUAL,max_num_inspectors,"Max_Inspector_Constraint")
+    model.addConstr(maxWorking, GRB.LESS_EQUAL, max_num_inspectors,"Max_Inspector_Constraint")
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
-
-
-def add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors):
-    """Constraint to restrict the number of inspectors working on a specific day
-    by an upper bound (max_num_inspectors)
-
-    Attributes:
-        graph : directed graph
-        model : Gurobi model
-        inspectors : dict of inspectors
-        x : list of binary decision variables
-        max_num_inspectors : upper bound on number of inspectors allowed to work
-    """
-    coefs = [1 for k in inspectors for _ in graph.successors("source_"+str(k))]
-    variables = [x["source_"+str(k),u,k] for k in inspectors for u in graph.successors("source_"+str(k))]
-    constr = LinExpr(coefs, variables)
-    model.addConstr(constr, GRB.EQUAL, max_num_inspectors, "max_inspectors_constr")
 
 
 

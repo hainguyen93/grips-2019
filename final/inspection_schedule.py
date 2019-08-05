@@ -133,6 +133,7 @@ def main(argv):
         print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
     except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
         print(error)
+        
     print("=======================")
     print("TESTING HEURSTIC SOLVER")
     print("=======================")
