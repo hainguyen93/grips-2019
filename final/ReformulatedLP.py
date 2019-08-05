@@ -12,6 +12,7 @@ import sys
 sys.path.append('/nfs/optimi/usr/sw/cplex/python/3.6/x86-64_linux')
 
 import cplex
+from gurobipy import *
 import networkx as nx
 import time
 import re
@@ -26,10 +27,12 @@ import pandas as pd
 from copy import deepcopy
 
 from OD_matrix import *
+from read_inspector_data import *
 
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
+<<<<<<< HEAD:final/ReformulatedLP.py
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
@@ -38,11 +41,26 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
               }
 
+=======
+#inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 10},
+              #1 : {"base": 'HH', "working_hours": 8, "rate": 10},
+              #2 : {"base": 'AHAR', "working_hours": 8, "rate": 10},
+              #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
+              #4 : {"base": 'HSOR', "working_hours": 8, "rate": 10},
+              #5 : {"base": 'RM', 'working_hours': 8, 'rate':10}
+              #}
+maxInspectors = 4;
+
+
+inspectors = inspectors("GRIPS2019_401.csv")
+
+# Assumption: rate of inspection remains constant
+>>>>>>> Nate:Nate/Main_Gurobi.py
 KAPPA = 12
 flow_var_names = []
 
 # new reformulation variable
-var_portion_of_passengers_inspected = np.array([])
+var_m = np.array([])
 
 HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
@@ -61,7 +79,7 @@ with open(input_dir, "r") as f:
         end = line[2]+'@'+line[3]
 
         for k in inspectors:
-            flow_var_names.append('var_x_{}_{}_{}'.format(start, end, k))
+            flow_var_names.append((start, end, k))
 
         graph.add_node(start, station = line[0], time_stamp = line[1])
         graph.add_node(end, station = line[2], time_stamp = line[3])
@@ -88,6 +106,8 @@ shortest_paths, arc_paths = create_arc_paths(new_graph)
 
 T, OD = generate_OD_matrix(nodes, shortest_paths, arc_paths)
 
+numPassengers = sum(list(OD.values()))
+
 # Create a dictionary of all Origin-Destinations
 all_paths = {}
 for source, sink in OD.keys():
@@ -113,9 +133,9 @@ for k, vals in inspectors.items():
         if (graph.nodes[node]['station'] == vals['base']) and (graph.nodes[node]['time_stamp'] is not None):
             # adding edge between sink and events and adding to the variable dictionary
             graph.add_edge(source, node, num_passengers = 0, travel_time = 0)
-            flow_var_names.append('var_x_{}_{}_{}'.format(source, node, k))
+            flow_var_names.append((source, node, k))
             graph.add_edge(node, sink, num_passengers=0, travel_time = 0 )
-            flow_var_names.append('var_x_{}_{}_{}'.format(node, sink, k))
+            flow_var_names.append((node, sink, k))
 
 
 t3 = time.time()
@@ -129,40 +149,25 @@ print("TEST: No Source-Sink Edge: ", not graph.has_edge("source_0", "sink_0"))
 # freeze graph to prevent further changes
 graph = nx.freeze(graph)
 
-#================================== START CPLEX =================================================
+#================================== START Gurobi ================================================
 #                           Establish Maximization Problem
 #================================================================================================
 
-print("Start CPLEX")
+print("Start Gurobi")
 
-c = cplex.Cplex()
-c.set_problem_type(c.problem_type.LP)
-c.objective.set_sense(c.objective.sense.maximize)	# formulated as a maximization problem
-
+model = Model("DB_MIP");
 
 #========================= ADDING VARIABLES AND OBJECTIVE FUNCTION ==============================
 
 print("Adding variables...", end=" ")
 
-# declaring variable types for binary variables
-c.variables.add(
-    names = flow_var_names,
-    types = [ c.variables.type.binary ] * len(flow_var_names)
-)
-
-# create variable names
-for (source, sink) in all_paths.keys():
-    var_portion_of_passengers_inspected = np.append(var_portion_of_passengers_inspected, 'portion_of_({},{})'.format(source, sink))
+x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
 
 
 # Adding the objective function coefficients
-c.variables.add(
-    names = var_portion_of_passengers_inspected,
-    lb = [0] * len(var_portion_of_passengers_inspected),
-    ub = [1] * len(var_portion_of_passengers_inspected),
-    obj = list(OD.values()),
-    types = [ c.variables.type.continuous ] * len(var_portion_of_passengers_inspected)
-)
+model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+#model.addConstr(M.prod(OD),GRB.LESS_EQUAL,numPassengers*(0.8),"objective upper-bound") #TEST!
 
 t4 = time.time()
 print("Finished! Took {:.5f} seconds".format(t4-t3))
@@ -176,30 +181,28 @@ for k in inspectors:
     for node in graph.nodes():
         if graph.nodes[node]['time_stamp']:
 
-            in_indices = []
+            in_x = [] #list of in_arc variables
 
             for p in graph.predecessors(node):
                 if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k): # not a sink/source
-                    in_indices.append('var_x_{}_{}_{}'.format(p, node, k))
-            in_vals = [1] * len(in_indices)
+                    in_x.append(x[p, node, k])
 
-            out_indices = []
+            in_vals = [1] * len(in_x)
+            in_exp = LinExpr(in_vals,in_x)
+
+            out_x = []#list of out-arc variables
 
             for p in graph.successors(node):
                 if graph.nodes[p]['time_stamp'] or p.split('_')[1] == str(k):
-                    out_indices.append('var_x_{}_{}_{}'.format(node, p, k))
+                    out_x.append(x[node, p, k])
 
-            out_vals = [-1] * len(out_indices)
+            out_vals = [-1] * len(out_x)
+            out_exp = LinExpr(out_vals,out_x)
 
-            c.linear_constraints.add(
-                lin_expr = [cplex.SparsePair(
-                                ind = in_indices + out_indices,
-                                val = in_vals + out_vals
-                            )],
-                senses = ['E'],
-                rhs = [0],
-                names = ['mass_balance_constr_{}_{}'.format(node, k)]
-            )
+            in_exp.add(out_exp) #combine in-arc & out-arc linear expressions
+            model.addConstr(in_exp,GRB.EQUAL,0,"mass_bal_{}_{}".format(node,str(k))) #add constraint to model
+
+
 
 t5 = time.time()
 
@@ -212,29 +215,26 @@ print('Finished! Took {:.5f} seconds'.format(t5-t4))
 
 print("Adding constraint (7) [Sink and Source Constraint]...", end=" ")
 
+
 for k, vals in inspectors.items():
     sink = "sink_" + str(k)
     source = "source_" + str(k)
 
-    c.linear_constraints.add(
-        lin_expr = [cplex.SparsePair(
-                        ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)],
-                        val = [1] * graph.in_degree(sink)
-                    )],
-        senses = ['E'],
-        rhs = [1],
-        names = ['sink_constr_{}'.format(k)]
-    )
+    sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
+    #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
 
-    c.linear_constraints.add(
-        lin_expr = [ cplex.SparsePair(
-                        ind = ['var_x_{}_{}_{}'.format(source, u, k) for u in graph.successors(source)] ,
-                        val = [1] * graph.out_degree(source)
-                    )],
-        senses = ['E'],
-        rhs = [1],
-        names = ['source_constr_{}'.format(k)]
-    )
+    source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
+    sink_constr.add(source_constr) #combine
+
+    model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
+    model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
+
+    if k == 0:
+        maxWorking = source_constr
+    else:
+        maxWorking.add(source_constr)
+
+model.addConstr(maxWorking,GRB.LESS_EQUAL,maxInspectors,"Max_Inspector_Constraint")
 
 t6 = time.time()
 print('Finished! Took {:.5f} seconds'.format(t6-t5))
@@ -249,19 +249,13 @@ print("Adding Constraint (8) [Time Flow Constraint]...", end=" ")
 for k, vals in inspectors.items():
     source = "source_" + str(k) + ""
     sink = "sink_" + str(k)
-    c.linear_constraints.add(
-        lin_expr = [cplex.SparsePair(
-                    ind = ['var_x_{}_{}_{}'.format(u, sink, k) for u in graph.predecessors(sink)]
-                        + ['var_x_{}_{}_{}'.format(source, v, k) for v in graph.successors(source)],
-                    val = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())
-                                    for u in graph.predecessors(sink)]
-                        + [-time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())
-                                    for v in graph.successors(source)]
-                        )],
-        senses = ['L'],
-        rhs = [vals['working_hours'] * HOUR_TO_SECONDS],
-        names = ['time_flow_constr_{}'.format(k)]
-    )
+
+    ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
+    val = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)] + [-time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
+
+    time_flow = LinExpr(val,ind)
+    model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
+
 
 t7 = time.time()
 print("Finished! Took {:.5f} seconds".format(t7-t6))
@@ -275,15 +269,12 @@ print('Adding Constraint (9) [Minimum Constraint]...', end = " ")
 
 for (u, v), path in all_paths.items():
     if not ("source_" in u+v or "sink_" in u+v):
-        indices = ['portion_of_({},{})'.format(u,v)] + ['var_x_{}_{}_{}'.format(i,j,k) for i,j in zip(path, path[1:]) for k in inspectors]
+
+        indices = [M[u,v]] + [x[i,j,k] for i,j in zip(path, path[1:]) for k in inspectors]
         values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
-        c.linear_constraints.add(
-            lin_expr = [cplex.SparsePair(ind = indices, val = values)], # needs to be checked
-            senses = ['L'],
-            rhs = [0],
-            # range_values = [0],
-            names = ['percentage_inspected_on_({},{})'.format(u, v)]
-        )
+
+        min_constr = LinExpr(values,indices)
+        model.addConstr(min_constr,GRB.LESS_EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
 
 t8 = time.time()
 print("Finished! Took {:.5f} seconds".format(t8-t7))
@@ -291,50 +282,33 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 
 #================================== POST-PROCESSING ================================================
 
-print('Write to inspectors.lp ...', end=" ")
-c.write('inspectors.lp')
-t9 =time.time()
-print('Finished! Took {:.5f} seconds'.format(t9-t8))
 
+#Set Parameters:
 
-print("Now solving ...", end = " ")
-c.solve()
-print("Solution Status: ", c.solution.get_status())
-t10 = time.time()
-print('Finished! Took {:.5f} seconds'.format(t10-t9))
-print("Print out solutions:")
+model.Param.
 
-try:
-    res = c.solution.get_values( flow_var_names )
-    #print(res)
-except cplex.exceptions.errors.CplexSolverError:
-    print("No solution exists.")
+model.optimize()
+model.write("Gurobi_Solution.mps")
+model.write("Gurobi_Solution.lp")
+model.write("Gurobi_Solution.rlp")
 
-print("Test: Do 'flow_var_names' and 'res' have same size? ", len(flow_var_names)==len(res))
+#Write Solution:
+#----------------------------------------------------------------------------------------------
 
-# post-processing
-paths = [re.split('_|\^|@', edge)[2:] for edge, x_val in zip(flow_var_names, res) if abs(1-x_val) < 0.01]
+with open("Gurobi_Solution.txt", "w") as f:
+    for k in inspectors:
+        start = "source_{}".format(k)
+        while(start != "sink_{}".format(k)):
+            arcs = x.select(start,'*',k)
+            try:
+                match = [x for x in arcs if x.getAttr("x") != 0]
 
-print("Edges Number = ", len(paths))
+                arc = match[0].getAttr("VarName").split(",")
+                start = arc[1]
+                arc[0] = arc[0].split("[")[1]
+                arc = arc[:-1]
+            except:
+                break
 
-#for edge in paths:
-    #print(edge)
-
-df_paths = pd.DataFrame(paths, columns=['from_station', 'departure_time', 'to_station', 'arrival_time', 'inspector_id'])
-
-#df_paths['inspector_id'].astype('int8')
-
-for k, vals in inspectors.items():
-    print("Solution for Inspector ", k)
-    path = df_paths[df_paths['inspector_id'] == str(k)]
-    path = path.sort_values(by=['departure_time'])
-    print(path.to_string())
-    #path.to_csv('inspector_0_path.csv', index = False)
-
-#print(len(paths))
-
-
-t11= time.time()
-print("Programme Terminated! Took {:.5f} seconds".format(t11-t1))
-
-#print(flow_var_names[:10])
+            f.write(" ".join(arc)+"\n")
+f.close()
