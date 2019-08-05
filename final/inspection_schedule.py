@@ -31,8 +31,7 @@ def extract_inspectors_data(inspectors_file):
 
 
 def main(argv):
-    """Main function
-    """
+    """Main function"""
 
     try:
         # raise error if command-line arguments do not match
@@ -47,7 +46,7 @@ def main(argv):
         max_num_inspectors = int(argv[4])
 
         if not chosen_day in DAYS:
-            raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
+            raise DayNotFound('ERROR: Day not found')
 
         # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspector_file)
