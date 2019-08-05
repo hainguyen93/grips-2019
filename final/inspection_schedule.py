@@ -54,7 +54,7 @@ def main(argv):
 
         # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspector_file)
-        print("Number of inspectors: {}".format(len(inspectors)))
+        print("Inspectors loaded ... number of inspectors: {}".format(len(inspectors)))
 
         # if os.path.exists(file_name):
         #     graph = nx.read_gexf(file_name)
@@ -66,15 +66,24 @@ def main(argv):
 
         flow_var_names = construct_variable_names(all_edges, inspectors)
 
-        T, OD = generate_OD_matrix(deepcopy(graph))
-        with open("OD.pickle","w") as f:
-            pickle.dump(OD, f, protocol=pickle.HIGHEST_PROTOCOL)
-        print("OD saved")
+        shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
+
+        # T, OD = generate_OD_matrix(deepcopy(graph))
+
+        # f = open('dict.txt','w')
+        # f.write(str(OD))
+        # f.close()
+        # print("OD saved")
         # np.save("OD", OD)
         # print("saved OD matrix")
         # save shortest_paths and OD coefficients data
         # save_data("shortest_paths",shortest_paths)
         # save_data("OD", OD)
+        f = open('dict.txt','r')
+        data=f.read()
+        f.close()
+        OD = eval(data)
+        print("OD matrix loaded ...")
 
         add_sinks_and_sources(graph, inspectors, flow_var_names)
 
@@ -109,7 +118,6 @@ def main(argv):
         # add working_hours restriction constraints
         add_time_flow_constraint(graph, model, inspectors, x)
 
-        shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
         # adding dummy variables to get rid of 'min' in objective function
         minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 

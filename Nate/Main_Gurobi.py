@@ -32,7 +32,7 @@ from read_inspector_data import *
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-<<<<<<< HEAD:final/ReformulatedLP.py
+
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
@@ -55,7 +55,7 @@ maxInspectors = 4;
 inspectors = inspectors("GRIPS2019_401.csv")
 
 # Assumption: rate of inspection remains constant
->>>>>>> Nate:Nate/Main_Gurobi.py
+
 KAPPA = 12
 flow_var_names = []
 
@@ -285,7 +285,7 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 
 #Set Parameters:
 
-model.Param.MIPGap = 
+model.Param.MIPGap =
 
 model.optimize()
 model.write("Gurobi_Solution.mps")

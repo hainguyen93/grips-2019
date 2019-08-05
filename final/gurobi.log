@@ -1092,3 +1092,72 @@ Academic license - for non-commercial use only
 Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 16:36:29 2019
 
 Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 17:08:39 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 17:11:48 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 17:12:17 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 17:13:42 2019
+
+Academic license - for non-commercial use only
+Optimize a model with 256797 rows, 437219 columns and 2967488 nonzeros
+Variable types: 10619 continuous, 426600 integer (426600 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 84046 rows and 129055 columns (presolve time = 6s) ...
+Presolve removed 102882 rows and 160000 columns (presolve time = 10s) ...
+Presolve removed 116169 rows and 182763 columns (presolve time = 15s) ...
+Presolve removed 121529 rows and 191663 columns (presolve time = 21s) ...
+Presolve removed 122651 rows and 193430 columns (presolve time = 25s) ...
+Presolve removed 123293 rows and 194545 columns
+Presolve time: 29.60s
+Presolved: 133504 rows, 242674 columns, 1338885 nonzeros
+Variable types: 6250 continuous, 236424 integer (235955 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   3.661872e+05     36s
+  100298    5.8795078e+02   0.000000e+00   1.613875e+08     41s
+  101488    6.2397409e+02   0.000000e+00   9.511207e+07     46s
+  101708    6.3149957e+02   0.000000e+00   1.127255e+08     51s
+  101948    6.3747523e+02   0.000000e+00   1.126468e+08     56s
+  102258    6.4878821e+02   0.000000e+00   2.446848e+08     64s
+  102358    6.5088866e+02   0.000000e+00   1.007674e+08     66s
+  102518    6.5530194e+02   0.000000e+00   5.256420e+08     71s
+  102698    6.6024623e+02   0.000000e+00   4.044520e+08     77s
+  102868    6.6506555e+02   0.000000e+00   1.193048e+08     82s
+  103018    6.6836384e+02   0.000000e+00   3.438196e+08     87s
+  103178    6.7242136e+02   0.000000e+00   9.931691e+08     92s
+  103338    6.7602569e+02   0.000000e+00   3.018075e+08     97s
+  103478    6.7937347e+02   0.000000e+00   1.603154e+09    102s
+  103638    6.8275514e+02   0.000000e+00   3.206090e+08    109s
+  103788    6.8643969e+02   0.000000e+00   2.921131e+08    118s
+  103928    6.8999582e+02   0.000000e+00   2.517776e+08    125s
+  104068    6.9381691e+02   0.000000e+00   7.819980e+08    135s
+  104218    6.9720484e+02   0.000000e+00   3.391580e+08    140s
+  104368    6.9992667e+02   0.000000e+00   2.818287e+08    146s
+  104508    7.0341926e+02   0.000000e+00   1.699443e+08    154s
+  104648    7.0653115e+02   0.000000e+00   2.429605e+08    160s
+  104788    7.0858829e+02   0.000000e+00   2.216066e+08    166s
+  104928    7.1174402e+02   0.000000e+00   1.317757e+08    171s
+  105068    7.1515562e+02   0.000000e+00   1.788611e+08    177s
