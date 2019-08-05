@@ -218,7 +218,7 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
 
 
 
-def add_sinks_and_source_constraint(graph, model, inspectors, x):
+def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x):
     """Add sink/source constraint for each inspector
 
     Attributes:
@@ -248,7 +248,7 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
         else:
             maxWorking.add(source_constr)
 
-    model.addConstr(maxWorking,GRB.LESS_EQUAL,maxInspectors,"Max_Inspector_Constraint")
+    model.addConstr(maxWorking,GRB.LESS_EQUAL,max_num_inspectors,"Max_Inspector_Constraint")
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
@@ -356,10 +356,11 @@ def print_solution_paths(inspectors, x):
     return solution
 
 def total_number_of_passengers_in_system(OD):
-    total = 0
-    for key, num in OD.items():
-        total += num
-    return total
+    return sum(list(OD.values()))
+    #total = 0
+    #for key, num in OD.items():
+        #total += num
+    #return total
 
 def main(argv):
     """main function"""

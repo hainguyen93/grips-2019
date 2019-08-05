@@ -103,7 +103,7 @@ def main(argv):
         add_sinks_and_source_constraint(graph, model, inspectors, x)
 
         # add max number of inspectors working
-        add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
+        add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspectors, x)
 
         # add working_hours restriction constraints
         add_time_flow_constraint(graph, model, inspectors, x)
