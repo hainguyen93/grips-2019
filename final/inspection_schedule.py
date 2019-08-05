@@ -101,10 +101,7 @@ def main(argv):
         add_mass_balance_constraint(graph, model, inspectors, x)
 
         # adding sink/source constraints
-        add_sinks_and_source_constraint(graph, model, inspectors, x)
-
-        # add max number of inspectors working
-        add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspectors, x)
+        add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x)
 
         # add working_hours restriction constraints
         add_time_flow_constraint(graph, model, inspectors, x)
@@ -166,7 +163,7 @@ def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_
     add_mass_balance_constraint(graph, model, inspectors, x)
 
     # adding sink/source constraints
-    add_sinks_and_source_constraint(graph, model, inspectors, x)
+    add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x)
 
     # add working_hours restriction constraints
     add_time_flow_constraint(graph, model, inspectors, x)
