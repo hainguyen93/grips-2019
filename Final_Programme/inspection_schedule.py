@@ -5,6 +5,7 @@ import sys
 import os
 import xml.etree.ElementTree as ET
 import json
+import pandas as pd
 
 from exceptions import *
 from my_xml_parser import *
@@ -53,7 +54,9 @@ def main(argv):
         # list of 6-tuples (from, depart, to, arrival, num passengers, time)
         all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
 
-        graph, flow_var_names = construct_graph(all_edges, inspectors)
+        graph = construct_graph(all_edges)
+
+        flow_var_names = construct_variable_names(all_edges, inspectors)
 
         shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
 
@@ -104,7 +107,11 @@ def main(argv):
 
         # write Solution:
         solution = print_solution_paths(inspectors, x)
-        
+        obj_val = float(model.objVal)
+        denominator = float(total_number_of_passengers_in_system(OD))
+        print("Approximate number of people in the system: {}".format(denominator))
+        percentage = obj_val/denominator*100
+        print("Approximate percentage of people inspected today: {}%".format(percentage))
         # with open("Gurobi_Solution.txt", "w") as f:
         #     f.write(solution)
     except CommandLineArgumentsNotMatch as error:
@@ -112,20 +119,64 @@ def main(argv):
         print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
     except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
         print(error)
+    print("=======================")
+    print("TESTING HEURSTIC SOLVER")
+    print("=======================")
+    heuristic_solver(timetable_file, chosen_day, "more_inspectors.csv","schedule_for_1_inspectors.csv", shortest_paths, OD)
 
-def heuristic_solver(model, inspectors, flow_var_names, x):
+def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_name, shortest_paths, OD):
+    # dictionary of id (key) and base/max_hours (value)
+    inspectors = extract_inspectors_data(inspectors_file)
+    all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+    graph = construct_graph(all_edges)
+    flow_var_names = construct_variable_names(all_edges, inspectors)
+    #================================== START Gurobi ================================================
+    #                           Establish Maximization Problem
+    #================================================================================================
+    t3 = time.time()
+    print("Start Gurobi")
+    model = Model("DB_MIP");
+
+    # adding variables and objective functions
+    print("Adding variables...", end=" ")
+    x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+    M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
+
+    # Adding the objective function coefficients
+    model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+
+    # adding flow conservation constraints
+    add_mass_balance_constraint(graph, model, inspectors, x)
+
+    # adding sink/source constraints
+    add_sinks_and_source_constraint(graph, model, inspectors, x)
+
+    # add working_hours restriction constraints
+    add_time_flow_constraint(graph, model, inspectors, x)
+
+    # adding dummy variables to get rid of 'min' in objective function
+    minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
+
+
     # To solve problems with more inspectors, use solutions from previous problems.
+    schedule = pd.read_csv(schedule_file_name)
+    var_names = [(row.start_station_and_time, row.end_station_and_time, row.inspector_id) for row in schedule]
 
     # add heuristic solutions to solve for more inspectors
     def heuristic_solution(model, where):
         if where == GRB.Callback.MIPNODE:
-            model.cbSolution(flow_var_names, x)
+            model.cbSolution(var_names, [1]*len(var_names))
 
     model.optimize(heuristic_solution)
     model.write("heuristic_LP.lp")
 
-
-
+    # write Solution:
+    solution = print_solution_paths(inspectors, x)
+    obj_val = float(model.objVal)
+    denominator = float(total_number_of_passengers_in_system(OD))
+    print("Approximate number of people in the system: {}".format(denominator))
+    percentage = obj_val/denominator*100
+    print("Approximate percentage of people inspected today: {}%".format(percentage))
 
 
 
