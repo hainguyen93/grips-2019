@@ -670,3 +670,583 @@ Warning: to let Gurobi read it back, use rlp format
 Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 11:47:46 2019
 
 Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:17:30 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:25:56 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:30:39 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:30:59 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:33:49 2019
+
+Academic license - for non-commercial use only
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 39582 rows, 61115 columns and 359729 nonzeros
+Variable types: 10619 continuous, 50496 integer (50496 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 15662 rows and 21964 columns (presolve time = 5s) ...
+Presolve removed 15657 rows and 21959 columns
+Presolve time: 5.06s
+Presolved: 23925 rows, 39156 columns, 188436 nonzeros
+Variable types: 5752 continuous, 33404 integer (32976 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   3.982745e+05      6s
+   28858    5.2733734e+03   0.000000e+00   4.331964e+06     10s
+   33958    5.5578671e+03   0.000000e+00   1.739384e+07     15s
+   37751    2.3638464e+04   0.000000e+00   0.000000e+00     18s
+   37753    2.3639690e+04   0.000000e+00   0.000000e+00     18s
+Extra 2 simplex iterations after uncrush
+Concurrent spin time: 3.10s
+
+Solved with primal simplex
+
+Root relaxation: objective 2.363969e+04, 37753 iterations, 16.24 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 23639.6899    0 1496   -0.00000 23639.6899      -     -   21s
+H    0     0                    4311.1501778 23639.6899   448%     -   22s
+     0     0 22017.1376    0 1398 4311.15018 22017.1376   411%     -   23s
+     0     0 21740.2235    0 1268 4311.15018 21740.2235   404%     -   24s
+     0     0 21737.7660    0 1395 4311.15018 21737.7660   404%     -   24s
+     0     0 21737.4461    0 1428 4311.15018 21737.4461   404%     -   24s
+     0     0 21737.3861    0 1428 4311.15018 21737.3861   404%     -   24s
+     0     0 21372.5032    0 1039 4311.15018 21372.5032   396%     -   26s
+     0     0 20995.1331    0 1466 4311.15018 20995.1331   387%     -   27s
+     0     0 20995.0165    0 1467 4311.15018 20995.0165   387%     -   27s
+     0     0 20320.4761    0 1167 4311.15018 20320.4761   371%     -   28s
+H    0     0                    6119.7090060 20320.4761   232%     -   28s
+H    0     0                    9759.6726389 20320.4761   108%     -   28s
+     0     0 20083.6657    0 1222 9759.67264 20083.6657   106%     -   29s
+     0     0 20083.6166    0 1221 9759.67264 20083.6166   106%     -   29s
+     0     0 19309.0323    0 1407 9759.67264 19309.0323  97.8%     -   31s
+     0     0 19283.5969    0 1209 9759.67264 19283.5969  97.6%     -   31s
+     0     0 19283.4701    0 1270 9759.67264 19283.4701  97.6%     -   31s
+     0     0 19013.3276    0 1185 9759.67264 19013.3276  94.8%     -   32s
+H    0     0                    9864.1328452 19013.3276  92.8%     -   33s
+     0     0 19011.6030    0 1068 9864.13285 19011.6030  92.7%     -   33s
+     0     0 19010.8915    0 1369 9864.13285 19010.8915  92.7%     -   33s
+     0     0 19010.3269    0 1443 9864.13285 19010.3269  92.7%     -   33s
+     0     0 18465.0587    0 1076 9864.13285 18465.0587  87.2%     -   35s
+     0     0 18464.8050    0 1102 9864.13285 18464.8050  87.2%     -   35s
+     0     0          -    0      9864.13285 18464.8050  87.2%     -   36s
+
+Cutting planes:
+  Gomory: 2
+  Cover: 12
+  Implied bound: 1
+  MIR: 47
+  Flow cover: 3
+  GUB cover: 37
+
+Explored 1 nodes (41743 simplex iterations) in 36.63 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 5: 9864.13 9759.67 6119.71 ... -0
+
+Solve interrupted
+Best objective 9.864132845245e+03, best bound 1.846480499906e+04, gap 87.1914%
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:36:27 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:36:48 2019
+
+Academic license - for non-commercial use only
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 39582 rows, 61115 columns and 359729 nonzeros
+Variable types: 10619 continuous, 50496 integer (50496 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 15662 rows and 21964 columns (presolve time = 5s) ...
+Presolve removed 15657 rows and 21959 columns
+Presolve time: 5.33s
+Presolved: 23925 rows, 39156 columns, 188436 nonzeros
+Variable types: 5752 continuous, 33404 integer (32976 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   3.982745e+05      6s
+
+
+Root relaxation: interrupted, 27918 iterations, 3.75 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0        -0.00000 395403.177      -     -    9s
+
+Explored 0 nodes (27918 simplex iterations) in 9.20 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: -0 
+
+Solve interrupted
+Best objective -0.000000000000e+00, best bound 3.954031769101e+05, gap -
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:38:16 2019
+
+Academic license - for non-commercial use only
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 39582 rows, 61115 columns and 359729 nonzeros
+Variable types: 10619 continuous, 50496 integer (50496 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 15662 rows and 21964 columns (presolve time = 6s) ...
+Presolve removed 15657 rows and 21959 columns
+Presolve time: 5.51s
+Presolved: 23925 rows, 39156 columns, 188436 nonzeros
+Variable types: 5752 continuous, 33404 integer (32976 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   3.982745e+05      6s
+   28478    5.2651096e+03   0.000000e+00   3.746396e+06     10s
+   32448    5.4525903e+03   0.000000e+00   3.145684e+05     15s
+   37439    2.4022051e+04   0.000000e+00   4.305559e+07     20s
+   37751    2.3638464e+04   0.000000e+00   0.000000e+00     21s
+   37753    2.3639690e+04   0.000000e+00   0.000000e+00     21s
+Extra 2 simplex iterations after uncrush
+Concurrent spin time: 8.89s
+
+Solved with primal simplex
+
+Root relaxation: objective 2.363969e+04, 37753 iterations, 24.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 23639.6899    0 1496   -0.00000 23639.6899      -     -   30s
+H    0     0                    4311.1501778 23639.6899   448%     -   30s
+     0     0 22017.1376    0 1398 4311.15018 22017.1376   411%     -   32s
+     0     0 21740.2235    0 1268 4311.15018 21740.2235   404%     -   32s
+     0     0 21737.7660    0 1395 4311.15018 21737.7660   404%     -   33s
+     0     0 21737.4461    0 1428 4311.15018 21737.4461   404%     -   33s
+     0     0 21737.3861    0 1428 4311.15018 21737.3861   404%     -   33s
+     0     0 21372.5032    0 1039 4311.15018 21372.5032   396%     -   35s
+     0     0 20995.1331    0 1466 4311.15018 20995.1331   387%     -   36s
+     0     0 20995.0165    0 1467 4311.15018 20995.0165   387%     -   36s
+     0     0 20320.4761    0 1167 4311.15018 20320.4761   371%     -   37s
+H    0     0                    6119.7090060 20320.4761   232%     -   38s
+H    0     0                    9759.6726389 20320.4761   108%     -   38s
+     0     0 20083.6657    0 1222 9759.67264 20083.6657   106%     -   39s
+     0     0 20083.6166    0 1221 9759.67264 20083.6166   106%     -   39s
+     0     0 19309.0323    0 1407 9759.67264 19309.0323  97.8%     -   40s
+     0     0 19283.5969    0 1209 9759.67264 19283.5969  97.6%     -   41s
+     0     0 19283.4701    0 1270 9759.67264 19283.4701  97.6%     -   41s
+     0     0 19013.3276    0 1185 9759.67264 19013.3276  94.8%     -   42s
+H    0     0                    9864.1328452 19013.3276  92.8%     -   42s
+     0     0 19011.6030    0 1068 9864.13285 19011.6030  92.7%     -   42s
+     0     0 19010.8915    0 1369 9864.13285 19010.8915  92.7%     -   43s
+     0     0 19010.3269    0 1443 9864.13285 19010.3269  92.7%     -   43s
+     0     0 18465.0587    0 1076 9864.13285 18465.0587  87.2%     -   44s
+     0     0 18464.8050    0 1102 9864.13285 18464.8050  87.2%     -   45s
+     0     0          -    0      9864.13285 18464.8050  87.2%     -   45s
+
+Cutting planes:
+  Gomory: 2
+  Cover: 12
+  Implied bound: 1
+  MIR: 47
+  Flow cover: 3
+  GUB cover: 37
+
+Explored 1 nodes (41574 simplex iterations) in 45.79 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 5: 9864.13 9759.67 6119.71 ... -0
+
+Solve interrupted
+Best objective 9.864132845245e+03, best bound 1.846480499906e+04, gap 87.1914%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 39582 rows, 61115 columns and 359729 nonzeros
+Variable types: 10619 continuous, 50496 integer (50496 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective 9864.13
+
+Presolve removed 15662 rows and 21964 columns (presolve time = 6s) ...
+Presolve removed 15657 rows and 21959 columns
+Presolve time: 5.84s
+Presolved: 23925 rows, 39156 columns, 188436 nonzeros
+Variable types: 5752 continuous, 33404 integer (32976 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   3.982745e+05      7s
+   27818    5.2490545e+03   0.000000e+00   1.572464e+07     10s
+   31318    5.4373812e+03   0.000000e+00   1.694654e+06     15s
+   36416    2.5455066e+04   0.000000e+00   3.457397e+05     20s
+   40071    2.6242755e+04   0.000000e+00   0.000000e+00     23s
+   40072    2.6242755e+04   0.000000e+00   0.000000e+00     23s
+Extra one simplex iteration after uncrush
+Concurrent spin time: 4.45s
+
+Solved with primal simplex
+
+Root relaxation: objective 2.624276e+04, 40072 iterations, 21.94 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 26242.7555    0 1377 9864.13285 26242.7555   166%     -   28s
+     0     0 26115.8519    0 1629 9864.13285 26115.8519   165%     -   31s
+     0     0 26115.7613    0 1630 9864.13285 26115.7613   165%     -   31s
+     0     0 26115.6044    0 1631 9864.13285 26115.6044   165%     -   32s
+     0     0 26115.2957    0 1634 9864.13285 26115.2957   165%     -   32s
+     0     0 26115.1333    0 1634 9864.13285 26115.1333   165%     -   32s
+     0     0 26115.0347    0 1634 9864.13285 26115.0347   165%     -   32s
+     0     0 26114.9915    0 1634 9864.13285 26114.9915   165%     -   32s
+     0     0 26114.8984    0 1634 9864.13285 26114.8984   165%     -   32s
+     0     0 25932.9966    0 1161 9864.13285 25932.9966   163%     -   35s
+     0     0 25925.4733    0 1166 9864.13285 25925.4733   163%     -   36s
+     0     0 25924.9412    0 1258 9864.13285 25924.9412   163%     -   36s
+     0     0 25924.6943    0 1258 9864.13285 25924.6943   163%     -   36s
+     0     0 25924.6425    0 1258 9864.13285 25924.6425   163%     -   36s
+     0     0 25924.5342    0 1258 9864.13285 25924.5342   163%     -   36s
+     0     0 25924.5212    0 1258 9864.13285 25924.5212   163%     -   36s
+     0     0 25298.3607    0 1610 9864.13285 25298.3607   156%     -   38s
+     0     0 25250.9529    0 1601 9864.13285 25250.9529   156%     -   39s
+     0     0 25250.8473    0 1596 9864.13285 25250.8473   156%     -   40s
+     0     0 24693.8345    0 1236 9864.13285 24693.8345   150%     -   41s
+     0     0 24659.1925    0 1368 9864.13285 24659.1925   150%     -   42s
+     0     0 24647.5387    0 1387 9864.13285 24647.5387   150%     -   42s
+     0     0 24647.4997    0 1387 9864.13285 24647.4997   150%     -   42s
+     0     0          -    0      9864.13285 24647.4997   150%     -   43s
+
+Cutting planes:
+  Gomory: 1
+  Cover: 6
+  MIR: 53
+  Flow cover: 1
+  GUB cover: 30
+  Zero half: 1
+
+Explored 1 nodes (43502 simplex iterations) in 43.63 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 9864.13 
+
+Solve interrupted
+Best objective 9.864132845245e+03, best bound 2.464749971952e+04, gap 149.8699%
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:44:54 2019
+
+Academic license - for non-commercial use only
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 39582 rows, 61115 columns and 359729 nonzeros
+Variable types: 10619 continuous, 50496 integer (50496 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 15657 rows and 21959 columns
+Presolve time: 4.42s
+Presolved: 23925 rows, 39156 columns, 188436 nonzeros
+Variable types: 5752 continuous, 33404 integer (32976 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   11942   -0.0000000e+00   0.000000e+00   2.184738e+06      5s
+   29488    5.2856102e+03   0.000000e+00   6.684909e+06     10s
+   34738    1.6776532e+04   0.000000e+00   2.242159e+05     15s
+   37751    2.3638464e+04   0.000000e+00   0.000000e+00     18s
+   37753    2.3639690e+04   0.000000e+00   0.000000e+00     18s
+Extra 2 simplex iterations after uncrush
+Concurrent spin time: 2.80s
+
+Solved with primal simplex
+
+Root relaxation: objective 2.363969e+04, 37753 iterations, 15.90 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 23639.6899    0 1496   -0.00000 23639.6899      -     -   20s
+H    0     0                    4311.1501778 23639.6899   448%     -   20s
+     0     0 23639.6899    0 1496 4311.15018 23639.6899   448%     -   96s
+
+Cutting planes:
+  Gomory: 1
+  Implied bound: 1
+  MIR: 14
+  Flow cover: 1
+  GUB cover: 6
+
+Explored 1 nodes (37789 simplex iterations) in 96.58 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 2: 4311.15 -0 
+
+Solve interrupted
+Best objective 4.311150177848e+03, best bound 2.363968989669e+04, gap 448.3384%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 39582 rows, 61115 columns and 359729 nonzeros
+Variable types: 10619 continuous, 50496 integer (50496 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective 4311.15
+
+Presolve removed 15657 rows and 21959 columns
+Presolve time: 4.77s
+Presolved: 23925 rows, 39156 columns, 188436 nonzeros
+Variable types: 5752 continuous, 33404 integer (32976 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   3.982745e+05      5s
+   28598    5.2671498e+03   0.000000e+00   3.095733e+06     10s
+   32878    5.5060630e+03   0.000000e+00   3.381121e+05     15s
+
+
+Root relaxation: interrupted, 33749 iterations, 10.85 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0      4311.15018 395403.177  9072%     -   15s
+
+Explored 0 nodes (33749 simplex iterations) in 15.76 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 4311.15 
+
+Solve interrupted
+Best objective 4.311150177848e+03, best bound 3.954031769101e+05, gap 9071.6401%
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug  5 18:47:08 2019
+
+Academic license - for non-commercial use only
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 29928 rows, 44179 columns and 242943 nonzeros
+Variable types: 10619 continuous, 33560 integer (33560 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 12835 rows and 17144 columns (presolve time = 7s) ...
+Presolve removed 12834 rows and 17142 columns
+Presolve time: 7.16s
+Presolved: 17094 rows, 27037 columns, 122358 nonzeros
+Variable types: 4903 continuous, 22134 integer (21715 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   3.923900e+05      8s
+   23161    7.7599951e+03   0.000000e+00   6.992921e+03     10s
+   23493    8.3786273e+03   0.000000e+00   0.000000e+00     10s
+   23495    8.3799353e+03   0.000000e+00   0.000000e+00     10s
+Extra 2 simplex iterations after uncrush
+Concurrent spin time: 1.05s
+
+Solved with primal simplex
+
+Root relaxation: objective 8.379935e+03, 23495 iterations, 4.15 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 8379.93531    0  671   -0.00000 8379.93531      -     -   11s
+     0     0 7908.59011    0  758   -0.00000 7908.59011      -     -  117s
+     0     0 7733.88224    0  788   -0.00000 7733.88224      -     -  221s
+H    0     0                    5313.7177149 7733.88224  45.5%     -  221s
+     0     0 7571.63559    0  611 5313.71771 7571.63559  42.5%     -  323s
+     0     0 7552.47019    0  616 5313.71771 7552.47019  42.1%     -  426s
+     0     0 7552.47019    0  616 5313.71771 7552.47019  42.1%     -  458s
+
+Cutting planes:
+  Gomory: 2
+  Cover: 3
+  Implied bound: 11
+  MIR: 8
+  Flow cover: 1
+  GUB cover: 8
+
+Explored 1 nodes (23853 simplex iterations) in 458.62 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 2: 5313.72 -0 
+
+Solve interrupted
+Best objective 5.313717714929e+03, best bound 7.552470194063e+03, gap 42.1316%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 29928 rows, 44179 columns and 242943 nonzeros
+Variable types: 10619 continuous, 33560 integer (33560 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective 5313.72
+
+Presolve removed 12808 rows and 17100 columns
+Presolve time: 2.47s
+Presolved: 17120 rows, 27079 columns, 121714 nonzeros
+Variable types: 4952 continuous, 22127 integer (21721 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   23136    1.0011576e+04   0.000000e+00   1.466933e+05      5s
+   26071    1.8123997e+04   0.000000e+00   0.000000e+00      6s
+   26071    1.8123997e+04   0.000000e+00   0.000000e+00      6s
+Concurrent spin time: 0.75s
+
+Solved with primal simplex
+
+Root relaxation: objective 1.812400e+04, 26071 iterations, 4.47 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 18123.9968    0  959 5313.71771 18123.9968   241%     -    7s
+     0     0 18123.9968    0  959 5313.71771 18123.9968   241%     -   34s
+
+Cutting planes:
+  Gomory: 3
+  Implied bound: 2
+  MIR: 10
+  Flow cover: 4
+  GUB cover: 4
+
+Explored 1 nodes (26087 simplex iterations) in 34.64 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 5313.72 
+
+Solve interrupted
+Best objective 5.313717714929e+03, best bound 1.812399679251e+04, gap 241.0794%
