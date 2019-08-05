@@ -63,8 +63,6 @@ def main(argv):
 
         flow_var_names = construct_variable_names(all_edges, inspectors)
 
-        shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
-
         T, OD = generate_OD_matrix(deepcopy(graph))
 
         # save shortest_paths and OD coefficients data
@@ -105,6 +103,7 @@ def main(argv):
         # add working_hours restriction constraints
         add_time_flow_constraint(graph, model, inspectors, x)
 
+        shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
         # adding dummy variables to get rid of 'min' in objective function
         minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
@@ -115,10 +114,12 @@ def main(argv):
         # write Solution:
         solution  = print_solution_paths(inspectors, x)
 
-        with open(output_file, "w") as f:
-            f.write(solution)
 
-        solution = print_solution_paths(inspectors, x)
+
+        # with open(output_file, "w") as f:
+        #     f.write(solution)
+
+        # post analysis
         obj_val = float(model.objVal)
         denominator = float(total_number_of_passengers_in_system(OD))
         print("Approximate number of people in the system: {}".format(denominator))
@@ -132,12 +133,14 @@ def main(argv):
         print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
     except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
         print(error)
+
     print("=======================")
     print("TESTING HEURSTIC SOLVER")
     print("=======================")
-    heuristic_solver(timetable_file, chosen_day, "more_inspectors.csv","schedule_for_1_inspectors.csv", shortest_paths, OD)
 
-def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_name, shortest_paths, OD):
+    heuristic_solver(timetable_file, chosen_day, "more_inspectors.csv","schedule_for_1_inspectors.csv", shortest_paths, OD, max_num_inspectors)
+
+def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_name, shortest_paths, OD, max_num_inspectors):
     # dictionary of id (key) and base/max_hours (value)
     inspectors = extract_inspectors_data(inspectors_file)
     all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
@@ -180,7 +183,8 @@ def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_
     def heuristic_solution(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(var_names, [1]*len(var_names))
-        # add a time constraint here too
+
+    model.optimize(heuristic_solution)
 
     model.optimize(heuristic_solution)
     model.write("heuristic_LP.lp")
