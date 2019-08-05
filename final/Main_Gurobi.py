@@ -217,7 +217,7 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
 
 
 
-def add_sinks_and_source_constraint(graph, model, inspectors, x):
+def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x):
     """Add sink/source constraint for each inspector
 
     Attributes:
@@ -247,7 +247,7 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
         else:
             maxWorking.add(source_constr)
 
-    model.addConstr(maxWorking,GRB.LESS_EQUAL,maxInspectors,"Max_Inspector_Constraint")
+    model.addConstr(maxWorking,GRB.LESS_EQUAL,max_num_inspectors,"Max_Inspector_Constraint")
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
