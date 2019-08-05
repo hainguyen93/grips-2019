@@ -44,11 +44,7 @@ def main(argv):
         inspector_file = argv[1]
         chosen_day = argv[2]
         output_file = argv[3]
-<<<<<<< HEAD:final/inspection_schedule.py
-        # options = argv[4]
-	max_num_inspectors = int(argv[4])
-=======
->>>>>>> ruby:Final_Programme/inspection_schedule.py
+        max_num_inspectors = int(argv[4])
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue,...)')
@@ -56,6 +52,11 @@ def main(argv):
         # dictionary of id (key) and base/max_hours (value)
         inspectors = extract_inspectors_data(inspector_file)
 
+        file_name = timetable_file+"_graph.gexf"
+        graph = nx.DiGraph()
+        # if os.path.exists(file_name):
+        #     graph = nx.read_gexf(file_name)
+        # else:
         # list of 6-tuples (from, depart, to, arrival, num passengers, time)
         all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
 
@@ -65,21 +66,20 @@ def main(argv):
 
         shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
 
-        T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)
+        T, OD = generate_OD_matrix(deepcopy(graph))
 
         # save shortest_paths and OD coefficients data
         # save_data("shortest_paths",shortest_paths)
         # save_data("OD", OD)
 
         add_sinks_and_sources(graph, inspectors, flow_var_names)
-
+        nx.write_gexf(graph, file_name)
+        print("graph.gexf has been saved.")
         # freeze graph to prevent further changes
         graph = nx.freeze(graph)
 
+
         # save_graph(graph, "graph.gexf")
-        file_name = ""
-        nx.write_gexf(graph, file_name)
-        print("graph.gexf has been saved.")
         # save_variable_names(flow_var_names, "flow_var_names.npy")
 
         #================================== START Gurobi ================================================
@@ -103,8 +103,8 @@ def main(argv):
         # adding sink/source constraints
         add_sinks_and_source_constraint(graph, model, inspectors, x)
 
-	# add max number of inspectors working
-	add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
+        # add max number of inspectors working
+        add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
 
         # add working_hours restriction constraints
         add_time_flow_constraint(graph, model, inspectors, x)
@@ -117,13 +117,11 @@ def main(argv):
         model.write("Inspection_LP.lp")
 
         # write Solution:
-<<<<<<< HEAD:final/inspection_schedule.py
         solution  = print_solution_paths(inspectors, x)
 
         with open(output_file, "w") as f:
             f.write(solution)
 
-=======
         solution = print_solution_paths(inspectors, x)
         obj_val = float(model.objVal)
         denominator = float(total_number_of_passengers_in_system(OD))
@@ -132,7 +130,7 @@ def main(argv):
         print("Approximate percentage of people inspected today: {}%".format(percentage))
         # with open("Gurobi_Solution.txt", "w") as f:
         #     f.write(solution)
->>>>>>> ruby:Final_Programme/inspection_schedule.py
+
     except CommandLineArgumentsNotMatch as error:
         print(error)
         print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
@@ -182,6 +180,7 @@ def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_
     var_names = [(row.start_station_and_time, row.end_station_and_time, row.inspector_id) for row in schedule]
 
     # add heuristic solutions to solve for more inspectors
+    t4 = time.time()
     def heuristic_solution(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(var_names, [1]*len(var_names))

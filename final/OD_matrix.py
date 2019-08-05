@@ -86,26 +86,28 @@ def multiproportional(arc_paths):
 
 
 def is_convergence(V_hat, V):
-    """ Check if the multi-proportional does converge    
+    """ Check if the multi-proportional does converge
     """
     return (np.abs(V_hat - V)/np.abs(V_hat) < EPSILON).all()
 
 
-def generate_OD_matrix(nodes, shortest_paths, arc_paths):
+def generate_OD_matrix(graph):
     '''
     This will generate a sparse matrix of the OD generate_OD_matrix.
     Given the X vector and arc_paths, all non-zero entries will be returned in
     a dictionary whose key is the arc and value is the number of passengers of
     that kind.
     '''
-    
+
     print("Estimating OD Matrix ...", end = " ")
-    t1 = time.time()        
-        
+    t1 = time.time()
+
+    nodes = graph.nodes()
     N = len(nodes)
     nod_idx = {node: i for i,node in enumerate(nodes)}
-    
-    #shortest_paths, arc_paths = create_arc_paths(graph)
+
+    shortest_paths, arc_paths = create_arc_paths(graph)
+
     X = multiproportional(arc_paths)
     T = dok_matrix((N,N))
     arc_idx = {arc: i for i,arc in enumerate(arc_paths)}
@@ -123,7 +125,7 @@ def generate_OD_matrix(nodes, shortest_paths, arc_paths):
                 T[ nod_idx[source] , nod_idx[sink] ] = np.round(X_a)
                 # populate a dictionary of the non-zero entries too
                 OD[(source, sink)] = np.round(X_a)
-                
+
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
     return T, OD
