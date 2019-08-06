@@ -271,7 +271,7 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
         sink = "sink_" + str(k)
         source = "source_" + str(k)
 
-        sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
+        #sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
         #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
 
         source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
@@ -447,16 +447,19 @@ def main(argv):
         sys.exit()
 
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-                    2 : {"base": 'AHAR', "working_hours": 6, "rate": 15},
-                    3 : {"base": 'FGE', "working_hours": 8, "rate": 10}
-                    # 4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
+                   1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+                   2 : {"base": 'RDRM', "working_hours": 6, "rate": 15},
+                   3 : {"base": 'HH', "working_hours": 8, "rate": 10}
+                   4 : {"base": 'RDRM', "working_hours": 7, "rate": 10},
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
 
     depot_inspector_dict = create_depot_inspectors_dict(inspectors)
-
-    max_num_inspectors = int(argv[0]) if int(argv[0]) <= len(inspectors) else len(inspectors)
+    
+    # upper-bound max_num_inspectors by number of inspectors
+    max_num_inspectors = int(argv[0])
+    if max_num_inspectors > len(inspectors):
+        max_num_inspectors = len(inspectors)
 
     input_dir = 'Mon_Arcs.txt'
 
@@ -465,9 +468,10 @@ def main(argv):
     # OD Estimation
     shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
     # T, OD = generate_OD_matrix(graph)
-    f = open('../final/dict.txt','r')
-    data=f.read()
-    f.close()
+    
+    with open('../final/dict.txt','r') as f:
+        data=f.read()
+    
     OD = eval(data)
     print("OD matrix loaded ...")
 
