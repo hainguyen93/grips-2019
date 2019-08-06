@@ -342,7 +342,7 @@ def print_solution_paths(inspectors, x):
     for k in inspectors:
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
-            arcs = x.select((start,'*',k))
+            arcs = x.select(start,'*',k)
             match = [x for x in arcs if x.getAttr("x") > 0.5]
             arc = match[0].getAttr("VarName").split(",")
             arc[0] = arc[0].split("[")[1]
@@ -406,6 +406,36 @@ def update_all_var_lists(known_vars, unknown_vars, x):
     """Update the lists of variables
     """
     for inspector_id in unknown_vars[:]:
+<<<<<<< HEAD
+=======
+        if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
+            known_vars.append(inspector_id)
+            #unknown_vars.remove(inspector_id) --- Don't need anymore
+            # find base 'key' where inspector_id lives, in order to delete from depot_dict:
+            inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
+
+            # now remove it from depot dict:
+            depot_dict[inspector_id_base[0]].remove(inspector_id)
+
+    # update unknown and uncare vars:
+    unknown_vars = []
+    uncare_vars = []
+    for inspectors in depot_dict.values():
+        if len(inspectors) > delta:
+            unknown_vars = unknown_vars + inspectors[:delta]
+            uncare_vars = uncare_vars + inspectors[delta:]
+        else:
+            unknown_vars = unknown_vars + inspectors
+    return unknown_vars, uncare_vars
+
+
+
+            #all_arcs = x.select('*', '*', inspector_id)
+            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
+    #=========================================================================================
+
+    '''for inspector_id in unknown_vars[:]:
+>>>>>>> 2a15574ab12be2874eafb7dd43ceed2eb94aeb56
         start = "source_{}".format(inspector_id)
         source_arcs = x.select(start, '*', inspector_id)
         source_sols = [clean_up_sol(arc.getAttr('x')) for arc in source_arcs]
@@ -525,7 +555,7 @@ def main(argv):
     uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
     delta = 1 # incremental number of inspector schedules to make
-    start = 1 # number of inspector schedules to start with
+    start = 0 # number of inspector schedules to start with
 
     prev_sols = {}
 
@@ -563,10 +593,10 @@ def main(argv):
         update_all_var_lists(known_vars, unknown_vars, x)
 
     # write Solution:
-    solution  = print_solution_paths(inspectors, x)
+    solution  = print_solution_paths(known_vars, x)
 
     with open("Gurobi_Solution.txt", "w") as f:
-        f.write(solution)
+        f.write(solution.to_string())
 
 
 
