@@ -377,7 +377,7 @@ def print_solution_paths(inspectors, x):
 
 def create_depot_inspectors_dict(inspectors):
     """Create a new dict with keys being depot and value being a list of
-    2-tuples (inspector_id, max_working_hours), sorted in descending order according
+    inspector_id, sorted in descending order according
     to the max_working_hours
 
     Attributes:
@@ -392,7 +392,7 @@ def create_depot_inspectors_dict(inspectors):
 
     for _, val in res.items():
         val.sort(key=lambda x: x[1], reverse=True)
-    return res
+    return {k:[i[0] for i in val] for k, val in res.items()}
 
 
 
@@ -408,7 +408,7 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_var
 
     for depot, val in depot_dict.items():
         count = 0
-        for (inspector_id, max_hours) in val:
+        for inspector_id in val:
             if inspector_id in known_vars:
                 continue
             if count < delta:
