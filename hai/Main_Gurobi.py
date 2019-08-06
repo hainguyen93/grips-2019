@@ -255,7 +255,7 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
 
 
 def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspectors, x):
-    """Add sink/source constraint for each inspector
+    """Adding a maximum number of inspectors constraint
 
     Attributes:
         graph : directed graph
@@ -268,17 +268,9 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
     t1 = time.time()
 
     for k, vals in inspectors.items():
-        sink = "sink_" + str(k)
         source = "source_" + str(k)
 
-        sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
-        #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
-
         source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
-        #sink_constr.add(source_constr) #combine
-
-        #model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
-        #model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
 
         if k == 0:
             maxWorking = source_constr
@@ -340,7 +332,6 @@ def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
 
     for (u, v), path in all_paths.items():
         if not ("source_" in u+v or "sink_" in u+v):
-
             indices = [M[u,v]] + [x[i,j,k] for i,j in zip(path, path[1:]) for k in inspectors]
             values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
 
@@ -401,9 +392,10 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_var
     from each depot
 
     Attributes:
-        depot_dict : dict of depot as keys and (inspector_id, max_hours) as values
+        depot_dict : dict of depot as keys and list of (inspector_id, max_hours) as values
         delta : maximum number of inspectors drawn from each depot
         known_vars : list of vars whose values are known (solved)
+        uncare_vars : list of vars whose values are made 0 (do not contribute to maximum inspection number)
     """
 
     for depot, val in depot_dict.items():
@@ -434,11 +426,8 @@ def update_all_var_lists(known_vars, unknown_vars, x):
             #all_arcs = x.select('*', '*', inspector_id)
             #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
 
-
-
 def clean_up_sol(x):
     return 1 if x > 0.5 else 0
-
 
 def main(argv):
     """main function"""
@@ -504,19 +493,22 @@ def main(argv):
     # adding dummy variables to get rid of 'min' in objective function
     minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
+    # adding a max number of inspectors constraint
     add_max_num_inspectors_constraint(graph, model, inspectors, 1, x)
 
     known_vars = []  # vars with known solutions
     unknown_vars = []  # vars currently in the model
     uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
-    delta = 1
-    start = 1
+    delta = 1 # incremental number of inspector schedules to make
+    start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
     #curr_sol = []
 
-    model.write("testing_LP.lp")
+    # important for saving constraints and variables
+    model.write("Scheduling.rlp")
+    model.setParam('MIPGap', 0.05)
 
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
@@ -525,7 +517,11 @@ def main(argv):
     for i in range(start, max_num_inspectors, delta):
 
         select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars, unknown_vars, uncare_vars)
-
+        print(known_vars)
+        print("========")
+        print(unknown_vars)
+        print("========")
+        print(uncare_vars)
         for uncare_inspector_id in uncare_vars:
             all_vars = x.select('*', '*', uncare_inspector_id)
             prev_sols.update({arc.getAttr('VarName'):0 for arc in all_vars})
@@ -535,7 +531,7 @@ def main(argv):
         constr.setAttr(GRB.Attr.RHS, i)
 
         model.update() # implement all pending changes
-        model.write("gurobi_model_{}.lp".format(i))
+        model.write("gurobi_model_iteration_{}.rlp".format(i))
         model.optimize(mycallback)
 
         update_all_var_lists(known_vars, unknown_vars, x)
