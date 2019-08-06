@@ -242,13 +242,6 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
         model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
         model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
 
-        #if k == 0:
-            #maxWorking = source_constr
-        #else:
-            #maxWorking.add(source_constr)
-
-    #model.addConstr(maxWorking, GRB.LESS_EQUAL, max_num_inspectors,"Max_Inspector_Constraint")
-
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
@@ -269,9 +262,6 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
 
     for k, vals in inspectors.items():
         source = "source_" + str(k)
-
-        #sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
-        #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
 
         source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
 
@@ -475,18 +465,10 @@ def main(argv):
 
     # start Gurobi
     print("Start Gurobi")
-
     model = Model("DB_MIP");
 
     # adding variables and objective functions
-    print("Adding variables...", end=" ")
-
-    x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
-
-    M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
-
-    # Adding the objective function coefficients
-    model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+    x, M = add_vars_and_obj_function(model, flow_var_names, OD)
 
     # adding flow conservation constraints
     add_mass_balance_constraint(graph, model, inspectors, x)
@@ -511,7 +493,6 @@ def main(argv):
     start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
-    #curr_sol = []
 
     # important for saving constraints and variables
     model.write("Scheduling.rlp")
@@ -543,7 +524,7 @@ def main(argv):
 
         model.update() # implement all pending changes
         model.write("gurobi_model_iteration_{}.rlp".format(i))
-        # print(prev_sols)
+
         model.optimize(mycallback)
 
         update_all_var_lists(known_vars, unknown_vars, x)
