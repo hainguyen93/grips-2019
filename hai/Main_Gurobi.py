@@ -346,7 +346,7 @@ def print_solution_paths(inspectors, x):
     for k in inspectors:
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
-            arcs = x.select((start,'*',k))
+            arcs = x.select(start,'*',k)
             match = [x for x in arcs if x.getAttr("x") > 0.5]
             arc = match[0].getAttr("VarName").split(",")
             arc[0] = arc[0].split("[")[1]
@@ -391,7 +391,14 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_var
         uncare_vars : list of vars whose values are made 0 (do not contribute to maximum inspection number)
     """
 
+<<<<<<< HEAD
     for depot, val in depot_dict.items():
+=======
+    return unknown_vars, uncare_vars
+#==========================================================================================
+
+    '''for depot, val in depot_dict.items():
+>>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
         count = 0
         for inspector_id in val:
             if inspector_id in known_vars:
@@ -406,10 +413,44 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_var
 
 
 
+<<<<<<< HEAD
 def update_all_var_lists(known_vars, unknown_vars, x):
+=======
+def update_all_var_lists(unknown_vars, known_vars,depot_dict, x, delta):
+>>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
     """Update the lists of variables
     """
     for inspector_id in unknown_vars[:]:
+<<<<<<< HEAD
+=======
+        if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
+            known_vars.append(inspector_id)
+            #unknown_vars.remove(inspector_id) --- Don't need anymore
+            # find base 'key' where inspector_id lives, in order to delete from depot_dict:
+            inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
+
+            # now remove it from depot dict:
+            depot_dict[inspector_id_base[0]].remove(inspector_id)
+
+    # update unknown and uncare vars:
+    unknown_vars = []
+    uncare_vars = []
+    for inspectors in depot_dict.values():
+        if len(inspectors) > delta:
+            unknown_vars = unknown_vars + inspectors[:delta]
+            uncare_vars = uncare_vars + inspectors[delta:]
+        else:
+            unknown_vars = unknown_vars + inspectors
+    return unknown_vars, uncare_vars
+
+
+
+            #all_arcs = x.select('*', '*', inspector_id)
+            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
+    #=========================================================================================
+
+    '''for inspector_id in unknown_vars[:]:
+>>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
         start = "source_{}".format(inspector_id)
         source_arcs = x.select(start, '*', inspector_id)
         source_sols = [clean_up_sol(arc.getAttr('x')) for arc in source_arcs]
@@ -527,7 +568,7 @@ def main(argv):
     uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
     delta = 1 # incremental number of inspector schedules to make
-    start = 1 # number of inspector schedules to start with
+    start = 0 # number of inspector schedules to start with
 
     prev_sols = {}
 
@@ -544,6 +585,10 @@ def main(argv):
 
 
     t = time.time()
+<<<<<<< HEAD
+=======
+    unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta) #initial list fill
+>>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
     for i in range(start, max_num_inspectors, delta):
 
         select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars, unknown_vars, uncare_vars)
@@ -566,16 +611,20 @@ def main(argv):
 
         model.optimize(mycallback)
 
+<<<<<<< HEAD
         update_all_var_lists(known_vars, unknown_vars, x)
+=======
+        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta)
+>>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
 
 
     #model.write("Gurobi_Solution.lp")
 
     # write Solution:
-    solution  = print_solution_paths(inspectors, x)
+    solution  = print_solution_paths(known_vars, x)
 
     with open("Gurobi_Solution.txt", "w") as f:
-        f.write(solution)
+        f.write(solution.to_string())
 
 
 
