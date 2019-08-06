@@ -104,48 +104,6 @@ def construct_variable_names(all_edges, inspectors):
         flow_var_names.append([(start, end, k) for k in inspectors])
     flat_list = [item for sublist in flow_var_names for item in sublist]
     return flat_list
-#
-# def save_graph(graph, file_name):
-#     nx.write_gexf(graph, file_name)
-#     print("graph.gexf has been saved.")
-#
-#
-#
-# def load_graph(file_name):
-#     print("graph.gexf has been loaded.")
-#     return nx.read_gexf(file_name)
-#
-# def save_data(name, dict):
-#     """ Save data to json objects
-#
-#     Attributes:
-#         name            : string name of object
-#         dict            : dictionary to be saved
-#     """
-#     # save shortest_paths and OD to files to be read in again
-#     with open(name+".json", "w") as f:
-#         json.dump(dict, f)
-#     print(name+".json has been saved.")
-#
-# def load_data(name):
-#     """ Load saved data from json files
-#
-#     Attributes:
-#         name            : string name of object
-#     """
-#     data = {}
-#     with open(name+".json", "r") as f:
-#         data = json.load(f)
-#     print(name+'.json has been loaded.')
-#     return data
-#
-# def save_variable_names(obj, name):
-#     np.save(name, obj)
-#     print(name+" has been saved." )
-#
-# def load_variable_names(name):
-#     print(name+" has been loaded.")
-#     return np.load(name)
 
 def add_sinks_and_sources(graph, inspectors, flow_var_names):
     """Add sinks/sources (for each inspector) to the graph
@@ -216,8 +174,6 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
-
-
 def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x):
     """Add sink/source constraint for each inspector
 
@@ -253,8 +209,6 @@ def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
-
-
 def add_time_flow_constraint(graph, model, inspectors, x):
     """Add time flow constraint (maximum number of working hours)
 
@@ -279,8 +233,6 @@ def add_time_flow_constraint(graph, model, inspectors, x):
 
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
-
-
 
 def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
     """Add dummy variables to get rid of 'min' operators
@@ -313,8 +265,6 @@ def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
 
-
-
 def print_solution_paths(inspectors, x):
     """Print solutions
     Attributes:
@@ -337,8 +287,6 @@ def print_solution_paths(inspectors, x):
                                         'inspector_id':k}, ignore_index=True)
     solution.to_csv("schedule_for_{}_inspectors.csv".format(len(inspectors)))
     return solution
-
-
 
 def main(argv):
     """main function"""

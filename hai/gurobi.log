@@ -4757,3 +4757,9 @@ Solution count 2: 23701.3 23701.3
 
 Solve interrupted
 Best objective 2.370128384772e+04, best bound 3.296500501858e+04, gap 39.0853%
+
+Gurobi 8.1.1 (mac64, Python) logging started Tue Aug  6 12:26:01 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.1
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001

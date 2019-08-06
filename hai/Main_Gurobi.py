@@ -436,22 +436,19 @@ def update_all_var_lists(known_vars, unknown_vars,depot_dict, x, delta):
             unknown_vars.append(inspectors[:delta])
         else:
             unknown_vars.append(inspectors)
-
-
-
             #all_arcs = x.select('*', '*', inspector_id)
             #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
     #=========================================================================================
-
-    '''for inspector_id in unknown_vars[:]:
-        start = "source_{}".format(inspector_id)
-        source_arcs = x.select(start, '*', inspector_id)
-        source_sols = [clean_up_sol(arc.getAttr('x')) for arc in source_arcs]
-        if sum(source_sols) == 1:  # inspector involves in solution
-            known_vars.append(inspector_id)
-            unknown_vars.remove(inspector_id)
-            #all_arcs = x.select('*', '*', inspector_id)
-            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})'''
+    #
+    # '''for inspector_id in unknown_vars[:]:
+    #     start = "source_{}".format(inspector_id)
+    #     source_arcs = x.select(start, '*', inspector_id)
+    #     source_sols = [clean_up_sol(arc.getAttr('x')) for arc in source_arcs]
+    #     if sum(source_sols) == 1:  # inspector involves in solution
+    #         known_vars.append(inspector_id)
+    #         unknown_vars.remove(inspector_id)
+    #         #all_arcs = x.select('*', '*', inspector_id)
+    #         #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})'''
 
 def update_max_inspectors_constraint(model, new_max_inspectors):
     """ Update the max_num_inspectors in the model constraint named
