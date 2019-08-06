@@ -41,7 +41,6 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
               }
 
-=======
 #inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 10},
               #1 : {"base": 'HH', "working_hours": 8, "rate": 10},
               #2 : {"base": 'AHAR', "working_hours": 8, "rate": 10},
@@ -49,7 +48,7 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               #4 : {"base": 'HSOR', "working_hours": 8, "rate": 10},
               #5 : {"base": 'RM', 'working_hours': 8, 'rate':10}
               #}
-maxInspectors = 4;
+maxInspectors = 10;
 
 
 inspectors = inspectors("GRIPS2019_401.csv")
@@ -285,7 +284,8 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 
 #Set Parameters:
 
-model.Param.MIPGap =
+model.setParam("MIPGap",.05)
+#model.setParam("MIPFocus",1)
 
 model.optimize()
 model.write("Gurobi_Solution.mps")
@@ -312,3 +312,20 @@ with open("Gurobi_Solution.txt", "w") as f:
 
             f.write(" ".join(arc)+"\n")
 f.close()
+
+def setSolution(x,inspectors,delta):
+    prevSolution = [z for z in x if z.getAttr("x") == 1]
+    zeros = []
+
+    for base in inspectors.keys():
+        for(u,v) in inspectors[base][:delta+1]:
+            if prevSolution.select('*','*',u):
+                inspectors[base].remove((u,v))
+        for (u,v) in inspectors[base][delta:]:
+            zeros.append(x.select('*','*',u))
+
+    solution = prevSolution + zeros
+    vals = [1]*len(prevSolution) + [0]* len(zeros)
+
+    return solution, vals, inspectors
+
