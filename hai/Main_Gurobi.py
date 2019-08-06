@@ -363,7 +363,7 @@ def print_solution_paths(inspectors, x):
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
             arcs = x.select((start,'*',k))
-            match = [x for x in arcs if abs(x.getAttr("x")-1) < 0.1]
+            match = [x for x in arcs if x.getAttr("x") > 0.5]
             arc = match[0].getAttr("VarName").split(",")
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
