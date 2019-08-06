@@ -1,12 +1,17 @@
+import numpy as np
+
 def inspectors(filename):
     Inspectors = {}
     with open(filename,'r') as f:
         f.readline()
-        i = 0
+        numInspectors=0
         for line in f.readlines():
             info = line.split(",")
-            #for j in range(int(info[1])):
-            Inspectors[i] = {"base": info[0].split(" ")[0], "working_hours": 6, "rate": 10}
-            i += 1
+            base = info[0].split(" ")[0]
+            Inspectors[base] = []
+            for j in range(int(info[1])):
+                Inspectors[base].append((numInspectors,np.random.randint(4,9)))
+                numInspectors+=1
+            Inspectors[base].sort(key=lambda x: x[1])
 
-    return Inspectors
+    return Inspectors, numInspectors
