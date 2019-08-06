@@ -333,6 +333,7 @@ def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
 
 def print_solution_paths(inspectors, x):
     """Print solutions
+    
     Attributes:
         inspectors : dict of inspectors
         x : list of binary decision variables
@@ -359,6 +360,7 @@ def create_depot_inspectors_dict(inspectors):
     """Create a new dict with keys being depot and value being a list of
     inspector_id, sorted in descending order according
     to the max_working_hours
+    
     Attributes:
         inspectors : dict of inspectors
     """
@@ -378,13 +380,13 @@ def create_depot_inspectors_dict(inspectors):
 def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_vars, uncare_vars):
     """Select the (delta) inspectors with the largest number of working hours
     from each depot
+    
     Attributes:
         depot_dict : dict of depot as keys and list of (inspector_id, max_hours) as values
         delta : maximum number of inspectors drawn from each depot
         known_vars : list of vars whose values are known (solved)
         uncare_vars : list of vars whose values are made 0 (do not contribute to maximum inspection number)
     """
-
     for depot, val in depot_dict.items():
         count = 0
         for inspector_id in val:
@@ -416,11 +418,11 @@ def update_all_var_lists(known_vars, unknown_vars, x):
 def update_max_inspectors_constraint(model, new_max_inspectors):
     """ Update the max_num_inspectors in the model constraint named
     'Max_Inspector_Constraint', and also write the lp model to a file
+    
     Attributes:
         model : Gurobi model
         new_max_inspectors : new upper bound on maximum number of inspectors
     """
-
     constr = model.getConstrByName("Max_Inspector_Constraint")
     constr.setAttr(GRB.Attr.RHS, new_max_inspectors)
     model.update() # implement all pending changes
@@ -430,6 +432,7 @@ def update_max_inspectors_constraint(model, new_max_inspectors):
 
 def add_vars_and_obj_function(model, flow_var_names, OD):
     """Adding variables and objective function to model
+    
     Attributes:
         model : Gurobi model
         flow_var_names : list of binary variables
