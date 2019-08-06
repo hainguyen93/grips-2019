@@ -380,7 +380,7 @@ def create_depot_inspectors_dict(inspectors):
 
 
 
-def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_vars, uncare_vars):
+def select_inspectors_from_each_depot(depot_dict, delta, known_vars):#, unknown_vars, uncare_vars):
     """Select the (delta) inspectors with the largest number of working hours
     from each depot
 
@@ -390,8 +390,18 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_var
         known_vars : list of vars whose values are known (solved)
         uncare_vars : list of vars whose values are made 0 (do not contribute to maximum inspection number)
     """
-
+    #Nate's Modification:
     for depot, val in depot_dict.items():
+        for inspector_id in val[:delta]:
+            if inspector_id in known_vars:
+                val.remove(inspector_id)
+    unknown_vars = [val[:delta] for val in depot_dict.values()]
+    uncare_vars = [val[delta+1:] for val in depot_dict.values()]
+
+    return unkown_vars, uncare_vars
+#==========================================================================================
+
+    '''for depot, val in depot_dict.items():
         count = 0
         for inspector_id in val:
             if inspector_id in known_vars:
@@ -402,14 +412,38 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_var
                     uncare_vars.remove(inspector_id)  # remove from don't care vars
                 count += 1
             else:
-                break
+                break'''
 
 
 
-def update_all_var_lists(known_vars, unknown_vars, x):
+def update_all_var_lists(known_vars, unknown_vars,depot_dict, x, delta):
     """Update the lists of variables
     """
+    #=======================Nate's mod===================================================
     for inspector_id in unknown_vars[:]:
+        if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
+            known_vars.append(inspector_id)
+            #unknown_vars.remove(inspector_id) --- Don't need anymore
+            # find base 'key' where inspector_id lives, in order to delete from depot_dict:
+            inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
+
+            # now remove it from depot dict:
+            depot_dict[inspector_id_base[0]].remove(inspector_id)
+
+    # update unknown and uncare vars:
+    for inspectors in depot_dict.values():
+        if len(inspectors) > delta:
+            unknown_vars.append(inspectors[:delta])
+        else:
+            unknown_vars.append(inspectors)
+
+
+
+            #all_arcs = x.select('*', '*', inspector_id)
+            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
+    #=========================================================================================
+
+    '''for inspector_id in unknown_vars[:]:
         start = "source_{}".format(inspector_id)
         source_arcs = x.select(start, '*', inspector_id)
         source_sols = [clean_up_sol(arc.getAttr('x')) for arc in source_arcs]
@@ -417,7 +451,7 @@ def update_all_var_lists(known_vars, unknown_vars, x):
             known_vars.append(inspector_id)
             unknown_vars.remove(inspector_id)
             #all_arcs = x.select('*', '*', inspector_id)
-            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
+            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})'''
 
 def update_max_inspectors_constraint(model, new_max_inspectors):
     """ Update the max_num_inspectors in the model constraint named
@@ -543,9 +577,10 @@ def main(argv):
 
 
     t = time.time()
+    update_all_var_lists(known_vars, unknown_vars, x, delta) #initial list fill
     for i in range(start, max_num_inspectors, delta):
 
-        select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars, unknown_vars, uncare_vars)
+        #unknown_vars, uncare_vars = select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars):#, unknown_vars, uncare_vars)
         print(known_vars)
         print("========")
         print(unknown_vars)
@@ -565,7 +600,7 @@ def main(argv):
 
         model.optimize(mycallback)
 
-        update_all_var_lists(known_vars, unknown_vars, x)
+        update_all_var_lists(known_vars, unknown_vars, x, delta)
 
 
     #model.write("Gurobi_Solution.lp")
