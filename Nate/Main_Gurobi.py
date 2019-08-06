@@ -286,8 +286,12 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 #Set Parameters:
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 model.setParam("MIPGap",.05)
 #model.setParam("MIPFocus",1)
+=======
+model.Param.MIPGap = 
+>>>>>>> master
 =======
 model.Param.MIPGap = 
 >>>>>>> master
