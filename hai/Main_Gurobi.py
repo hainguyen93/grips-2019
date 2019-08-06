@@ -520,7 +520,7 @@ def main(argv):
     uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
     delta = 1 # incremental number of inspector schedules to make
-    start = 0 # number of inspector schedules to start with
+    start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
 
