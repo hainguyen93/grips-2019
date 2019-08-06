@@ -241,14 +241,7 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
 
         model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
         model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
-
-        #if k == 0:
-            #maxWorking = source_constr
-        #else:
-            #maxWorking.add(source_constr)
-
-    #model.addConstr(maxWorking, GRB.LESS_EQUAL, max_num_inspectors,"Max_Inspector_Constraint")
-
+        
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
@@ -270,11 +263,12 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
     for k, vals in inspectors.items():
         source = "source_" + str(k)
 
-        #sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
-        #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
-
         source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
+<<<<<<< HEAD
 
+=======
+       
+>>>>>>> hai
         if k == 0:
             maxWorking = source_constr
         else:
@@ -429,6 +423,47 @@ def update_all_var_lists(known_vars, unknown_vars, x):
             #all_arcs = x.select('*', '*', inspector_id)
             #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
 
+<<<<<<< HEAD
+=======
+
+def update_max_inspectors_constraint(model, new_max_inspectors)
+    """Update the max_num_inspectors in the model constraint named
+    'Max_Inspector_Constraint', and also write the lp model to a file
+    
+    Attributes:
+        model : Gurobi model
+        new_max_inspectors : new upper bound on maximum number of inspectors
+    """
+    
+    constr = model.getConstrByName("Max_Inspector_Constraint")
+    constr.setAttr(GRB.Attr.RHS, new_max_inspectors)
+    model.update() # implement all pending changes
+    model.write("gurobi_model_{}.lp".format(new_max_inspectors))
+
+
+
+def add_vars_and_obj_function(model, flow_var_names, OD):
+    """Adding variables and objective function to model
+    
+    Attributes:
+        model : Gurobi model
+        flow_var_names : list of binary variables
+        OD : origin-destination matrix
+    """    
+    print("Adding variables...", end=" ")
+    
+    # adding variables
+    x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+    M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
+   
+    # Adding the objective function coefficients
+    model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+
+    print('Done')
+    return x, M
+
+
+>>>>>>> hai
 def clean_up_sol(x):
     return 1 if x > 0.5 else 0
 
@@ -475,19 +510,11 @@ def main(argv):
 
     # start Gurobi
     print("Start Gurobi")
-
     model = Model("DB_MIP");
 
     # adding variables and objective functions
-    print("Adding variables...", end=" ")
-
-    x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
-
-    M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
-
-    # Adding the objective function coefficients
-    model.setObjective(M.prod(OD),GRB.MAXIMIZE)
-
+    x, M = add_vars_and_obj_function(model, flow_var_names, OD)
+    
     # adding flow conservation constraints
     add_mass_balance_constraint(graph, model, inspectors, x)
 
@@ -511,7 +538,6 @@ def main(argv):
     start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
-    #curr_sol = []
 
     # important for saving constraints and variables
     model.write("Scheduling.rlp")
@@ -533,14 +559,18 @@ def main(argv):
             all_vars = x.select('*', '*', uncare_inspector_id)
             prev_sols.update({arc.getAttr('VarName'):0 for arc in all_vars})
 
+<<<<<<< HEAD
         constrs = model.getConstrs()
         constr = model.getConstrByName("Max_Inspector_Constraint")
         constr.setAttr(GRB.Attr.RHS, i)
 
         model.update() # implement all pending changes
         model.write("gurobi_model_iteration_{}.rlp".format(i))
+=======
+        update_max_inspectors_constraint(model, i)
+>>>>>>> hai
         model.optimize(mycallback)
-
+        
         update_all_var_lists(known_vars, unknown_vars, x)
 
 
