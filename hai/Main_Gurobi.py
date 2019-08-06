@@ -346,7 +346,7 @@ def print_solution_paths(inspectors, x):
     for k in inspectors:
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
-            arcs = x.select((start,'*',k))
+            arcs = x.select(start,'*',k)
             match = [x for x in arcs if x.getAttr("x") > 0.5]
             arc = match[0].getAttr("VarName").split(",")
             arc[0] = arc[0].split("[")[1]
@@ -431,14 +431,14 @@ def update_all_var_lists(unknown_vars, known_vars,depot_dict, x, delta):
             depot_dict[inspector_id_base[0]].remove(inspector_id)
 
     # update unknown and uncare vars:
+    unknown_vars = []
+    uncare_vars = []
     for inspectors in depot_dict.values():
-        unknown_vars = []
-        uncare_vars = []
         if len(inspectors) > delta:
-            unknown_vars.append(inspectors[:delta])
-            uncare_vars.append(inspectors[delta+1:])
+            unknown_vars = unknown_vars + inspectors[:delta]
+            uncare_vars = uncare_vars + inspectors[delta:]
         else:
-            unknown_vars.append(inspectors)
+            unknown_vars = unknown_vars + inspectors
     return unknown_vars, uncare_vars
 
 
@@ -565,7 +565,7 @@ def main(argv):
     uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
     delta = 1 # incremental number of inspector schedules to make
-    start = 1 # number of inspector schedules to start with
+    start = 0 # number of inspector schedules to start with
 
     prev_sols = {}
 
@@ -610,10 +610,10 @@ def main(argv):
     #model.write("Gurobi_Solution.lp")
 
     # write Solution:
-    solution  = print_solution_paths(inspectors, x)
+    solution  = print_solution_paths(known_vars, x)
 
     with open("Gurobi_Solution.txt", "w") as f:
-        f.write(solution)
+        f.write(solution.to_string())
 
 
 
