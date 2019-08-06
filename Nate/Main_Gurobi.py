@@ -32,7 +32,7 @@ from read_inspector_data import *
 # networkx start
 graph = nx.DiGraph() # nx.MultiDiGraph()
 
-<<<<<<< HEAD:final/ReformulatedLP.py
+
 inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               1 : {"base": 'HH', "working_hours": 5, "rate": 10},
               2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}
@@ -41,7 +41,6 @@ inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
               #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
               }
 
-=======
 #inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 10},
               #1 : {"base": 'HH', "working_hours": 8, "rate": 10},
               #2 : {"base": 'AHAR', "working_hours": 8, "rate": 10},
@@ -55,7 +54,7 @@ maxInspectors = 10;
 inspectors = inspectors("GRIPS2019_401.csv")
 
 # Assumption: rate of inspection remains constant
->>>>>>> Nate:Nate/Main_Gurobi.py
+
 KAPPA = 12
 flow_var_names = []
 
@@ -285,16 +284,8 @@ print("Finished! Took {:.5f} seconds".format(t8-t7))
 
 #Set Parameters:
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 model.setParam("MIPGap",.05)
 #model.setParam("MIPFocus",1)
-=======
-model.Param.MIPGap = 
->>>>>>> master
-=======
-model.Param.MIPGap = 
->>>>>>> master
 
 model.optimize()
 model.write("Gurobi_Solution.mps")
@@ -337,3 +328,4 @@ def setSolution(x,inspectors,delta):
     vals = [1]*len(prevSolution) + [0]* len(zeros)
 
     return solution, vals, inspectors
+

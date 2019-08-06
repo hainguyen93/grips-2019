@@ -102,7 +102,8 @@ def construct_variable_names(all_edges, inspectors):
         start = edge[0] + '@' + edge[1]
         end = edge[2] + '@' + edge[3]
         flow_var_names.append([(start, end, k) for k in inspectors])
-    return flow_var_names
+    flat_list = [item for sublist in flow_var_names for item in sublist]
+    return flat_list
 #
 # def save_graph(graph, file_name):
 #     nx.write_gexf(graph, file_name)
@@ -217,7 +218,7 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
 
 
 
-def add_sinks_and_source_constraint(graph, model, inspectors, x):
+def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x):
     """Add sink/source constraint for each inspector
 
     Attributes:
@@ -232,41 +233,26 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
     for k, vals in inspectors.items():
         sink = "sink_" + str(k)
         source = "source_" + str(k)
-        
-        in_sink_edges = [x[u, sink, k] for u in graph.predecessors(sink)]
-        in_sink_edges_coefs = [1] * graph.in_degree(sink)
-        sink_constr = LinExpr(in_sink_edges_coefs, in_sink_edges)
-        model.addConstr(sink_constr, GRB.LESS_EQUAL, 1,"sink_constr_{}".format(k))
 
-        out_source_edges = [x[source, u, k] for u in graph.successors(source)]
-        out_source_edges_coefs = [1] * graph.out_degree(source)
-        source_constr = LinExpr(out_source_edges_coefs, out_source_edges)
+        sink_constr = LinExpr([-1] * graph.in_degree(sink),[x[u, sink, k] for u in graph.predecessors(sink)])
+        #model.addConstr(sink_constr, GRB.EQUAL, 1,"sink_constr_{}".format(k))
+
+        source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
+        sink_constr.add(source_constr) #combine
+
+        model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
         model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
-        
-        coefs = in_sink_edges_coefs + [-1] * graph.out_degree(source)
-        source_sink_balance_constr =  LinExpr(coefs, in_sink_edges + out_source_edges)
-        model.addConstr(source_sink_balance_constr, GRB.EQUAL, 0, "source_sink_balance_constr_{}".format(k))
+
+        if k == 0:
+            maxWorking = source_constr
+        else:
+            maxWorking.add(source_constr)
+
+    model.addConstr(maxWorking, GRB.LESS_EQUAL, max_num_inspectors,"Max_Inspector_Constraint")
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
-
-def add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors):
-    """Constraint to restrict the number of inspectors working on a specific day 
-    by an upper bound (max_num_inspectors)
-    
-    Attributes:
-        graph : directed graph
-        model : Gurobi model
-        inspectors : dict of inspectors 
-        x : list of binary decision variables
-        max_num_inspectors : upper bound on number of inspectors allowed to work
-    """
-    coefs = [1 for k in inspectors for _ in graph.successors("source_"+str(k))]
-    variables = [x["source_"+str(k),u,k] for k in inspectors for u in graph.successors("source_"+str(k))]
-    constr = LinExpr(coefs, variables)
-    model.addConstr(constr, GRB.EQUAL, max_num_inspectors, "max_inspectors_constr")
-    
 
 
 def add_time_flow_constraint(graph, model, inspectors, x):
@@ -341,12 +327,7 @@ def print_solution_paths(inspectors, x):
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
             arcs = x.select((start,'*',k))
-<<<<<<< HEAD:final/Main_Gurobi.py
             match = [x for x in arcs if abs(x.getAttr("x")-1) < 0.1]
-
-=======
-            match = [x for x in arcs if x.getAttr("x") != 0]
->>>>>>> ruby:Final_Programme/Main_Gurobi.py
             arc = match[0].getAttr("VarName").split(",")
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
@@ -357,18 +338,14 @@ def print_solution_paths(inspectors, x):
     solution.to_csv("schedule_for_{}_inspectors.csv".format(len(inspectors)))
     return solution
 
-def total_number_of_passengers_in_system(OD):
-    total = 0
-    for key, num in OD.items():
-        total += num
-    return total
+
 
 def main(argv):
     """main function"""
     if len(argv) != 1:
         print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
-    
+
     max_num_inspectors = int(argv[0])
 
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
@@ -410,20 +387,20 @@ def main(argv):
 
     # adding sink/source constraints
     add_sinks_and_source_constraint(graph, model, inspectors, x)
-    
+
     # add maximum number of inspectors allowed to work
     add_max_num_inspectors_constraint(graph, model, inspectors, x, max_num_inspectors)
 
     # add working_hours restriction constraints
-    add_time_flow_constraint(graph, model, inspectors, x)    
+    add_time_flow_constraint(graph, model, inspectors, x)
 
     # adding dummy variables to get rid of 'min' in objective function
     minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
     # start solving using Gurobi
     model.optimize()
-        
-    
+
+
     model.write("Gurobi_Solution.lp")
 
     # write Solution:
