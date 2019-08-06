@@ -431,7 +431,7 @@ def update_max_inspectors_constraint(model, new_max_inspectors):
     constr = model.getConstrByName("Max_Inspector_Constraint")
     constr.setAttr(GRB.Attr.RHS, new_max_inspectors)
     model.update() # implement all pending changes
-    model.write("gurobi_model_{}.lp".format(new_max_inspectors))
+    model.write("gurobi_model_{}.rlp".format(new_max_inspectors))
 
 
 
@@ -446,7 +446,7 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
     print("Adding variables...", end=" ")
 
     # adding variables
-    x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+    x = model.addVars(flow_var_names, ub=1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
     M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
 
     # Adding the objective function coefficients
@@ -555,12 +555,6 @@ def main(argv):
             all_vars = x.select('*', '*', uncare_inspector_id)
             prev_sols.update({arc:0 for arc in all_vars})
 
-        # constrs = model.getConstrs()
-        # constr = model.getConstrByName("Max_Inspector_Constraint")
-        # constr.setAttr(GRB.Attr.RHS, i)
-        #
-        # model.update() # implement all pending changes
-        # model.write("gurobi_model_iteration_{}.rlp".format(i))
         update_max_inspectors_constraint(model, i)
 
         model.optimize(mycallback)

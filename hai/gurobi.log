@@ -4590,3 +4590,170 @@ Solution count 3: 23710 23701.3 23701.3
 
 Solve interrupted
 Best objective 2.371003668354e+04, best bound 3.091538626791e+04, gap 30.3894%
+
+Gurobi 8.1.1 (mac64, Python) logging started Tue Aug  6 12:17:54 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.1
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300660 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 15030 rows and 20570 columns
+Presolve time: 2.01s
+Presolved: 19725 rows, 31908 columns, 142134 nonzeros
+Variable types: 5113 continuous, 26795 integer (26437 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   26845    7.0573272e+03   0.000000e+00   1.591757e+06      5s
+   30471    1.2924319e+04   0.000000e+00   0.000000e+00      8s
+   30471    1.2924319e+04   0.000000e+00   0.000000e+00      8s
+Concurrent spin time: 2.81s
+
+Solved with primal simplex
+
+Root relaxation: objective 1.292432e+04, 30471 iterations, 9.09 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 12924.3194    0  583   -0.00000 12924.3194      -     -   11s
+H    0     0                    9793.5254491 12924.3194  32.0%     -   11s
+H    0     0                    12373.807874 12924.3194  4.45%     -   11s
+
+Explored 1 nodes (30523 simplex iterations) in 11.67 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 3: 12373.8 9793.53 -0 
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective 1.237380787386e+04, best bound 1.292431935714e+04, gap 4.4490%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300660 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective 12373.8
+
+Presolve removed 15025 rows and 20568 columns
+Presolve time: 1.49s
+Presolved: 19730 rows, 31910 columns, 142288 nonzeros
+Variable types: 5136 continuous, 26774 integer (26425 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   25386    2.8988534e+02   0.000000e+00   5.158150e+05      5s
+   29532    2.4441753e+04   0.000000e+00   0.000000e+00      9s
+   29532    2.4441753e+04   0.000000e+00   0.000000e+00      9s
+Concurrent spin time: 2.71s
+
+Solved with primal simplex
+
+Root relaxation: objective 2.444175e+04, 29532 iterations, 10.16 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 24441.7528    0 1007 12373.8079 24441.7528  97.5%     -   11s
+H    0     0                    19213.636390 24441.7528  27.2%     -   12s
+H    0     0                    23701.283811 24441.7528  3.12%     -   12s
+
+Explored 1 nodes (29592 simplex iterations) in 12.31 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 3: 23701.3 19213.6 12373.8 
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective 2.370128381098e+04, best bound 2.444175284011e+04, gap 3.1242%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300660 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective 23701.3
+
+Presolve removed 15025 rows and 20568 columns
+Presolve time: 1.54s
+Presolved: 19730 rows, 31910 columns, 142288 nonzeros
+Variable types: 5137 continuous, 26773 integer (26425 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   25624    2.8862562e+04   0.000000e+00   3.676650e+05      5s
+   30408    3.4912573e+04   0.000000e+00   0.000000e+00     10s
+   30408    3.4912573e+04   0.000000e+00   0.000000e+00     10s
+Concurrent spin time: 4.37s
+
+Solved with primal simplex
+
+Root relaxation: objective 3.491257e+04, 30408 iterations, 12.73 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 34912.5732    0 1432 23701.2838 34912.5732  47.3%     -   14s
+     0     0 33491.5781    0 1670 23701.2838 33491.5781  41.3%     -   21s
+H    0     0                    23701.283848 33491.5781  41.3%     -   22s
+     0     0 32965.7521    0 1466 23701.2838 32965.7521  39.1%     -   28s
+     0     0 32965.0050    0 1468 23701.2838 32965.0050  39.1%     -   33s
+
+Cutting planes:
+  Gomory: 9
+  Cover: 3
+  Implied bound: 3
+  MIR: 26
+  StrongCG: 1
+  GUB cover: 3
+
+Explored 1 nodes (31092 simplex iterations) in 36.08 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 2: 23701.3 23701.3 
+
+Solve interrupted
+Best objective 2.370128384772e+04, best bound 3.296500501858e+04, gap 39.0853%
