@@ -264,11 +264,7 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
         source = "source_" + str(k)
 
         source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
-<<<<<<< HEAD
 
-=======
-       
->>>>>>> hai
         if k == 0:
             maxWorking = source_constr
         else:
@@ -420,11 +416,8 @@ def update_all_var_lists(known_vars, unknown_vars, x):
         if sum(source_sols) == 1:  # inspector involves in solution
             known_vars.append(inspector_id)
             unknown_vars.remove(inspector_id)
-            #all_arcs = x.select('*', '*', inspector_id)
-            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
 
-<<<<<<< HEAD
-=======
+
 
 def update_max_inspectors_constraint(model, new_max_inspectors)
     """Update the max_num_inspectors in the model constraint named
@@ -463,7 +456,6 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
     return x, M
 
 
->>>>>>> hai
 def clean_up_sol(x):
     return 1 if x > 0.5 else 0
 
@@ -545,30 +537,25 @@ def main(argv):
 
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
-            model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
+            model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))        
+        
+            
 
     for i in range(start, max_num_inspectors, delta):
 
         select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars, unknown_vars, uncare_vars)
-        print(known_vars)
-        print("========")
-        print(unknown_vars)
-        print("========")
-        print(uncare_vars)
+        
+        # print out current values of vars list
+        print('Known Vars: ', known_vars)
+        print('Unknown Vars: ', unknown_vars)
+        print('Uncare Vars: ', uncare_vars)
+        
         for uncare_inspector_id in uncare_vars:
             all_vars = x.select('*', '*', uncare_inspector_id)
             prev_sols.update({arc.getAttr('VarName'):0 for arc in all_vars})
 
-<<<<<<< HEAD
-        constrs = model.getConstrs()
-        constr = model.getConstrByName("Max_Inspector_Constraint")
-        constr.setAttr(GRB.Attr.RHS, i)
-
-        model.update() # implement all pending changes
-        model.write("gurobi_model_iteration_{}.rlp".format(i))
-=======
         update_max_inspectors_constraint(model, i)
->>>>>>> hai
+        
         model.optimize(mycallback)
         
         update_all_var_lists(known_vars, unknown_vars, x)
