@@ -398,7 +398,7 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars):#, unknown_
     unknown_vars = [val[:delta] for val in depot_dict.values()]
     uncare_vars = [val[delta+1:] for val in depot_dict.values()]
 
-    return unkown_vars, uncare_vars
+    return unknown_vars, uncare_vars
 #==========================================================================================
 
     '''for depot, val in depot_dict.items():
@@ -416,7 +416,7 @@ def select_inspectors_from_each_depot(depot_dict, delta, known_vars):#, unknown_
 
 
 
-def update_all_var_lists(known_vars, unknown_vars,depot_dict, x, delta):
+def update_all_var_lists(unknown_vars, known_vars,depot_dict, x, delta):
     """Update the lists of variables
     """
     #=======================Nate's mod===================================================
@@ -432,10 +432,14 @@ def update_all_var_lists(known_vars, unknown_vars,depot_dict, x, delta):
 
     # update unknown and uncare vars:
     for inspectors in depot_dict.values():
+        unknown_vars = []
+        uncare_vars = []
         if len(inspectors) > delta:
             unknown_vars.append(inspectors[:delta])
+            uncare_vars.append(inspectors[delta+1:])
         else:
             unknown_vars.append(inspectors)
+    return unknown_vars, uncare_vars
 
 
 
@@ -577,7 +581,7 @@ def main(argv):
 
 
     t = time.time()
-    update_all_var_lists(known_vars, unknown_vars, x, delta) #initial list fill
+    unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta) #initial list fill
     for i in range(start, max_num_inspectors, delta):
 
         #unknown_vars, uncare_vars = select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars):#, unknown_vars, uncare_vars)
@@ -600,7 +604,7 @@ def main(argv):
 
         model.optimize(mycallback)
 
-        update_all_var_lists(known_vars, unknown_vars, x, delta)
+        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta)
 
 
     #model.write("Gurobi_Solution.lp")
