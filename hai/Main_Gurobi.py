@@ -441,8 +441,8 @@ def main(argv):
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
                    2 : {"base": 'RDRM', "working_hours": 6, "rate": 15},
-                   3 : {"base": 'HH', "working_hours": 8, "rate": 10}
-                   4 : {"base": 'RDRM', "working_hours": 7, "rate": 10},
+                   3 : {"base": 'HH', "working_hours": 8, "rate": 10},
+                   4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
 
@@ -515,12 +515,16 @@ def main(argv):
 
     # important for saving constraints and variables
     model.write("Scheduling.rlp")
-    model.setParam('MIPGap', 0.05)
+    model.setParam('MIPGap', 0.1)
+    # model.setParam('MIPFocus', 1)
 
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
+            print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
+
+    t = time.time()
     for i in range(start, max_num_inspectors, delta):
 
         select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars, unknown_vars, uncare_vars)
@@ -531,7 +535,7 @@ def main(argv):
         print(uncare_vars)
         for uncare_inspector_id in uncare_vars:
             all_vars = x.select('*', '*', uncare_inspector_id)
-            prev_sols.update({arc.getAttr('VarName'):0 for arc in all_vars})
+            prev_sols.update({arc:0 for arc in all_vars})
 
         constrs = model.getConstrs()
         constr = model.getConstrByName("Max_Inspector_Constraint")
@@ -539,6 +543,7 @@ def main(argv):
 
         model.update() # implement all pending changes
         model.write("gurobi_model_iteration_{}.rlp".format(i))
+        # print(prev_sols)
         model.optimize(mycallback)
 
         update_all_var_lists(known_vars, unknown_vars, x)
