@@ -6,7 +6,6 @@ import os
 import xml.etree.ElementTree as ET
 import json
 import pandas as pd
-import pickle
 
 from exceptions import *
 from my_xml_parser import *
@@ -146,10 +145,10 @@ def main(argv):
     except CommandLineArgumentsNotMatch as error:
         print(error)
         print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
-        
+
     except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
         print(error)
-        
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

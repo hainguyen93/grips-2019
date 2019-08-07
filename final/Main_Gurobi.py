@@ -449,10 +449,10 @@ def main(argv):
         for i in range(random_num_inspectors):
             inspectors[indx] = {'base':station, 'working_hours': np.random.randint(3,8)}
             indx += 1
-    
+
     print(station_list)
     print(inspectors)
-    
+
     """
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
