@@ -32,6 +32,19 @@ HOUR_TO_SECONDS = 3600
 MINUTE_TO_SECONDS = 60
 
 
+def extract_inspectors_data(inspectors_file):
+    """Extract a dictionary containing information for inspectors
+    from the input file for inspectors
+
+    Attribute:
+        inspector_file : name of inspectors input file
+    """
+    data = pd.read_csv(inspectors_file)
+    inspectors={ data.loc[i]['Inspector_ID']:
+                    {"base": data.loc[i]['Depot'], "working_hours": data.loc[i]['Max_Hours']}
+                     for i in range(len(data))}
+    return inspectors
+
 def construct_graph_from_file(input_dir, inspectors):
     """Construct graph from an external file
 
@@ -65,19 +78,6 @@ def construct_graph_from_file(input_dir, inspectors):
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
     return graph, flow_var_names
-
-def extract_inspectors_data(inspectors_file):
-    """Extract a dictionary containing information for inspectors
-    from the input file for inspectors
-
-    Attribute:
-        inspector_file : name of inspectors input file
-    """
-    data = pd.read_csv(inspectors_file)
-    inspectors={ data.loc[i]['Inspector_ID']:
-                    {"base": data.loc[i]['Depot'], "working_hours": data.loc[i]['Max_Hours']}
-                     for i in range(len(data))}
-    return inspectors
 
 def construct_graph(all_edges):
     """ Construct the graph from a list of edges
@@ -117,7 +117,7 @@ def construct_variable_names(all_edges, inspectors):
     flat_list = [item for sublist in flow_var_names for item in sublist]
     return flat_list
 
-def add_sinks_and_sources(graph, inspectors, flow_var_names):
+def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
     """Add sinks/sources (for each inspector) to the graph
 
     Attributes:
@@ -143,8 +143,6 @@ def add_sinks_and_sources(graph, inspectors, flow_var_names):
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
-
-
 
 def add_mass_balance_constraint(graph, model, inspectors, x):
     """Add the flow conservation constraints
@@ -238,13 +236,23 @@ def add_time_flow_constraint(graph, model, inspectors, x):
         sink = "sink_" + str(k)
 
         ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
-        val = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)] + [-time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
+
+        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)]
+        min_val1 = min(val1)
+        val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
+
+        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
+        min_val2 = min(val2)
+        val2 = [-(t-min_val2) for t in val2]  # again, normalising
+
+        val = val1 + val2
 
         time_flow = LinExpr(val,ind)
-        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k)) #
+        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
 
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
+
 
 def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
     """Add dummy variables to get rid of 'min' operators
@@ -416,33 +424,33 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
 
 def main(argv):
     """main function"""
+
     if len(argv) != 1:
         print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
 
-    max_num_inspectors = int(argv[0])
-
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-                    2 : {"base": 'AHAR', "working_hours": 6, "rate": 15}}#,
-                #3 : {"base": 'FGE', "working_hours": 8, "rate": 10},
-                #4 : {"base": 'HSOR', "working_hours": 7, "rate": 10},
-                #5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
-                #}
+                   1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+                   2 : {"base": 'RDRM', "working_hours": 6, "rate": 15},
+                   3 : {"base": 'HH', "working_hours": 8, "rate": 10},
+                   4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
+                    # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+                    }
 
+    depot_dict = create_depot_inspectors_dict(inspectors)
 
-    input_dir = '../hai/Mon_Arcs.txt'
-    inspector_file = 'inspectors.csv'
+    # upper-bound max_num_inspectors by number of inspectors
+    max_num_inspectors = int(argv[0])
+    if max_num_inspectors > len(inspectors):
+        max_num_inspectors = len(inspectors)
 
-    inspectors = extract_inspectors_data(inspectors_file)
-    depot_inspector_dict = create_depot_inspectors_dict(inspectors)
+    input_dir = 'mon_arcs.txt'
 
-    graph  = construct_graph_from_file(input_dir, inspectors)
-    flow_var_names = construct_variable_names(all_edges, inspectors)
+    graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
 
     # OD Estimation
     shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
-    # T, OD = generate_OD_matrix(graph.nodes(), shortest_paths, arc_paths)
+    # T, OD = generate_OD_matrix(graph)
 
     with open('../final/dict.txt','r') as f:
         data=f.read()
@@ -451,7 +459,7 @@ def main(argv):
     print("OD matrix loaded ...")
 
     # adding sources/sinks nodes
-    add_sinks_and_sources(graph, inspectors, flow_var_names)
+    add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names)
 
     #freeze graph to prevent further changes
     graph = nx.freeze(graph)
@@ -467,7 +475,7 @@ def main(argv):
     add_mass_balance_constraint(graph, model, inspectors, x)
 
     # adding sink/source constraints
-    add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x)
+    add_sinks_and_source_constraint(graph, model, inspectors, x)
 
     # add working_hours restriction constraints
     add_time_flow_constraint(graph, model, inspectors, x)
@@ -475,15 +483,15 @@ def main(argv):
     # adding dummy variables to get rid of 'min' in objective function
     minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
-    # adding a max number of inspectors constraint
+    # adding a max number of inspectors constraint (set to 1 by default)
     add_max_num_inspectors_constraint(graph, model, inspectors, 1, x)
 
     known_vars = []  # vars with known solutions
-    unknown_vars = []  # vars currently in the model
-    uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
+    #unknown_vars = []  # vars currently in the model
+    #uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
     delta = 1 # incremental number of inspector schedules to make
-    start = 0 # number of inspector schedules to start with
+    #start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
 
@@ -495,27 +503,28 @@ def main(argv):
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
-            objval = model.cbUseSolution()  # newly added
+            model.cbUseSolution()  # newly added
             print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
     #initial list fill
-    unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta)
+    unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta)
 
-    for i in range(start, max_num_inspectors, delta):
+    for i in range(1, max_num_inspectors+1, delta):
 
-        print('Known Vars     : ', known_vars)
-        print('Unknown Vars   : ', unknown_vars)
+        print('============= ITERATION No.{} ============'.format(i))
+        print('Known Vars: ', known_vars)
+        print('Unknown Vars: ', unknown_vars)
         print("Don't care Vars: ", uncare_vars)
 
         for uncare_inspector_id in uncare_vars:
-            all_vars = x.select('*', '*', uncare_inspector_id)
-            prev_sols.update({arc:0 for arc in all_vars})
+            #= x.select('*', '*', uncare_inspector_id)
+            prev_sols.update({arc:0 for arc in x.select('*', '*', uncare_inspector_id)})
 
         update_max_inspectors_constraint(model, i)
 
         model.optimize(mycallback)
 
-        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta)
+        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta)
 
     # write Solution:
     solution  = print_solution_paths(known_vars, x)
