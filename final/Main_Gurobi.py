@@ -29,21 +29,10 @@ KAPPA = 12
 
 HOUR_TO_SECONDS = 3600
 
+HOUR_TO_MINUTES = 60
+
 MINUTE_TO_SECONDS = 60
 
-
-def extract_inspectors_data(inspectors_file):
-    """Extract a dictionary containing information for inspectors
-    from the input file for inspectors
-
-    Attribute:
-        inspector_file : name of inspectors input file
-    """
-    data = pd.read_csv(inspectors_file)
-    inspectors={ data.loc[i]['Inspector_ID']:
-                    {"base": data.loc[i]['Depot'], "working_hours": data.loc[i]['Max_Hours']}
-                     for i in range(len(data))}
-    return inspectors
 
 def construct_graph_from_file(input_dir, inspectors):
     """Construct graph from an external file
@@ -79,6 +68,8 @@ def construct_graph_from_file(input_dir, inspectors):
 
     return graph, flow_var_names
 
+
+
 def construct_graph(all_edges):
     """ Construct the graph from a list of edges
 
@@ -108,14 +99,16 @@ def construct_graph(all_edges):
 
     return graph #, flow_var_names
 
+
+
 def construct_variable_names(all_edges, inspectors):
     flow_var_names = []
     for edge in all_edges:
         start = edge[0] + '@' + edge[1]
         end = edge[2] + '@' + edge[3]
         flow_var_names.append([(start, end, k) for k in inspectors])
-    flat_list = [item for sublist in flow_var_names for item in sublist]
-    return flat_list
+    return flow_var_names
+
 
 def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
     """Add sinks/sources (for each inspector) to the graph
@@ -143,6 +136,8 @@ def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
+
+
 
 def add_mass_balance_constraint(graph, model, inspectors, x):
     """Add the flow conservation constraints
@@ -184,7 +179,9 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
-def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x):
+
+
+def add_sinks_and_source_constraint(graph, model, inspectors, x):
     """Add sink/source constraint for each inspector
 
     Attributes:
@@ -209,81 +206,10 @@ def add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors
         model.addConstr(sink_constr, GRB.EQUAL, 0,"source_constr_{}".format(k))
         model.addConstr(source_constr, GRB.LESS_EQUAL, 1,"source_constr_{}".format(k))
 
-        if k == 0:
-            maxWorking = source_constr
-        else:
-            maxWorking.add(source_constr)
-
-    model.addConstr(maxWorking, GRB.LESS_EQUAL, max_num_inspectors,"Max_Inspector_Constraint")
-
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
-def add_time_flow_constraint(graph, model, inspectors, x):
-    """Add time flow constraint (maximum number of working hours)
 
-    Attributes:
-        graph : directed graph
-        model : Gurobi model
-        inspectors : dict of inspectors
-        x : list of binary decision variables
-    """
-    print("Adding [Time Flow Constraint]...", end=" ")
-    t1 = time.time()
-
-    for k, vals in inspectors.items():
-        source = "source_" + str(k) + ""
-        sink = "sink_" + str(k)
-
-        ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
-
-        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)]
-        min_val1 = min(val1)
-        val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
-
-        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
-        min_val2 = min(val2)
-        val2 = [-(t-min_val2) for t in val2]  # again, normalising
-
-        val = val1 + val2
-
-        time_flow = LinExpr(val,ind)
-        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
-
-    t2 = time.time()
-    print("Finished! Took {:.5f} seconds".format(t2-t1))
-
-
-def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
-    """Add dummy variables to get rid of 'min' operators
-
-    Attributes:
-        graph : directed graph
-        model : Gurobi model
-        OD : origin-destination matrix
-        shortest_paths : dict of edges and associated paths
-    """
-
-    print('Adding [Minimum Constraint]...', end = " ")
-    t1 = time.time()
-
-    # Create a dictionary of all Origin-Destinations
-    all_paths = {}
-    for source, sink in OD.keys():
-        if source != sink:
-            all_paths[(source, sink)] = shortest_paths[source][sink]
-
-    for (u, v), path in all_paths.items():
-        if not ("source_" in u+v or "sink_" in u+v):
-
-            indices = [M[u,v]] + [x[i,j,k] for i,j in zip(path, path[1:]) for k in inspectors]
-            values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
-
-            min_constr = LinExpr(values,indices)
-            model.addConstr(min_constr,GRB.LESS_EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
-
-    t2 = time.time()
-    print("Finished! Took {:.5f} seconds".format(t2-t1))
 
 def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspectors, x):
     """Adding a maximum number of inspectors constraint
@@ -313,6 +239,76 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
 
+
+
+def add_time_flow_constraint(graph, model, inspectors, x):
+    """Add time flow constraint (maximum number of working hours)
+
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        inspectors : dict of inspectors
+        x : list of binary decision variables
+    """
+    print("Adding [Time Flow Constraint]...", end=" ")
+    t1 = time.time()
+
+    for k, vals in inspectors.items():
+        source = "source_" + str(k) + ""
+        sink = "sink_" + str(k)
+
+        ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
+
+        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())/60 for u in graph.predecessors(sink)]
+        min_val1 = min(val1)
+        val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
+
+        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())/60 for v in graph.successors(source)]
+        min_val2 = min(val2)
+        val2 = [-(t-min_val2) for t in val2]  # again, normalising
+
+        val = val1 + val2
+
+        time_flow = LinExpr(val,ind)
+        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_MINUTES,'time_flow_constr_{}'.format(k))
+
+    t2 = time.time()
+    print("Finished! Took {:.5f} seconds".format(t2-t1))
+
+
+
+def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
+    """Add dummy variables to get rid of 'min' operators
+
+    Attributes:
+        graph : directed graph
+        model : Gurobi model
+        OD : origin-destination matrix
+        shortest_paths : dict of edges and associated paths
+    """
+
+    print('Adding [Minimum Constraint]...', end = " ")
+    t1 = time.time()
+
+    # Create a dictionary of all Origin-Destinations
+    all_paths = {}
+    for source, sink in OD.keys():
+        if source != sink:
+            all_paths[(source, sink)] = shortest_paths[source][sink]
+
+    for (u, v), path in all_paths.items():
+        if not ("source_" in u+v or "sink_" in u+v):
+            indices = [M[u,v]] + [x[i,j,k] for i,j in zip(path, path[1:]) for k in inspectors]
+            values = [1] + [-KAPPA * graph.edges[i,j]['travel_time']/graph.edges[i,j]['num_passengers'] for i,j in zip(path, path[1:]) for k in inspectors]
+
+            min_constr = LinExpr(values,indices)
+            model.addConstr(min_constr,GRB.LESS_EQUAL,0,"minimum_constr_path_({},{})".format(u,v))
+
+    t2 = time.time()
+    print("Finished! Took {:.5f} seconds".format(t2-t1))
+
+
+
 def print_solution_paths(inspectors, x):
     """Print solutions
     Attributes:
@@ -321,11 +317,10 @@ def print_solution_paths(inspectors, x):
     """
     solution = pd.DataFrame(columns = ['start_station_and_time','end_station_and_time','inspector_id'])
     for k in inspectors:
-
         start = "source_{}".format(k)
         while(start != "sink_{}".format(k)):
-            arcs = x.select((start,'*',k))
-            match = [x for x in arcs if abs(x.getAttr("x")-1) < 0.1]
+            arcs = x.select(start,'*',k)
+            match = [x for x in arcs if x.getAttr("x") > 0.5]
             arc = match[0].getAttr("VarName").split(",")
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
@@ -335,6 +330,7 @@ def print_solution_paths(inspectors, x):
                                         'inspector_id':k}, ignore_index=True)
     solution.to_csv("schedule_for_{}_inspectors.csv".format(len(inspectors)))
     return solution
+
 
 
 def create_depot_inspectors_dict(inspectors):
@@ -358,21 +354,31 @@ def create_depot_inspectors_dict(inspectors):
 
 
 
-def update_all_var_lists(unknown_vars, known_vars,depot_dict, x, delta):
+def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
     """Update the lists of variables
     """
+
     for inspector_id in unknown_vars[:]:
         if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
             known_vars.append(inspector_id)
+            unknown_vars.remove(inspector_id)
+
             # find base 'key' where inspector_id lives, in order to delete from depot_dict:
-            inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
+            # Hai's note: inefficient as no need of looping over all depots
+            # inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
+
+            for depot, val in depot_dict.items():
+                if inspector_id in val:
+                    inspector_id_base = depot
+                    break
 
             # now remove it from depot dict:
-            depot_dict[inspector_id_base[0]].remove(inspector_id)
+            depot_dict[inspector_id_base].remove(inspector_id)
 
     # update unknown and uncare vars:
     unknown_vars = []
     uncare_vars = []
+
     for inspectors in depot_dict.values():
         if len(inspectors) > delta:
             unknown_vars = unknown_vars + inspectors[:delta]
@@ -429,6 +435,25 @@ def main(argv):
         print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
 
+    timetable_file = argv[0]
+    chosen_day = argv[1]
+
+    #======================================================================
+    station_list = create_station_list(timetable_file, chosen_day)
+
+    inspectors = dict()
+    indx = 0
+
+    for station in station_list:
+        random_num_inspectors = np.random.randint(1,10)
+        for i in range(random_num_inspectors):
+            inspectors[indx] = {'base':station, 'working_hours': np.random.randint(3,8)}
+            indx += 1
+    
+    print(station_list)
+    print(inspectors)
+    
+    """
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
                    2 : {"base": 'RDRM', "working_hours": 6, "rate": 15},
@@ -436,11 +461,13 @@ def main(argv):
                    4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
+    """
+    #=====================================================================
 
     depot_dict = create_depot_inspectors_dict(inspectors)
 
     # upper-bound max_num_inspectors by number of inspectors
-    max_num_inspectors = int(argv[0])
+    max_num_inspectors = int(argv[2])
     if max_num_inspectors > len(inspectors):
         max_num_inspectors = len(inspectors)
 
@@ -511,7 +538,7 @@ def main(argv):
 
     for i in range(1, max_num_inspectors+1, delta):
 
-        print('============= ITERATION No.{} ============'.format(i))
+        print('=========================== ITERATION No.{} ==========================='.format(i))
         print('Known Vars: ', known_vars)
         print('Unknown Vars: ', unknown_vars)
         print("Don't care Vars: ", uncare_vars)
@@ -532,11 +559,6 @@ def main(argv):
     with open("Gurobi_Solution.txt", "w") as f:
         f.write(solution.to_string())
 
-    obj_val = float(model.objVal)
-    denominator = float(sum(OD.values())(OD))
-    print("Approximate number of people in the system: {}".format(denominator))
-    percentage = obj_val/denominator*100
-    print("Approximate percentage of people inspected today: {}%".format(percentage))
 
 
 if __name__ == '__main__':
