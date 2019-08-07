@@ -7771,3 +7771,171 @@ Solution count 4: 13825.3 13781.3 12584.4 10242.6
 
 Optimal solution found (tolerance 1.00e-01)
 Best objective 1.382526947556e+04, best bound 1.519591824656e+04, gap 9.9141%
+
+Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 15:25:54 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.1
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300655 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 3e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 34755 rows and 52478 columns
+Presolve time: 0.34s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.36 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective -0.000000000000e+00, best bound -0.000000000000e+00, gap 0.0000%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300655 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 3e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective -0
+
+Presolve removed 34755 rows and 52478 columns
+Presolve time: 0.36s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.38 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective -0.000000000000e+00, best bound -0.000000000000e+00, gap 0.0000%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300655 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 3e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective -0
+
+Presolve removed 34755 rows and 52478 columns
+Presolve time: 0.36s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.38 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective -0.000000000000e+00, best bound -0.000000000000e+00, gap 0.0000%
+
+Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 15:27:03 2019
+
+Academic license - for non-commercial use only
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300655 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 3e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 34755 rows and 52478 columns
+Presolve time: 0.35s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.36 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective -0.000000000000e+00, best bound -0.000000000000e+00, gap 0.0000%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300655 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 3e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective -0
+
+Presolve removed 34755 rows and 52478 columns
+Presolve time: 0.36s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.38 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective -0.000000000000e+00, best bound -0.000000000000e+00, gap 0.0000%
+Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
+Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
+Warning: to let Gurobi read it back, use rlp format
+Optimize a model with 34755 rows, 52478 columns and 300655 nonzeros
+Variable types: 10619 continuous, 41859 integer (41859 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 3e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective -0
+
+Presolve removed 34755 rows and 52478 columns
+Presolve time: 0.36s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.38 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective -0.000000000000e+00, best bound -0.000000000000e+00, gap 0.0000%
