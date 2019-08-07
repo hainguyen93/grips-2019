@@ -302,11 +302,15 @@ def add_time_flow_constraint(graph, model, inspectors, x):
 
         ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
         
-        val = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)] + [-time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
+        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)]
+        min_val1 = min(val1)
+        val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
         
-        min_val = min(val)  # fin smallest number in val list
-        val = [t - min_val for t in val]
+        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
+        min_val2 = min(val2)
+        val2 = [-(t-min_val2) for t in val2]  # again, normalising
         
+        val = val1 + val2        
 
         time_flow = LinExpr(val,ind)
         model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
