@@ -440,6 +440,12 @@ def main(argv):
 
     #======================================================================
     station_list = create_station_list(timetable_file, chosen_day)
+    
+    depot_list = ['BHF', 'UEP', 'TS', 'AA', 'BGS', 'RB', 'HB', 'EDO', 'MOF', 'WS', 
+		'FKW', 'LH', 'DH', 'RK', 'KK', 'AH', 'MH', 'UEI', 'RM', 'LL', 'MDT', 
+		'FW', 'NN', 'BL', 'XSB', 'BLS', 'EDG', 'FFU', 'HOLD', 'FF', 'FMZ', 'AK', 'HH']
+
+    station_list = [i for i in station_list if i in depot_list]
 
     inspectors = dict()
     indx = 0
@@ -452,6 +458,9 @@ def main(argv):
     
     print(station_list)
     print(inspectors)
+
+    df = pd.DataFrame([(x,val['base'],val['working_hours']) for x, val in inspectors.items()], columns = ['Inspector_ID', 'Depot', 'Max_Hours'])
+    df.to_csv('inspectors.csv', index=False)     
     
     """
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
@@ -461,7 +470,7 @@ def main(argv):
                    4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
-    """
+"""
     #=====================================================================
 
     depot_dict = create_depot_inspectors_dict(inspectors)
