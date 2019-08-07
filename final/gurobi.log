@@ -1187,3 +1187,142 @@ Best objective -0.000000000000e+00, best bound 3.712387142832e+05, gap -
 Warning: variable name "x[XSZH@Mon19:00:00,XSB@Mon19:53:00,0]" has a colon
 Warning: constraint name "mass_bal_XSZH@Mon19:00:00_0" has a colon
 Warning: to let Gurobi read it back, use rlp format
+
+Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 15:13:59 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 15:15:01 2019
+
+Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 15:19:12 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+
+Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 15:20:28 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Optimize a model with 25102 rows, 35802 columns and 185117 nonzeros
+Variable types: 10619 continuous, 25183 integer (25183 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Found heuristic solution: objective -0.0000000
+Presolve removed 25102 rows and 35802 columns
+Presolve time: 0.45s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.48 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 2: 4.44089e-16 -0 
+
+Optimal solution found (tolerance 5.00e-02)
+Best objective 4.440892098501e-16, best bound 4.440892098501e-16, gap 0.0000%
+Optimize a model with 25102 rows, 35802 columns and 185117 nonzeros
+Variable types: 10619 continuous, 25183 integer (25183 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective -0
+
+Presolve removed 11905 rows and 15262 columns
+Presolve time: 2.71s
+Presolved: 13197 rows, 20540 columns, 86470 nonzeros
+Variable types: 4185 continuous, 16355 integer (16006 binary)
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   23738    2.0847958e+05   1.455965e+05   0.000000e+00      5s
+   32224    1.1873779e+05   1.871392e+05   0.000000e+00     10s
+   39052    4.7795645e+04   2.101896e+04   0.000000e+00     15s
+   44078    7.3691599e+03   0.000000e+00   0.000000e+00     19s
+
+Root relaxation: objective 7.369160e+03, 44078 iterations, 16.01 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 7369.15992    0  398   -0.00000 7369.15992      -     -   19s
+     0     0 7369.15992    0  398   -0.00000 7369.15992      -     -   44s
+
+Cutting planes:
+  Implied bound: 1
+  MIR: 1
+  Flow cover: 2
+  GUB cover: 3
+
+Explored 1 nodes (44095 simplex iterations) in 44.52 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: -0 
+
+Solve interrupted
+Best objective -0.000000000000e+00, best bound 7.369159924668e+03, gap -
+Optimize a model with 25102 rows, 35802 columns and 185117 nonzeros
+Variable types: 10619 continuous, 25183 integer (25183 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective -0
+
+Presolve removed 11151 rows and 13929 columns
+Presolve time: 0.84s
+
+Explored 0 nodes (0 simplex iterations) in 0.88 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Solve interrupted
+Best objective -0.000000000000e+00, best bound -, gap -
+Optimize a model with 25102 rows, 35802 columns and 185117 nonzeros
+Variable types: 10619 continuous, 25183 integer (25183 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+09]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+04]
+Warning: Model contains large matrix coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+
+Loaded MIP start with objective -0
+
+Presolve removed 4885 rows and 6106 columns
+Presolve time: 0.14s
+
+Explored 0 nodes (0 simplex iterations) in 0.18 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: -0 
+
+Solve interrupted
+Best objective -0.000000000000e+00, best bound -, gap -
+
+Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 15:27:58 2019
+
+Academic license - for non-commercial use only

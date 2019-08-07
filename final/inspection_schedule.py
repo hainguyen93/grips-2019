@@ -24,13 +24,6 @@ def extract_inspectors_data(inspectors_file):
     inspectors={ data.loc[i]['Inspector_ID']:
                     {"base": data.loc[i]['Depot'], "working_hours": data.loc[i]['Max_Hours']}
                      for i in range(len(data))}
-    # with open(inspectors_file, "r") as f:
-    #     for line in f.readlines()[1:]:
-    #         line = line.split(',')
-    #         inspector_id = int(line[0])
-    #         depot = line[1]
-    #         max_hours = float(line[2])
-    #         inspectors[inspector_id] = {"base": depot, 'working_hours': max_hours}
     return inspectors
 
 

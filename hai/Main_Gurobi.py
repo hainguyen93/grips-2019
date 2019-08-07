@@ -107,52 +107,6 @@ def construct_variable_names(all_edges, inspectors):
     return flow_var_names
 
 
-
-#
-# def save_graph(graph, file_name):
-#     nx.write_gexf(graph, file_name)
-#     print("graph.gexf has been saved.")
-#
-#
-#
-# def load_graph(file_name):
-#     print("graph.gexf has been loaded.")
-#     return nx.read_gexf(file_name)
-#
-# def save_data(name, dict):
-#     """ Save data to json objects
-#
-#     Attributes:
-#         name            : string name of object
-#         dict            : dictionary to be saved
-#     """
-#     # save shortest_paths and OD to files to be read in again
-#     with open(name+".json", "w") as f:
-#         json.dump(dict, f)
-#     print(name+".json has been saved.")
-#
-# def load_data(name):
-#     """ Load saved data from json files
-#
-#     Attributes:
-#         name            : string name of object
-#     """
-#     data = {}
-#     with open(name+".json", "r") as f:
-#         data = json.load(f)
-#     print(name+'.json has been loaded.')
-#     return data
-#
-# def save_variable_names(obj, name):
-#     np.save(name, obj)
-#     print(name+" has been saved." )
-#
-# def load_variable_names(name):
-#     print(name+" has been loaded.")
-#     return np.load(name)
-
-
-
 def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
     """Add sinks/sources (for each inspector) to the graph
 
