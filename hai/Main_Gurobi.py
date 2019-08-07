@@ -388,24 +388,34 @@ def create_depot_inspectors_dict(inspectors):
 
 
 
-def update_all_var_lists(unknown_vars, known_vars,depot_dict, x, delta):
+def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta):
     """Update the lists of variables
     """
+    
     for inspector_id in unknown_vars[:]:
         if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
             known_vars.append(inspector_id)
+            unknown_vars.remove(inspector_id)
+            
             # find base 'key' where inspector_id lives, in order to delete from depot_dict:
-            inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
+            # Hai's note: inefficient as no need of looping over all depots
+            # inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
+            
+            for depot, val in depot_dict.items():
+                if inspector_id in val:
+                    inspector_id_base = depot
+                    break  
 
             # now remove it from depot dict:
-            depot_dict[inspector_id_base[0]].remove(inspector_id)
+            depot_dict[inspector_id_base].remove(inspector_id)
 
     # update unknown and uncare vars:
     unknown_vars = []
     uncare_vars = []
+    
     for inspectors in depot_dict.values():
         if len(inspectors) > delta:
-            unknown_vars = unknown_vars + inspectors[:delta]
+            unknown_vars = unknown_vars + inspectors[:delta])
             uncare_vars = uncare_vars + inspectors[delta:]
         else:
             unknown_vars = unknown_vars + inspectors
@@ -454,6 +464,7 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
 
 def main(argv):
     """main function"""
+    
     if len(argv) != 1:
         print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
@@ -466,7 +477,7 @@ def main(argv):
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
 
-    depot_inspector_dict = create_depot_inspectors_dict(inspectors)
+    depot_dict = create_depot_inspectors_dict(inspectors)
 
     # upper-bound max_num_inspectors by number of inspectors
     max_num_inspectors = int(argv[0])
@@ -512,15 +523,15 @@ def main(argv):
     # adding dummy variables to get rid of 'min' in objective function
     minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
-    # adding a max number of inspectors constraint
+    # adding a max number of inspectors constraint (set to 1 by default)
     add_max_num_inspectors_constraint(graph, model, inspectors, 1, x)
 
     known_vars = []  # vars with known solutions
-    unknown_vars = []  # vars currently in the model
-    uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
+    #unknown_vars = []  # vars currently in the model
+    #uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
     delta = 1 # incremental number of inspector schedules to make
-    start = 1 # number of inspector schedules to start with
+    #start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
 
@@ -532,27 +543,28 @@ def main(argv):
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
-            model.cbUseSolution()  # newly added
-            print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
+            #model.cbUseSolution()  # newly added
+            #print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
     #initial list fill
-    unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta) 
+    unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta) 
     
-    for i in range(start, max_num_inspectors, delta):
-
+    for i in range(1, max_num_inspectors+1, delta):
+        
+        print('============= ITERATION No.{} ============'.format(i))
         print('Known Vars: ', known_vars)
         print('Unknown Vars: ', unknown_vars)
         print("Don't care Vars: ", uncare_vars)
         
         for uncare_inspector_id in uncare_vars:
-            all_vars = x.select('*', '*', uncare_inspector_id)
-            prev_sols.update({arc:0 for arc in all_vars})
+            #= x.select('*', '*', uncare_inspector_id)
+            prev_sols.update({arc:0 for arc in x.select('*', '*', uncare_inspector_id)})
 
         update_max_inspectors_constraint(model, i)
  
         model.optimize(mycallback)
 
-        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta)
+        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta)
 
     # write Solution:
     solution  = print_solution_paths(known_vars, x)
