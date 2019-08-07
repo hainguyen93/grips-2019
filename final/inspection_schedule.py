@@ -6,7 +6,6 @@ import os
 import xml.etree.ElementTree as ET
 import json
 import pandas as pd
-import pickle
 
 from exceptions import *
 from my_xml_parser import *
@@ -115,7 +114,6 @@ def main(argv):
     unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta)
 
     for i in range(1, max_num_inspectors+1, delta):
-
         print('============= ITERATION No.{} ============'.format(i))
         print('Known Vars:      ', known_vars)
         print('Unknown Vars:    ', unknown_vars)
@@ -138,7 +136,7 @@ def main(argv):
         f.write(solution.to_string())
 
     obj_val = float(model.objVal)
-    denominator = float(sum(OD.values()))
+    denominator = sum(list(OD.values()))
     print("Approximate number of people in the system: {}".format(denominator))
     percentage = obj_val/denominator*100
     print("Approximate percentage of people inspected today: {}%".format(percentage))

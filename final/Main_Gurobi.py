@@ -29,6 +29,8 @@ KAPPA = 12
 
 HOUR_TO_SECONDS = 3600
 
+HOUR_TO_MINUTES = 60
+
 MINUTE_TO_SECONDS = 60
 
 
@@ -237,21 +239,22 @@ def add_time_flow_constraint(graph, model, inspectors, x):
 
         ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
 
-        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)]
+        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())/60 for u in graph.predecessors(sink)]
         min_val1 = min(val1)
         val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
 
-        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
+        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())/60 for v in graph.successors(source)]
         min_val2 = min(val2)
         val2 = [-(t-min_val2) for t in val2]  # again, normalising
 
         val = val1 + val2
 
         time_flow = LinExpr(val,ind)
-        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
+        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_MINUTES,'time_flow_constr_{}'.format(k))
 
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
+
 
 
 def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
