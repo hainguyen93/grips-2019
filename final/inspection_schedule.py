@@ -63,7 +63,7 @@ def main(argv):
         # T, OD = generate_OD_matrix(deepcopy(graph))
 
         with open('../final/dict.txt','r') as f:
-        data=f.read()
+            data=f.read()
 
         OD = eval(data)
         print("OD matrix loaded ...")
@@ -109,6 +109,7 @@ def main(argv):
         model.write("Scheduling.rlp")
         model.setParam('MIPGap', 0.05)
         # model.setParam('MIPFocus', 1)
+        model.setParam('NumericFocus', 0)
 
         def mycallback(model, where):
             if where == GRB.Callback.MIPNODE:
