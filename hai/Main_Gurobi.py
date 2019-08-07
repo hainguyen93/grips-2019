@@ -96,6 +96,8 @@ def construct_graph(all_edges):
 
     return graph #, flow_var_names
 
+
+
 def construct_variable_names(all_edges, inspectors):
     flow_var_names = []
     for edge in all_edges:
@@ -103,6 +105,9 @@ def construct_variable_names(all_edges, inspectors):
         end = edge[2] + '@' + edge[3]
         flow_var_names.append([(start, end, k) for k in inspectors])
     return flow_var_names
+
+
+
 #
 # def save_graph(graph, file_name):
 #     nx.write_gexf(graph, file_name)
@@ -145,6 +150,8 @@ def construct_variable_names(all_edges, inspectors):
 # def load_variable_names(name):
 #     print(name+" has been loaded.")
 #     return np.load(name)
+
+
 
 def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
     """Add sinks/sources (for each inspector) to the graph
@@ -359,6 +366,7 @@ def print_solution_paths(inspectors, x):
     return solution
 
 
+
 def create_depot_inspectors_dict(inspectors):
     """Create a new dict with keys being depot and value being a list of
     inspector_id, sorted in descending order according
@@ -380,52 +388,12 @@ def create_depot_inspectors_dict(inspectors):
 
 
 
-def select_inspectors_from_each_depot(depot_dict, delta, known_vars, unknown_vars, uncare_vars):
-    """Select the (delta) inspectors with the largest number of working hours
-    from each depot
-
-    Attributes:
-        depot_dict : dict of depot as keys and list of (inspector_id, max_hours) as values
-        delta : maximum number of inspectors drawn from each depot
-        known_vars : list of vars whose values are known (solved)
-        uncare_vars : list of vars whose values are made 0 (do not contribute to maximum inspection number)
-    """
-
-<<<<<<< HEAD
-    for depot, val in depot_dict.items():
-=======
-    return unknown_vars, uncare_vars
-#==========================================================================================
-
-    '''for depot, val in depot_dict.items():
->>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
-        count = 0
-        for inspector_id in val:
-            if inspector_id in known_vars:
-                continue
-            if count < delta:
-                if not inspector_id in unknown_vars:
-                    unknown_vars.append(inspector_id) # add to unknown_vars
-                    uncare_vars.remove(inspector_id)  # remove from don't care vars
-                count += 1
-            else:
-                break
-
-
-
-<<<<<<< HEAD
-def update_all_var_lists(known_vars, unknown_vars, x):
-=======
 def update_all_var_lists(unknown_vars, known_vars,depot_dict, x, delta):
->>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
     """Update the lists of variables
     """
     for inspector_id in unknown_vars[:]:
-<<<<<<< HEAD
-=======
         if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
             known_vars.append(inspector_id)
-            #unknown_vars.remove(inspector_id) --- Don't need anymore
             # find base 'key' where inspector_id lives, in order to delete from depot_dict:
             inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
 
@@ -445,20 +413,6 @@ def update_all_var_lists(unknown_vars, known_vars,depot_dict, x, delta):
 
 
 
-            #all_arcs = x.select('*', '*', inspector_id)
-            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
-    #=========================================================================================
-
-    '''for inspector_id in unknown_vars[:]:
->>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
-        start = "source_{}".format(inspector_id)
-        source_arcs = x.select(start, '*', inspector_id)
-        source_sols = [clean_up_sol(arc.getAttr('x')) for arc in source_arcs]
-        if sum(source_sols) == 1:  # inspector involves in solution
-            known_vars.append(inspector_id)
-            unknown_vars.remove(inspector_id)
-            #all_arcs = x.select('*', '*', inspector_id)
-            #prev_sols.update({arc.getAttr('VarName'):clean_up_sol(x.getAttr('x')) for arc in all_arcs})
 
 def update_max_inspectors_constraint(model, new_max_inspectors):
     """ Update the max_num_inspectors in the model constraint named
@@ -472,7 +426,7 @@ def update_max_inspectors_constraint(model, new_max_inspectors):
     constr = model.getConstrByName("Max_Inspector_Constraint")
     constr.setAttr(GRB.Attr.RHS, new_max_inspectors)
     model.update() # implement all pending changes
-    model.write("gurobi_model_{}.lp".format(new_max_inspectors))
+    model.write("gurobi_model_{}.rlp".format(new_max_inspectors))
 
 
 
@@ -497,8 +451,6 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
     return x, M
 
 
-def clean_up_sol(x):
-    return 1 if x > 0.5 else 0
 
 def main(argv):
     """main function"""
@@ -521,7 +473,7 @@ def main(argv):
     if max_num_inspectors > len(inspectors):
         max_num_inspectors = len(inspectors)
 
-    input_dir = 'Mon_Arcs.txt'
+    input_dir = 'mon_arcs.txt'
 
     graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
 
@@ -574,51 +526,33 @@ def main(argv):
 
     # important for saving constraints and variables
     model.write("Scheduling.rlp")
-    model.setParam('MIPGap', 0.1)
+    model.setParam('MIPGap', 0.05)
     # model.setParam('MIPFocus', 1)
 
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
-            objval = model.cbUseSolution()
+            objval = model.cbUseSolution()  # newly added
             print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
+    #initial list fill
+    unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta)
 
-    t = time.time()
-<<<<<<< HEAD
-=======
-    unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta) #initial list fill
->>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
     for i in range(start, max_num_inspectors, delta):
 
-        select_inspectors_from_each_depot(depot_inspector_dict, delta, known_vars, unknown_vars, uncare_vars)
-        print(known_vars)
-        print("========")
-        print(unknown_vars)
-        print("========")
-        print(uncare_vars)
+        print('Known Vars: ', known_vars)
+        print('Unknown Vars: ', unknown_vars)
+        print("Don't care Vars: ", uncare_vars)
+
         for uncare_inspector_id in uncare_vars:
             all_vars = x.select('*', '*', uncare_inspector_id)
             prev_sols.update({arc:0 for arc in all_vars})
 
-        # constrs = model.getConstrs()
-        # constr = model.getConstrByName("Max_Inspector_Constraint")
-        # constr.setAttr(GRB.Attr.RHS, i)
-        #
-        # model.update() # implement all pending changes
-        # model.write("gurobi_model_iteration_{}.rlp".format(i))
         update_max_inspectors_constraint(model, i)
 
         model.optimize(mycallback)
 
-<<<<<<< HEAD
-        update_all_var_lists(known_vars, unknown_vars, x)
-=======
         unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars,depot_inspector_dict, x, delta)
->>>>>>> f9a3494429155e3ce21fce89bcd3f35b78c0d24c
-
-
-    #model.write("Gurobi_Solution.lp")
 
     # write Solution:
     solution  = print_solution_paths(known_vars, x)
