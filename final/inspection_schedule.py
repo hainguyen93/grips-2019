@@ -102,6 +102,7 @@ def main(argv):
     # important for saving constraints and variables
     model.write("Scheduling.rlp")
     model.setParam('MIPGap', 0.05)
+    model.setParam('NumericFocus', 0)
     # model.setParam('MIPFocus', 1)
 
     def mycallback(model, where):
