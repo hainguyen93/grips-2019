@@ -424,7 +424,7 @@ def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta):
     
     for inspectors in depot_dict.values():
         if len(inspectors) > delta:
-            unknown_vars = unknown_vars + inspectors[:delta])
+            unknown_vars = unknown_vars + inspectors[:delta]
             uncare_vars = uncare_vars + inspectors[delta:]
         else:
             unknown_vars = unknown_vars + inspectors
