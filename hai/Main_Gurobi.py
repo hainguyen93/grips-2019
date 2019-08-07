@@ -23,10 +23,13 @@ import pandas as pd
 from copy import deepcopy
 
 from OD_matrix import *
+from my_xml_parser import *
 
 KAPPA = 12
 
 HOUR_TO_SECONDS = 3600
+
+HOUR_TO_MINUTES = 60
 
 MINUTE_TO_SECONDS = 60
 
@@ -302,18 +305,18 @@ def add_time_flow_constraint(graph, model, inspectors, x):
 
         ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
         
-        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple()) for u in graph.predecessors(sink)]
+        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())/60 for u in graph.predecessors(sink)]
         min_val1 = min(val1)
         val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
         
-        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple()) for v in graph.successors(source)]
+        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())/60 for v in graph.successors(source)]
         min_val2 = min(val2)
         val2 = [-(t-min_val2) for t in val2]  # again, normalising
         
         val = val1 + val2        
 
         time_flow = LinExpr(val,ind)
-        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_SECONDS,'time_flow_constr_{}'.format(k))
+        model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_MINUTES,'time_flow_constr_{}'.format(k))
 
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
@@ -397,7 +400,7 @@ def create_depot_inspectors_dict(inspectors):
 
 
 
-def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta):
+def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
     """Update the lists of variables
     """
     
@@ -474,9 +477,24 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
 def main(argv):
     """main function"""
     
-    if len(argv) != 1:
-        print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
+    if len(argv) != 3:
+        print("USAGE: {} timetable chosenDay maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
+        
+    timetable_file = argv[0]
+    chosen_day = argv[1]  
+    
+    #======================================================================
+    station_list = create_station_list(timetable_file, chosen_day)
+    
+    inspectors = dict()
+    indx = 0
+    
+    for station in station_list:
+        random_num_inspectors = np.random.randint(1,10)
+        for i in range(random_num_inspectors):
+            inspectors[indx] = {'base':station, 'working_hours'}
+    
 
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
@@ -485,11 +503,12 @@ def main(argv):
                    4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
+    #=====================================================================
 
     depot_dict = create_depot_inspectors_dict(inspectors)
 
     # upper-bound max_num_inspectors by number of inspectors
-    max_num_inspectors = int(argv[0])
+    max_num_inspectors = int(argv[2])
     if max_num_inspectors > len(inspectors):
         max_num_inspectors = len(inspectors)
 
@@ -560,7 +579,7 @@ def main(argv):
     
     for i in range(1, max_num_inspectors+1, delta):
         
-        print('============= ITERATION No.{} ============'.format(i))
+        print('=========================== ITERATION No.{} ==========================='.format(i))
         print('Known Vars: ', known_vars)
         print('Unknown Vars: ', unknown_vars)
         print("Don't care Vars: ", uncare_vars)

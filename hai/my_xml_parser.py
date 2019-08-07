@@ -128,6 +128,24 @@ def extract_edges_from_timetable(timetable, chosen_day):
 
 
 
+def create_station_list(timetable, chosen_day):
+    """Create a list of stations involed in the train timetable for a specific day 
+    """
+    driving_edges = list()
+    waiting_edges = set() # implemented as a set to avoid duplicate
+
+    # dictionary with station as keys and list of timestamps as values
+    events = dict()
+
+    tree = ET.parse(timetable)
+    root = tree.getroot()
+
+    create_driving_edges(root, chosen_day, driving_edges)
+    create_list_of_events(driving_edges, events)
+    return events.keys()
+    
+
+
 def main(argv):
     """ Main function """
 
