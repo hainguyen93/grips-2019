@@ -110,52 +110,6 @@ def construct_variable_names(all_edges, inspectors):
     return flow_var_names
 
 
-
-#
-# def save_graph(graph, file_name):
-#     nx.write_gexf(graph, file_name)
-#     print("graph.gexf has been saved.")
-#
-#
-#
-# def load_graph(file_name):
-#     print("graph.gexf has been loaded.")
-#     return nx.read_gexf(file_name)
-#
-# def save_data(name, dict):
-#     """ Save data to json objects
-#
-#     Attributes:
-#         name            : string name of object
-#         dict            : dictionary to be saved
-#     """
-#     # save shortest_paths and OD to files to be read in again
-#     with open(name+".json", "w") as f:
-#         json.dump(dict, f)
-#     print(name+".json has been saved.")
-#
-# def load_data(name):
-#     """ Load saved data from json files
-#
-#     Attributes:
-#         name            : string name of object
-#     """
-#     data = {}
-#     with open(name+".json", "r") as f:
-#         data = json.load(f)
-#     print(name+'.json has been loaded.')
-#     return data
-#
-# def save_variable_names(obj, name):
-#     np.save(name, obj)
-#     print(name+" has been saved." )
-#
-# def load_variable_names(name):
-#     print(name+" has been loaded.")
-#     return np.load(name)
-
-
-
 def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
     """Add sinks/sources (for each inspector) to the graph
 
@@ -304,16 +258,16 @@ def add_time_flow_constraint(graph, model, inspectors, x):
         sink = "sink_" + str(k)
 
         ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
-        
+
         val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())/60 for u in graph.predecessors(sink)]
         min_val1 = min(val1)
         val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
-        
+
         val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())/60 for v in graph.successors(source)]
         min_val2 = min(val2)
         val2 = [-(t-min_val2) for t in val2]  # again, normalising
-        
-        val = val1 + val2        
+
+        val = val1 + val2
 
         time_flow = LinExpr(val,ind)
         model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_MINUTES,'time_flow_constr_{}'.format(k))
@@ -403,20 +357,20 @@ def create_depot_inspectors_dict(inspectors):
 def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
     """Update the lists of variables
     """
-    
+
     for inspector_id in unknown_vars[:]:
         if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
             known_vars.append(inspector_id)
             unknown_vars.remove(inspector_id)
-            
+
             # find base 'key' where inspector_id lives, in order to delete from depot_dict:
             # Hai's note: inefficient as no need of looping over all depots
             # inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
-            
+
             for depot, val in depot_dict.items():
                 if inspector_id in val:
                     inspector_id_base = depot
-                    break  
+                    break
 
             # now remove it from depot dict:
             depot_dict[inspector_id_base].remove(inspector_id)
@@ -424,7 +378,7 @@ def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
     # update unknown and uncare vars:
     unknown_vars = []
     uncare_vars = []
-    
+
     for inspectors in depot_dict.values():
         if len(inspectors) > delta:
             unknown_vars = unknown_vars + inspectors[:delta]
@@ -448,7 +402,7 @@ def update_max_inspectors_constraint(model, new_max_inspectors):
     constr = model.getConstrByName("Max_Inspector_Constraint")
     constr.setAttr(GRB.Attr.RHS, new_max_inspectors)
     model.update() # implement all pending changes
-    model.write("gurobi_model_{}.lp".format(new_max_inspectors))
+    model.write("gurobi_model_{}.rlp".format(new_max_inspectors))
 
 
 
@@ -476,20 +430,29 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
 
 def main(argv):
     """main function"""
-    
-    if len(argv) != 3:
-        print("USAGE: {} timetable chosenDay maxNumInspectors".format(os.path.basename(__file__)))
+
+    if len(argv) != 1:
+        print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
-        
+
     timetable_file = argv[0]
-    chosen_day = argv[1]  
-    
+    chosen_day = argv[1]
+
     #======================================================================
     station_list = create_station_list(timetable_file, chosen_day)
+<<<<<<< HEAD
     
+    depot_list = ['BHF', 'UEP', 'TS', 'AA', 'BGS', 'RB', 'HB', 'EDO', 'MOF', 'WS', 
+		'FKW', 'LH', 'DH', 'RK', 'KK', 'AH', 'MH', 'UEI', 'RM', 'LL', 'MDT', 
+		'FW', 'NN', 'BL', 'XSB', 'BLS', 'EDG', 'FFU', 'HOLD', 'FF', 'FMZ', 'AK', 'HH']
+
+    station_list = [i for i in station_list if i in depot_list]
+=======
+>>>>>>> f1589ea386c75e431b339cb364009cd48ba25c79
+
     inspectors = dict()
     indx = 0
-    
+
     for station in station_list:
         random_num_inspectors = np.random.randint(1,10)
         for i in range(random_num_inspectors):
@@ -498,6 +461,9 @@ def main(argv):
     
     print(station_list)
     print(inspectors)
+
+    df = pd.DataFrame([(x,val['base'],val['working_hours']) for x, val in inspectors.items()], columns = ['Inspector_ID', 'Depot', 'Max_Hours'])
+    df.to_csv('inspectors.csv', index=False)     
     
     """
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
@@ -507,6 +473,11 @@ def main(argv):
                    4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
+<<<<<<< HEAD
+    
+=======
+    """
+>>>>>>> f1589ea386c75e431b339cb364009cd48ba25c79
     #=====================================================================
 
     depot_dict = create_depot_inspectors_dict(inspectors)
@@ -569,31 +540,31 @@ def main(argv):
 
     # important for saving constraints and variables
     model.write("Scheduling.rlp")
-    #model.setParam('MIPGap', 0.1)
+    model.setParam('MIPGap', 0.05)
     # model.setParam('MIPFocus', 1)
 
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
-            #model.cbUseSolution()  # newly added
-            #print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
+            model.cbUseSolution()  # newly added
+            print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
     #initial list fill
-    unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta) 
-    
+    unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta)
+
     for i in range(1, max_num_inspectors+1, delta):
-        
+
         print('=========================== ITERATION No.{} ==========================='.format(i))
         print('Known Vars: ', known_vars)
         print('Unknown Vars: ', unknown_vars)
         print("Don't care Vars: ", uncare_vars)
-        
+
         for uncare_inspector_id in uncare_vars:
             #= x.select('*', '*', uncare_inspector_id)
             prev_sols.update({arc:0 for arc in x.select('*', '*', uncare_inspector_id)})
 
         update_max_inspectors_constraint(model, i)
- 
+
         model.optimize(mycallback)
 
         unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta)
@@ -603,8 +574,12 @@ def main(argv):
 
     with open("Gurobi_Solution.txt", "w") as f:
         f.write(solution.to_string())
-
+<<<<<<< HEAD
 """
+=======
+
+
+>>>>>>> f1589ea386c75e431b339cb364009cd48ba25c79
 
 if __name__ == '__main__':
     main(sys.argv[1:])
