@@ -24,156 +24,57 @@ def extract_inspectors_data(inspectors_file):
     inspectors={ data.loc[i]['Inspector_ID']:
                     {"base": data.loc[i]['Depot'], "working_hours": data.loc[i]['Max_Hours']}
                      for i in range(len(data))}
-    # with open(inspectors_file, "r") as f:
-    #     for line in f.readlines()[1:]:
-    #         line = line.split(',')
-    #         inspector_id = int(line[0])
-    #         depot = line[1]
-    #         max_hours = float(line[2])
-    #         inspectors[inspector_id] = {"base": depot, 'working_hours': max_hours}
     return inspectors
 
 
 def main(argv):
-    """Main function"""
+    """main function"""
 
-    try:
-        # raise error if command-line arguments do not match
-        if len(argv) != 5:
-            raise CommandLineArgumentsNotMatch('ERROR: Command-line arguments do not match')
-            sys.exit()
+    if len(argv) != 1:
+        print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
+        sys.exit()
 
-        timetable_file = argv[0]
-        inspector_file = argv[1]
-        chosen_day = argv[2]
-        output_file = argv[3]
-        max_num_inspectors = int(argv[4])
+    inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
+                   1 : {"base": 'HH', "working_hours": 5, "rate": 10},
+                   2 : {"base": 'RDRM', "working_hours": 6, "rate": 15},
+                   3 : {"base": 'HH', "working_hours": 8, "rate": 10},
+                   4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
+                    # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
+                    }
 
-        if not chosen_day in DAYS:
-            raise DayNotFound('ERROR: Day not found')
+    depot_dict = create_depot_inspectors_dict(inspectors)
 
-        # dictionary of id (key) and base/max_hours (value)
-        inspectors = extract_inspectors_data(inspector_file)
-        print("Inspectors loaded ... number of inspectors: {}".format(len(inspectors)))
+    # upper-bound max_num_inspectors by number of inspectors
+    max_num_inspectors = int(argv[0])
+    if max_num_inspectors > len(inspectors):
+        max_num_inspectors = len(inspectors)
 
-        # if os.path.exists(file_name):
-        #     graph = nx.read_gexf(file_name)
-        # else:
-        # list of 6-tuples (from, depart, to, arrival, num passengers, time)
-        all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+    input_dir = 'mon_arcs.txt'
 
-        graph = construct_graph(all_edges)
+    graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
 
-        flow_var_names = construct_variable_names(all_edges, inspectors)
+    # OD Estimation
+    shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
+    # T, OD = generate_OD_matrix(graph)
 
-        shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
-
-        # T, OD = generate_OD_matrix(deepcopy(graph))
-
-        # f = open('dict.txt','w')
-        # f.write(str(OD))
-        # f.close()
-        # print("OD saved")
-        # np.save("OD", OD)
-        # print("saved OD matrix")
-        # save shortest_paths and OD coefficients data
-        # save_data("shortest_paths",shortest_paths)
-        # save_data("OD", OD)
-        f = open('dict.txt','r')
+    with open('../final/dict.txt','r') as f:
         data=f.read()
-        f.close()
-        OD = eval(data)
-        print("OD matrix loaded ...")
 
-        add_sinks_and_sources(graph, inspectors, flow_var_names)
+    OD = eval(data)
+    print("OD matrix loaded ...")
 
-        # freeze graph to prevent further changes
-        graph = nx.freeze(graph)
+    # adding sources/sinks nodes
+    add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names)
 
+    #freeze graph to prevent further changes
+    graph = nx.freeze(graph)
 
-        # save_graph(graph, "graph.gexf")
-        # save_variable_names(flow_var_names, "flow_var_names.npy")
-
-        #================================== START Gurobi ================================================
-        #                           Establish Maximization Problem
-        #================================================================================================
-        t3 = time.time()
-        print("Start Gurobi")
-        model = Model("DB_MIP");
-
-        # adding variables and objective functions
-        print("Adding variables...", end=" ")
-        x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
-        M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
-        print("Setting the objective functions...", end=" ")
-        # Adding the objective function coefficients
-        model.setObjective(M.prod(OD),GRB.MAXIMIZE)
-
-        # adding flow conservation constraints
-        add_mass_balance_constraint(graph, model, inspectors, x)
-
-        # adding sink/source constraints
-        add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x)
-
-        # add working_hours restriction constraints
-        add_time_flow_constraint(graph, model, inspectors, x)
-
-        # adding dummy variables to get rid of 'min' in objective function
-        minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
-
-        # start solving using Gurobi using heuristic solution
-        model.optimize()
-        # model.write("Inspection_LP.lp")
-
-        # write Solution:
-        solution  = print_solution_paths(inspectors, x)
-
-
-
-        # with open(output_file, "w") as f:
-        #     f.write(solution)
-
-        # post analysis
-        obj_val = float(model.objVal)
-        denominator = float(sum(OD.values())(OD))
-        print("Approximate number of people in the system: {}".format(denominator))
-        percentage = obj_val/denominator*100
-        print("Approximate percentage of people inspected today: {}%".format(percentage))
-        # with open("Gurobi_Solution.txt", "w") as f:
-        #     f.write(solution)
-
-    except CommandLineArgumentsNotMatch as error:
-        print(error)
-        print('USAGE: {} xmlInputFile inspectorFile chosenDay outputFile'.format(os.path.basename(__file__)))
-    except (ET.ParseError, DayNotFound, FileNotFoundError) as error:
-        print(error)
-
-    print("=======================")
-    print("TESTING HEURSTIC SOLVER")
-    print("=======================")
-
-    # heuristic_solver(timetable_file, chosen_day, "more_inspectors.csv","schedule_for_1_inspectors.csv", shortest_paths, OD, max_num_inspectors)
-
-def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_name, shortest_paths, OD, max_num_inspectors):
-    # dictionary of id (key) and base/max_hours (value)
-    inspectors = extract_inspectors_data(inspectors_file)
-    all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
-    graph = construct_graph(all_edges)
-    flow_var_names = construct_variable_names(all_edges, inspectors)
-    #================================== START Gurobi ================================================
-    #                           Establish Maximization Problem
-    #================================================================================================
-    t3 = time.time()
+    # start Gurobi
     print("Start Gurobi")
     model = Model("DB_MIP");
 
     # adding variables and objective functions
-    print("Adding variables...", end=" ")
-    x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
-    M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
-
-    # Adding the objective function coefficients
-    model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+    x, M = add_vars_and_obj_function(model, flow_var_names, OD)
 
     # adding flow conservation constraints
     add_mass_balance_constraint(graph, model, inspectors, x)
@@ -187,29 +88,123 @@ def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_
     # adding dummy variables to get rid of 'min' in objective function
     minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
 
+    # adding a max number of inspectors constraint (set to 1 by default)
+    add_max_num_inspectors_constraint(graph, model, inspectors, 1, x)
 
-    # To solve problems with more inspectors, use solutions from previous problems.
-    schedule = pd.read_csv(schedule_file_name)
-    var_names = [(row.start_station_and_time, row.end_station_and_time, row.inspector_id) for row in schedule]
+    known_vars = []  # vars with known solutions
+    #unknown_vars = []  # vars currently in the model
+    #uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
-    # add heuristic solutions to solve for more inspectors
-    t4 = time.time()
-    def heuristic_solution(model, where):
+    delta = 1 # incremental number of inspector schedules to make
+    #start = 1 # number of inspector schedules to start with
+
+    prev_sols = {}
+
+    # important for saving constraints and variables
+    model.write("Scheduling.rlp")
+    model.setParam('MIPGap', 0.05)
+    # model.setParam('MIPFocus', 1)
+
+    def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
-            model.cbSetSolution(var_names, [1]*len(var_names))
+            model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
+            model.cbUseSolution()  # newly added
+            print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
-    model.optimize(heuristic_solution)
+    #initial list fill
+    unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta)
 
-    model.optimize(heuristic_solution)
-    model.write("heuristic_LP.lp")
+    for i in range(1, max_num_inspectors+1, delta):
+
+        print('============= ITERATION No.{} ============'.format(i))
+        print('Known Vars:      ', known_vars)
+        print('Unknown Vars:    ', unknown_vars)
+        print("Don't care Vars: ", uncare_vars)
+
+        for uncare_inspector_id in uncare_vars:
+            #= x.select('*', '*', uncare_inspector_id)
+            prev_sols.update({arc:0 for arc in x.select('*', '*', uncare_inspector_id)})
+
+        update_max_inspectors_constraint(model, i)
+
+        model.optimize(mycallback)
+
+        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta)
 
     # write Solution:
-    solution = print_solution_paths(inspectors, x)
+    solution  = print_solution_paths(known_vars, x)
+
+    with open("Gurobi_Solution.txt", "w") as f:
+        f.write(solution.to_string())
+
     obj_val = float(model.objVal)
-    denominator = float(sum(OD.values())(OD))
+    denominator = float(sum(OD.values()))
     print("Approximate number of people in the system: {}".format(denominator))
     percentage = obj_val/denominator*100
     print("Approximate percentage of people inspected today: {}%".format(percentage))
+    #
+    # print("=======================")
+    # print("TESTING HEURSTIC SOLVER")
+    # print("=======================")
+
+    # heuristic_solver(timetable_file, chosen_day, "more_inspectors.csv","schedule_for_1_inspectors.csv", shortest_paths, OD, max_num_inspectors)
+
+# def heuristic_solver(timetable_file, chosen_day, inspectors_file, schedule_file_name, shortest_paths, OD, max_num_inspectors):
+#     # dictionary of id (key) and base/max_hours (value)
+#     inspectors = extract_inspectors_data(inspectors_file)
+#     all_edges = extract_edges_from_timetable(timetable_file, chosen_day)
+#     graph = construct_graph(all_edges)
+#     flow_var_names = construct_variable_names(all_edges, inspectors)
+#     #================================== START Gurobi ================================================
+#     #                           Establish Maximization Problem
+#     #================================================================================================
+#     t3 = time.time()
+#     print("Start Gurobi")
+#     model = Model("DB_MIP");
+#
+#     # adding variables and objective functions
+#     print("Adding variables...", end=" ")
+#     x = model.addVars(flow_var_names,ub =1,lb =0,obj = 0,vtype = GRB.BINARY,name = 'x')
+#     M = model.addVars(OD.keys(), lb = 0,ub = 1, obj = list(OD.values()), vtype = GRB.CONTINUOUS,name = 'M');
+#
+#     # Adding the objective function coefficients
+#     model.setObjective(M.prod(OD),GRB.MAXIMIZE)
+#
+#     # adding flow conservation constraints
+#     add_mass_balance_constraint(graph, model, inspectors, x)
+#
+#     # adding sink/source constraints
+#     add_sinks_and_source_constraint(graph, model, inspectors, max_num_inspectors, x)
+#
+#     # add working_hours restriction constraints
+#     add_time_flow_constraint(graph, model, inspectors, x)
+#
+#     # adding dummy variables to get rid of 'min' in objective function
+#     minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x)
+#
+#
+#     # To solve problems with more inspectors, use solutions from previous problems.
+#     schedule = pd.read_csv(schedule_file_name)
+#     var_names = [(row.start_station_and_time, row.end_station_and_time, row.inspector_id) for row in schedule]
+#
+#     # add heuristic solutions to solve for more inspectors
+#     t4 = time.time()
+#     def heuristic_solution(model, where):
+#         if where == GRB.Callback.MIPNODE:
+#             model.cbSetSolution(var_names, [1]*len(var_names))
+#
+#     model.optimize(heuristic_solution)
+#
+#     model.optimize(heuristic_solution)
+#     model.write("heuristic_LP.lp")
+#
+#     # write Solution:
+#     solution = print_solution_paths(inspectors, x)
+#     obj_val = float(model.objVal)
+#     denominator = float(sum(OD.values())(OD))
+#     print("Approximate number of people in the system: {}".format(denominator))
+#     percentage = obj_val/denominator*100
+#     print("Approximate percentage of people inspected today: {}%".format(percentage))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
