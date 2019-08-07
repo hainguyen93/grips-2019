@@ -440,15 +440,12 @@ def main(argv):
 
     #======================================================================
     station_list = create_station_list(timetable_file, chosen_day)
-<<<<<<< HEAD
     
     depot_list = ['BHF', 'UEP', 'TS', 'AA', 'BGS', 'RB', 'HB', 'EDO', 'MOF', 'WS', 
 		'FKW', 'LH', 'DH', 'RK', 'KK', 'AH', 'MH', 'UEI', 'RM', 'LL', 'MDT', 
 		'FW', 'NN', 'BL', 'XSB', 'BLS', 'EDG', 'FFU', 'HOLD', 'FF', 'FMZ', 'AK', 'HH']
 
     station_list = [i for i in station_list if i in depot_list]
-=======
->>>>>>> f1589ea386c75e431b339cb364009cd48ba25c79
 
     inspectors = dict()
     indx = 0
@@ -473,11 +470,7 @@ def main(argv):
                    4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
-<<<<<<< HEAD
-    
-=======
-    """
->>>>>>> f1589ea386c75e431b339cb364009cd48ba25c79
+"""
     #=====================================================================
 
     depot_dict = create_depot_inspectors_dict(inspectors)
@@ -574,12 +567,8 @@ def main(argv):
 
     with open("Gurobi_Solution.txt", "w") as f:
         f.write(solution.to_string())
-<<<<<<< HEAD
-"""
-=======
 
 
->>>>>>> f1589ea386c75e431b339cb364009cd48ba25c79
 
 if __name__ == '__main__':
     main(sys.argv[1:])
