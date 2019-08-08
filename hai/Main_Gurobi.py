@@ -471,10 +471,11 @@ def main(argv):
         print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
         sys.exit()
 
-    timetable_file = argv[0]
-    chosen_day = argv[1]
+    #timetable_file = argv[0]
+    #chosen_day = argv[1]
 
     # ======================================================================
+    """
     station_list = create_station_list(timetable_file, chosen_day)
 
     depot_list = [
@@ -537,20 +538,19 @@ def main(argv):
     df.to_csv('inspectors.csv', index=False)
 
     """
-    inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
-                   1 : {"base": 'HH', "working_hours": 5, "rate": 10},
-                   2 : {"base": 'RDRM', "working_hours": 6, "rate": 15},
-                   3 : {"base": 'HH', "working_hours": 8, "rate": 10},
-                   4 : {"base": 'RDRM', "working_hours": 7, "rate": 10}
-                    # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
-                    }
-    """
+    inspectors = {0: {"base": 'RDRM', "working_hours": 8, "rate": 12},
+                  1: {"base": 'HH', "working_hours": 5, "rate": 10},
+                  2: {"base": 'RDRM', "working_hours": 6, "rate": 15},
+                  3: {"base": 'HH', "working_hours": 8, "rate": 10},
+                  4: {"base": 'RDRM', "working_hours": 7, "rate": 10},
+                  5: {"base": 'RM', 'working_hours': 5, 'rate': 11}
+                  }
     # =====================================================================
 
     depot_dict = create_depot_inspectors_dict(inspectors)
 
     # upper-bound max_num_inspectors by number of inspectors
-    max_num_inspectors = int(argv[2])
+    max_num_inspectors = int(argv[0])
     if max_num_inspectors > len(inspectors):
         max_num_inspectors = len(inspectors)
 
@@ -608,17 +608,41 @@ def main(argv):
 
     # important for saving constraints and variables
     model.write("Scheduling.rlp")
-    model.setParam('MIPGap', 0.05)
+    model.setParam('MIPGap', 0.1)
     # model.setParam('MIPFocus', 1)
 
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
             model.cbSetSolution(list(prev_sols.keys()),
                                 list(prev_sols.values()))
-            model.cbUseSolution()  # newly added
+            #model.cbUseSolution()  # newly added
             print("MODEL RUNTIME: {}".format(
                 model.cbGet(GRB.Callback.RUNTIME)))
 
+    # ================ Testing ===============
+    uncare_vars = list(inspectors.keys())
+    known_vars = []
+    unknown_vars = [0]
+    uncare_vars.remove(0)
+
+    print('Known Vars: ', known_vars)
+    print('Unknown Vars: ', unknown_vars)
+    print("Don't care Vars: ", uncare_vars)
+
+    for uncare_inspector_id in uncare_vars:
+        # = x.select('*', '*', uncare_inspector_id)
+        prev_sols.update(
+            {arc: 0 for arc in x.select('*', '*', uncare_inspector_id)})
+
+    update_max_inspectors_constraint(model, 1)
+
+    model.optimize(mycallback)
+
+    known_vars = [0]
+
+    # =======================================
+
+    """
     # initial list fill
     unknown_vars, uncare_vars = update_all_var_lists(
         [], known_vars, depot_dict, x, delta)
@@ -642,11 +666,11 @@ def main(argv):
 
         unknown_vars, uncare_vars = update_all_var_lists(
             unknown_vars, known_vars, depot_dict, x, delta)
-
+    """
     # write Solution:
     solution = print_solution_paths(known_vars, x)
 
-    with open("Gurobi_Solution.txt", "w") as f:
+    with open("Gurobi_Solution_1.txt", "w") as f:
         f.write(solution.to_string())
 
 
