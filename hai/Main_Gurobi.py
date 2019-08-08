@@ -27,7 +27,7 @@ from my_xml_parser import *
 
 KAPPA = 12
 
-HOUR_TO_SECONDS = 3600
+#HOUR_TO_SECOND = 3600
 
 HOUR_TO_MINUTES = 60
 
@@ -259,11 +259,11 @@ def add_time_flow_constraint(graph, model, inspectors, x):
 
         ind = [x[u, sink, k] for u in graph.predecessors(sink)] + [x[source, v, k] for v in graph.successors(source)]
 
-        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())/60 for u in graph.predecessors(sink)]
+        val1 = [time.mktime(parse(graph.nodes[u]['time_stamp']).timetuple())/MINUTE_TO_SECONDS for u in graph.predecessors(sink)]
         min_val1 = min(val1)
         val1 = [t-min_val1 for t in val1]  # normalising by subtracting the minimum
 
-        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())/60 for v in graph.successors(source)]
+        val2 = [time.mktime(parse(graph.nodes[v]['time_stamp']).timetuple())/MINUTE_TO_SECONDS for v in graph.successors(source)]
         min_val2 = min(val2)
         val2 = [-(t-min_val2) for t in val2]  # again, normalising
 
@@ -440,9 +440,9 @@ def main(argv):
 
     #======================================================================
     station_list = create_station_list(timetable_file, chosen_day)
-    
-    depot_list = ['BHF', 'UEP', 'TS', 'AA', 'BGS', 'RB', 'HB', 'EDO', 'MOF', 'WS', 
-		'FKW', 'LH', 'DH', 'RK', 'KK', 'AH', 'MH', 'UEI', 'RM', 'LL', 'MDT', 
+
+    depot_list = ['BHF', 'UEP', 'TS', 'AA', 'BGS', 'RB', 'HB', 'EDO', 'MOF', 'WS',
+		'FKW', 'LH', 'DH', 'RK', 'KK', 'AH', 'MH', 'UEI', 'RM', 'LL', 'MDT',
 		'FW', 'NN', 'BL', 'XSB', 'BLS', 'EDG', 'FFU', 'HOLD', 'FF', 'FMZ', 'AK', 'HH']
 
     station_list = [i for i in station_list if i in depot_list]
@@ -455,13 +455,13 @@ def main(argv):
         for i in range(random_num_inspectors):
             inspectors[indx] = {'base':station, 'working_hours': np.random.randint(3,8)}
             indx += 1
-    
+
     print(station_list)
     print(inspectors)
 
     df = pd.DataFrame([(x,val['base'],val['working_hours']) for x, val in inspectors.items()], columns = ['Inspector_ID', 'Depot', 'Max_Hours'])
-    df.to_csv('inspectors.csv', index=False)     
-    
+    df.to_csv('inspectors.csv', index=False)
+
     """
     inspectors = { 0 : {"base": 'RDRM', "working_hours": 8, "rate": 12},
                    1 : {"base": 'HH', "working_hours": 5, "rate": 10},
