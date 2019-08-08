@@ -88,6 +88,7 @@ def main(argv):
         add_sinks_and_source_constraint(graph, model, inspectors, x)
 
         # add working_hours restriction constraints
+        print(list(graph.predecessors("sink_22")))
         add_time_flow_constraint(graph, model, inspectors, x)
 
         # adding dummy variables to get rid of 'min' in objective function
