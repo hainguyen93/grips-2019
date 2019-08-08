@@ -1,0 +1,282 @@
+dhcp-052-251:hai_grips pthnguyen$ python3 Main_Gurobi.py 3
+Building graph ... Finished! Took 0.09693 seconds
+OD matrix loaded ...
+Adding Sinks/Sources... Finished! Took 0.03221 seconds
+Start Gurobi
+Academic license - for non-commercial use only
+Adding variables... Done
+Adding [Mass - Balance Constraint] ... Finished! Took 0.61342 seconds
+Adding [Sink and Source Constraint]... Finished! Took 0.00120 seconds
+Adding [Time Flow Constraint]... Finished! Took 0.05917 seconds
+Adding [Minimum Constraint]... Finished! Took 1.10635 seconds
+Adding [Max Working Inspectors Constraint]... Finished! Took 0.00058 seconds
+Changed value of parameter MIPGap to 0.1
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+=========================== ITERATION No.1 ===========================
+Known Vars:  []
+Unknown Vars:  [0, 3, 5]
+Don't care Vars:  [4, 2, 1]
+Optimize a model with 39582 rows, 60999 columns and 359253 nonzeros
+Variable types: 10619 continuous, 50380 integer (50380 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+02]
+Found heuristic solution: objective -0.0000000
+Presolve removed 17500 rows and 25027 columns
+Presolve time: 4.01s
+Presolved: 22082 rows, 35972 columns, 170963 nonzeros
+Variable types: 5413 continuous, 30559 integer (30086 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   26988    9.3260990e+03   0.000000e+00   1.952746e+06      5s
+   31628    9.4668949e+03   0.000000e+00   0.000000e+00      7s
+   31628    9.4668949e+03   0.000000e+00   0.000000e+00      7s
+Concurrent spin time: 0.86s
+
+Solved with primal simplex
+
+Root relaxation: objective 9.466895e+03, 31628 iterations, 3.64 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 9466.89495    0  953   -0.00000 9466.89495      -     -    8s
+H    0     0                    3149.7650020 9466.89495   201%     -    8s
+H    0     0                    3158.8201914 9466.89495   200%     -    8s
+MODEL RUNTIME: 9.050817966461182
+     0     0 8397.06369    0  878 3158.82019 8397.06369   166%     -   47s
+MODEL RUNTIME: 47.48576879501343
+     0     0 7325.54918    0  726 3158.82019 7325.54918   132%     -   85s
+MODEL RUNTIME: 85.31350493431091
+     0     0 6675.88738    0  556 3158.82019 6675.88738   111%     -  123s
+MODEL RUNTIME: 123.06459593772888
+     0     0 6641.21739    0  556 3158.82019 6641.21739   110%     -  161s
+H    0     0                    5115.9829925 6641.21739  29.8%     -  162s
+MODEL RUNTIME: 162.57110381126404
+     0     0 6482.26344    0  561 5115.98299 6482.26344  26.7%     -  188s
+MODEL RUNTIME: 188.69553780555725
+     0     0 6468.11191    0  643 5115.98299 6468.11191  26.4%     -  214s
+MODEL RUNTIME: 214.78977394104004
+     0     0 6467.92005    0  549 5115.98299 6467.92005  26.4%     -  240s
+H    0     0                    5199.7646302 6467.92005  24.4%     -  240s
+MODEL RUNTIME: 240.77237796783447
+     0     0 6348.84853    0  499 5199.76463 6348.84853  22.1%     -  263s
+MODEL RUNTIME: 263.2905728816986
+     0     0 6348.72347    0  501 5199.76463 6348.72347  22.1%     -  285s
+H    0     0                    5255.0780876 6348.72347  20.8%     -  285s
+MODEL RUNTIME: 285.63358187675476
+     0     0 6269.91720    0  724 5255.07809 6269.91720  19.3%     -  305s
+MODEL RUNTIME: 305.30571484565735
+     0     0 6263.85259    0  652 5255.07809 6263.85259  19.2%     -  324s
+MODEL RUNTIME: 324.99286699295044
+     0     0 6118.84673    0  756 5255.07809 6118.84673  16.4%     -  344s
+MODEL RUNTIME: 344.8088209629059
+     0     0 6091.37671    0  667 5255.07809 6091.37671  15.9%     -  365s
+MODEL RUNTIME: 365.13516783714294
+     0     0 6091.18090    0  673 5255.07809 6091.18090  15.9%     -  385s
+MODEL RUNTIME: 385.4245228767395
+     0     0 6032.53240    0  540 5255.07809 6032.53240  14.8%     -  407s
+MODEL RUNTIME: 407.53387999534607
+     0     0 5889.38231    0  721 5255.07809 5889.38231  12.1%     -  427s
+MODEL RUNTIME: 427.47401881217957
+     0     0 5843.65303    0  708 5255.07809 5843.65303  11.2%     -  447s
+MODEL RUNTIME: 447.3537108898163
+     0     0 5824.21464    0  651 5255.07809 5824.21464  10.8%     -  467s
+MODEL RUNTIME: 467.6170268058777
+     0     0 5753.64502    0  869 5255.07809 5753.64502  9.49%     -  487s
+
+Cutting planes:
+  Gomory: 1
+  Cover: 3
+  Implied bound: 5
+  MIR: 34
+  StrongCG: 10
+  Flow cover: 2
+  GUB cover: 11
+
+Explored 1 nodes (35248 simplex iterations) in 487.60 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 6: 5255.08 5199.76 5115.98 ... -0
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective 5.255078087646e+03, best bound 5.753645019643e+03, gap 9.4873%
+=========================== ITERATION No.2 ===========================
+Known Vars:  [3]
+Unknown Vars:  [0, 1, 5]
+Don't care Vars:  [4, 2]
+Optimize a model with 39582 rows, 60999 columns and 359253 nonzeros
+Variable types: 10619 continuous, 50380 integer (50380 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+02]
+
+Loaded MIP start with objective 5255.08
+
+Presolve removed 17383 rows and 24803 columns
+Presolve time: 1.70s
+Presolved: 22199 rows, 36196 columns, 170274 nonzeros
+Variable types: 5443 continuous, 30753 integer (30300 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+Concurrent spin time: 1.03s
+
+Solved with primal simplex
+
+Root relaxation: objective 2.290597e+04, 32592 iterations, 3.57 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 22905.9702    0 1247 5255.07809 22905.9702   336%     -    5s
+MODEL RUNTIME: 6.043716192245483
+     0     0 20357.3002    0 1225 5255.07809 20357.3002   287%     -   14s
+MODEL RUNTIME: 14.489713191986084
+     0     0 17522.3626    0  842 5255.07809 17522.3626   233%     -   22s
+MODEL RUNTIME: 22.637502193450928
+     0     0 14035.5717    0  618 5255.07809 14035.5717   167%     -   30s
+MODEL RUNTIME: 30.891985177993774
+     0     0 13503.1596    0  623 5255.07809 13503.1596   157%     -   39s
+MODEL RUNTIME: 39.288201093673706
+     0     0 12453.1865    0  973 5255.07809 12453.1865   137%     -   48s
+MODEL RUNTIME: 48.8031370639801
+     0     0 12169.8429    0  844 5255.07809 12169.8429   132%     -   57s
+MODEL RUNTIME: 57.087637186050415
+     0     0 12159.7058    0  937 5255.07809 12159.7058   131%     -   65s
+MODEL RUNTIME: 65.17961716651917
+     0     0 12156.9928    0  967 5255.07809 12156.9928   131%     -   73s
+H    0     0                    10096.023266 12156.9928  20.4%     -   74s
+MODEL RUNTIME: 74.19380307197571
+     0     0 12056.8695    0  877 10096.0233 12056.8695  19.4%     -   86s
+MODEL RUNTIME: 86.47189807891846
+     0     0 11891.8401    0  836 10096.0233 11891.8401  17.8%     -   97s
+MODEL RUNTIME: 97.92174506187439
+     0     0 11632.6510    0  764 10096.0233 11632.6510  15.2%     -  109s
+MODEL RUNTIME: 109.88964414596558
+     0     0 11362.8006    0  848 10096.0233 11362.8006  12.5%     -  121s
+MODEL RUNTIME: 121.92895317077637
+     0     0 11352.7165    0  868 10096.0233 11352.7165  12.4%     -  133s
+H    0     0                    10222.007359 11352.7165  11.1%     -  133s
+MODEL RUNTIME: 133.21761918067932
+     0     0 11226.4153    0  995 10222.0074 11226.4153  9.83%     -  142s
+
+Cutting planes:
+  Gomory: 7
+  Implied bound: 16
+  Clique: 10
+  MIR: 8
+  StrongCG: 6
+  Flow cover: 6
+  GUB cover: 9
+
+Explored 1 nodes (38079 simplex iterations) in 142.66 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 3: 10222 10096 5255.08
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective 1.022200735914e+04, best bound 1.122641528180e+04, gap 9.8259%
+=========================== ITERATION No.3 ===========================
+Known Vars:  [3, 0]
+Unknown Vars:  [4, 1, 5]
+Don't care Vars:  [2]
+Optimize a model with 39582 rows, 60999 columns and 359253 nonzeros
+Variable types: 10619 continuous, 50380 integer (50380 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+02]
+
+Loaded MIP start with objective 10222
+
+Presolve removed 17383 rows and 24803 columns
+Presolve time: 1.97s
+Presolved: 22199 rows, 36196 columns, 170274 nonzeros
+Variable types: 5444 continuous, 30752 integer (30300 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   33944    2.6030410e+04   0.000000e+00   0.000000e+00      5s
+   33944    2.6030410e+04   0.000000e+00   0.000000e+00      5s
+Concurrent spin time: 0.87s
+
+Solved with primal simplex
+
+Root relaxation: objective 2.603041e+04, 33944 iterations, 3.87 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 26030.4097    0 1625 10222.0074 26030.4097   155%     -    6s
+MODEL RUNTIME: 7.290966033935547
+     0     0 25879.6688    0 1230 10222.0074 25879.6688   153%     -    8s
+H    0     0                    12537.039928 25879.6688   106%     -    8s
+MODEL RUNTIME: 8.540302038192749
+     0     0 19930.8625    0 1048 12537.0399 19930.8625  59.0%     -    9s
+MODEL RUNTIME: 9.743858098983765
+     0     0 19510.2619    0 1015 12537.0399 19510.2619  55.6%     -   10s
+MODEL RUNTIME: 10.5314040184021
+     0     0 17949.1340    0  904 12537.0399 17949.1340  43.2%     -   11s
+MODEL RUNTIME: 11.373575925827026
+     0     0 17948.7979    0  895 12537.0399 17948.7979  43.2%     -   11s
+MODEL RUNTIME: 11.931165933609009
+     0     0 17948.7690    0  906 12537.0399 17948.7690  43.2%     -   12s
+H    0     0                    13076.667542 17948.7690  37.3%     -   13s
+MODEL RUNTIME: 13.242897033691406
+     0     0 17868.2433    0 1032 13076.6675 17868.2433  36.6%     -   19s
+H    0     0                    13929.609555 17868.2433  28.3%     -   19s
+MODEL RUNTIME: 19.65022301673889
+     0     0 17102.6094    0  849 13929.6096 17102.6094  22.8%     -   20s
+MODEL RUNTIME: 20.63747811317444
+     0     0 16444.5960    0  822 13929.6096 16444.5960  18.1%     -   21s
+MODEL RUNTIME: 21.491302013397217
+     0     0 16383.6337    0  835 13929.6096 16383.6337  17.6%     -   22s
+MODEL RUNTIME: 22.635977029800415
+     0     0 15765.7961    0 1361 13929.6096 15765.7961  13.2%     -   23s
+MODEL RUNTIME: 24.020179986953735
+     0     0 15735.2634    0 1422 13929.6096 15735.2634  13.0%     -   25s
+MODEL RUNTIME: 25.12985396385193
+     0     0 15734.8970    0 1376 13929.6096 15734.8970  13.0%     -   25s
+MODEL RUNTIME: 25.72468090057373
+     0     0 15548.2375    0 1037 13929.6096 15548.2375  11.6%     -   27s
+H    0     0                    14043.130928 15548.2375  10.7%     -   27s
+MODEL RUNTIME: 27.27212405204773
+     0     0 15508.4792    0 1026 14043.1309 15508.4792  10.4%     -   27s
+MODEL RUNTIME: 28.034564971923828
+     0     0 15508.3456    0  992 14043.1309 15508.3456  10.4%     -   28s
+MODEL RUNTIME: 28.664530038833618
+     0     0 15410.0494    0 1074 14043.1309 15410.0494  9.73%     -   29s
+
+Cutting planes:
+  Gomory: 4
+  Implied bound: 3
+  MIR: 13
+  StrongCG: 7
+  Flow cover: 3
+  GUB cover: 19
+
+Explored 1 nodes (39669 simplex iterations) in 29.95 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 5: 14043.1 13929.6 13076.7 ... 10222
+
+Optimal solution found (tolerance 1.00e-01)
+Best objective 1.404313092813e+04, best bound 1.541004938534e+04, gap 9.7337%
