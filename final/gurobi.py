@@ -334,27 +334,6 @@ def print_solution_paths(inspectors, x):
 
 
 
-def create_depot_inspectors_dict(inspectors):
-    """Create a new dict with keys being depot and value being a list of
-    inspector_id, sorted in descending order according
-    to the max_working_hours
-
-    Attributes:
-        inspectors : dict of inspectors
-    """
-    res = dict()
-    for inspector, val in inspectors.items():
-        if not val['base'] in res:
-            res[val['base']] = [(inspector, val['working_hours'])]
-        else:
-            res[val['base']].append((inspector, val['working_hours']))
-
-    for _, val in res.items():
-        val.sort(key=lambda x: x[1], reverse=True)
-    return {k:[i[0] for i in val] for k, val in res.items()}
-
-
-
 def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
     """Update the lists of variables
     """
@@ -465,7 +444,7 @@ def main(argv):
     """
     #=====================================================================
 
-    depot_dict = create_depot_inspectors_dict(inspectors)
+    depot_dict = create_depot_inspector_dict(inspectors)
 
     # upper-bound max_num_inspectors by number of inspectors
     max_num_inspectors = int(argv[2])

@@ -1,29 +1,31 @@
-# call this file to produce inspection schedule for inspectors
-# @author: Hai Nguyen, Ruby Abrams and Nathan May
+"""Main codes for preducing the inspection schedules for multiple inspectors
+
+INVOCATION:
+$ python3 main.py timetable chosenDay inspectorFile maxInspectors > outputFile
+
+timetable -- name of the XML file from which train timetable is extracted 
+            (note: must be in English, otherwise use xmltranslator.py to translate to English).
+chosenDay -- a day to produce inspection shedule (e.g., Mon, Tue, etc).
+inspectorFile -- name of the CSV file from which inspector data is extracted.
+maxInspectors -- maximum number of inspectors allowed to work on the chosen day. 
+outputFile -- name of text file, where the produced inspection schedule is stored.
+
+EXAMPLE:
+$ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt
+"""
 
 import sys
 import os
 import xml.etree.ElementTree as ET
 import json
+import numpy as np
 import pandas as pd
 
 from exceptions import *
-from my_xml_parser import *
-from Main_Gurobi import *
-
-
-def extract_inspectors_data(inspectors_file):
-    """Extract a dictionary containing information for inspectors
-    from the input file for inspectors
-
-    Attribute:
-        inspector_file : name of inspectors input file
-    """
-    data = pd.read_csv(inspectors_file)
-    inspectors={ data.loc[i]['Inspector_ID']:
-                    {"base": data.loc[i]['Depot'], "working_hours": data.loc[i]['Max_Hours']}
-                     for i in range(len(data))}
-    return inspectors
+from xmParser import *
+from gurobi import *
+from odMatrix import *
+from readInspectorData import *
 
 
 def main(argv):
