@@ -2524,3 +2524,11 @@ Academic license - for non-commercial use only
 Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 17:55:52 2019
 
 Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug 12 15:50:52 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0

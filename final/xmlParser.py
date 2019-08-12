@@ -136,7 +136,11 @@ def extract_edges_from_timetable(timetable, chosen_day):
         create_waiting_edges(waiting_edges, events)
     
         print('{} driving arcs and {} waiting arcs'.format(len(driving_edges), len(waiting_edges)))
-        return driving_edges + list(waiting_edges)
+        
+        all_edges = driving_edges + list(waiting_edges)
+        stations = events.keys()
+        
+        return all_edges, stations
     
     except ET.ParseError as error:
         print(error)

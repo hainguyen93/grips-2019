@@ -1,7 +1,7 @@
 """Main codes for preducing the inspection schedules for multiple inspectors
 
 INVOCATION:
-$ python3 main.py timetable chosenDay inspectorFile maxInspectors [options] > outputFile
+$ python3 main.py timetable chosenDay inspectorFile maxInspectors outputFile [--load-od]
 
 timetable -- name of the XML file from which train timetable is extracted 
             (note: must be in English, otherwise use xmltranslator.py to translate to English).
@@ -13,7 +13,7 @@ outputFile -- name of text file, where the produced inspection schedule is store
                      to load od matrix from a file (--load-od)
 
 EXAMPLE:
-$ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt
+$ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 schedule.txt [--load-od]
 """
 
 import sys
@@ -40,12 +40,14 @@ def main(argv):
         chosen_day = argv[1]        
         inspector_file = argv[2]        
         max_num_inspectors = int(argv[3])
+	outputFile = argv[4]
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found')
         
-        inspectors = extract_inspectors_data(inspector_file)  
-        edges = extract_edges_from_timetable(timetable_file, chosen_day)
+        edges, stations = extract_edges_from_timetable(timetable_file, chosen_day)
+        inspectors = extract_inspectors_data(inspector_file, stations)  
+        depot_dict = create_depot_inspector_dict(inspectors)
         graph = construct_graph_from_edges(edges)
         flow_var_names = construct_variable_names(edges, inspectors)        
         graph_copy = deepcopy(graph)        
@@ -108,12 +110,17 @@ def main(argv):
             unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta)
 
         # write solution to console
-        solution  = print_solution_paths(known_vars, x)        
-        print(solution.to_string())
+        solution  = print_solution_paths(known_vars, x)
+
+	with open(outputFile, 'w') as f:
+	    f.write(solution.to_string())
+        
+        #print(solution.to_string())
         
     except CLArgumentsNotMatch as error:
         print(error)
-        sys.stderr.write("""USAGE:
+        sys.stderr.write(
+        """USAGE:
         $ python3 main.py timetable chosenDay inspectorFile maxInspectors > outputFile
 
             timetable -- name of the XML file from which train timetable is extracted 
@@ -124,7 +131,8 @@ def main(argv):
             outputFile -- name of text file, where the produced inspection schedule is stored.
 
         EXAMPLE:
-        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt\n""")
+        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt\n"""
+        )
         sys.exit(1)
 
     except (CLArgumentsNotMatch, ET.ParseError, DayNotFound, FileNotFoundError) as error:
