@@ -4,6 +4,10 @@
 import numpy as np
 import pandas as pd
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2541c9f85b6c88ac94281c51f176cf87a010c066
 def extract_inspectors_data(file_name, stations):
     """Extract a dictionary containing information for inspectors
     from the input file for inspectors
