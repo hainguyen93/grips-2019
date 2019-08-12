@@ -4,10 +4,6 @@
 import numpy as np
 import pandas as pd
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 2541c9f85b6c88ac94281c51f176cf87a010c066
 def extract_inspectors_data(file_name, stations):
     """Extract a dictionary containing information for inspectors
     from the input file for inspectors
@@ -19,7 +15,7 @@ def extract_inspectors_data(file_name, stations):
     print('Loading inspectors...', end=' ')
     data = pd.read_csv(file_name)
     inspectors={ data.loc[i]['Inspector_ID']:
-                    {"base": data.loc[i]['Depot'], 
+                    {"base": data.loc[i]['Depot'],
                      "working_hours": data.loc[i]['Max_Hours']}
                     for i in range(len(data)) if data.loc[i]['Depot'] in stations}
     print('There are {} inspectors in total'.format(len(inspectors)))
@@ -35,14 +31,13 @@ def create_depot_inspector_dict(inspector_dict):
     Attributes:
         inspector_dict : dict of inspectors
     """
-    res = dict()    
+    res = dict()
     for inspector, val in inspector_dict.items():
         if not val['base'] in res:
             res[val['base']] = [(inspector, val['working_hours'])]
         else:
             res[val['base']].append((inspector, val['working_hours']))
     for val in res.values():
-        val.sort(key=lambda x: x[1], reverse=True)    
+        val.sort(key=lambda x: x[1], reverse=True)
     res = {k:[i[0] for i in val] for k, val in res.items()}
     return res
-
