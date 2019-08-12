@@ -44,8 +44,9 @@ def main(argv):
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found')
         
-        inspectors = extract_inspectors_data(inspector_file)  
-        edges = extract_edges_from_timetable(timetable_file, chosen_day)
+        edges, stations = extract_edges_from_timetable(timetable_file, chosen_day)
+        inspectors = extract_inspectors_data(inspector_file, stations)  
+        depot_dict = create_depot_inspector_dict(inspectors)
         graph = construct_graph_from_edges(edges)
         flow_var_names = construct_variable_names(edges, inspectors)        
         graph_copy = deepcopy(graph)        
@@ -113,7 +114,8 @@ def main(argv):
         
     except CLArgumentsNotMatch as error:
         print(error)
-        sys.stderr.write("""USAGE:
+        sys.stderr.write(
+        """USAGE:
         $ python3 main.py timetable chosenDay inspectorFile maxInspectors > outputFile
 
             timetable -- name of the XML file from which train timetable is extracted 
@@ -124,7 +126,8 @@ def main(argv):
             outputFile -- name of text file, where the produced inspection schedule is stored.
 
         EXAMPLE:
-        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt\n""")
+        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt\n"""
+        )
         sys.exit(1)
 
     except (CLArgumentsNotMatch, ET.ParseError, DayNotFound, FileNotFoundError) as error:
