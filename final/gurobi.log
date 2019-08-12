@@ -2524,3 +2524,59 @@ Academic license - for non-commercial use only
 Gurobi 8.1.1 (mac64, Python) logging started Wed Aug  7 17:55:52 2019
 
 Academic license - for non-commercial use only
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug 12 15:50:52 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+
+Gurobi 8.1.1 (mac64, Python) logging started Mon Aug 12 16:34:48 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Optimize a model with 478839 rows, 820167 columns and 5626960 nonzeros
+Variable types: 10619 continuous, 809548 integer (809548 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 2e+03]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 4e+02]
+Found heuristic solution: objective -0.0000000
+Presolve removed 144709 rows and 222794 columns (presolve time = 6s) ...
+Presolve removed 177807 rows and 276980 columns (presolve time = 10s) ...
+Presolve removed 214814 rows and 340858 columns (presolve time = 15s) ...
+Presolve removed 250657 rows and 405840 columns (presolve time = 20s) ...
+Presolve removed 279217 rows and 456833 columns (presolve time = 25s) ...
+Presolve removed 284225 rows and 471458 columns (presolve time = 41s) ...
+Presolve removed 287743 rows and 472008 columns
+Presolve time: 44.13s
+Presolved: 191096 rows, 348159 columns, 1934414 nonzeros
+Variable types: 7408 continuous, 340751 integer (340233 binary)
+
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing first log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -0.0000000e+00   0.000000e+00   4.422245e+05     47s
+  131397    5.2815712e+03   0.000000e+00   6.268459e+07     50s
+  140261    5.3473335e+03   0.000000e+00   1.267041e+08     55s
+  142348    5.4437659e+03   0.000000e+00   8.958796e+07     61s
+  143218    5.4832378e+03   0.000000e+00   3.960988e+08     65s
+  144428    5.5498646e+03   0.000000e+00   2.375202e+08     71s
+  145578    5.7575475e+03   0.000000e+00   7.991769e+07     76s
+  145878    5.7657745e+03   0.000000e+00   2.793410e+08     80s
+  146198    5.7738567e+03   0.000000e+00   2.050437e+08     88s
+  146348    5.7768295e+03   0.000000e+00   1.407667e+08     92s
+  146508    5.7796566e+03   0.000000e+00   3.205053e+08     96s
+  146818    5.7857001e+03   0.000000e+00   2.600988e+08    104s
+  146968    5.7888603e+03   0.000000e+00   2.324311e+08    108s
+  147108    5.7919634e+03   0.000000e+00   6.633017e+08    112s
