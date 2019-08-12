@@ -22,8 +22,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from copy import deepcopy
 
-from OD_matrix import *
-from my_xml_parser import *
+from odMatrix import *
+from xmlParser import *
 
 KAPPA = 12
 

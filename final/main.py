@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 
 from exceptions import *
-from xmParser import *
+from xmlParser import *
 from gurobi import *
 from odMatrix import *
 from readInspectorData import *
@@ -114,17 +114,17 @@ def main(argv):
     except CLArgumentsNotMatch as error:
         print(error)
         sys.stderr.write("""USAGE:
-            $ python3 main.py timetable chosenDay inspectorFile maxInspectors > outputFile
+        $ python3 main.py timetable chosenDay inspectorFile maxInspectors > outputFile
 
-                timetable -- name of the XML file from which train timetable is extracted 
+            timetable -- name of the XML file from which train timetable is extracted 
                             (note: must be in English, otherwise use xmltranslator.py to translate to English).
-                chosenDay -- a day to produce inspection shedule (e.g., Mon, Tue, etc).
-                inspectorFile -- name of the CSV file from which inspector data is extracted.
-                maxInspectors -- maximum number of inspectors allowed to work on the chosen day. 
-                outputFile -- name of text file, where the produced inspection schedule is stored.
+            chosenDay -- a day to produce inspection shedule (e.g., Mon, Tue, etc).
+            inspectorFile -- name of the CSV file from which inspector data is extracted.
+            maxInspectors -- maximum number of inspectors allowed to work on the chosen day. 
+            outputFile -- name of text file, where the produced inspection schedule is stored.
 
-            EXAMPLE:
-            $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt\n""")
+        EXAMPLE:
+        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt\n""")
         sys.exit(1)
 
     except (CLArgumentsNotMatch, ET.ParseError, DayNotFound, FileNotFoundError) as error:
