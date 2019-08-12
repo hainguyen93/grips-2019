@@ -11,11 +11,13 @@ def extract_inspectors_data(file_name):
     Attribute:
         file_name : name of inspectors input file
     """
+    print('Loading inspectors...', end=' ')
     data = pd.read_csv(file_name)
     inspectors={ data.loc[i]['Inspector_ID']:
                     {"base": data.loc[i]['Depot'], 
                      "working_hours": data.loc[i]['Max_Hours']}
                     for i in range(len(data))}
+    print('There are {} inspectors in total'.format(len(inspectors)))
     return inspectors
 
 

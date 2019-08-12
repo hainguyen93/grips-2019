@@ -70,7 +70,7 @@ def construct_graph_from_file(input_dir, inspectors):
 
 
 
-def construct_graph(all_edges):
+def construct_graph_from_edges(all_edges):
     """ Construct the graph from a list of edges
 
     Attribute:

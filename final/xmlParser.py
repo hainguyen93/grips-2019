@@ -109,63 +109,37 @@ def create_waiting_edges(waiting_edges, events):
 
 
 def extract_edges_from_timetable(timetable, chosen_day):
-    # List of 5-tuples
-    # E.G., (from_station, departure_time, to_station, arrival_time, passenger_number)
-    driving_edges = list()
-    waiting_edges = set() # implemented as a set to avoid duplicate
-
-    # dictionary with station as keys and list of timestamps as values
-    events = dict()
-
-    tree = ET.parse(timetable)
-    root = tree.getroot()
-
-    create_driving_edges(root, chosen_day, driving_edges)
-    create_list_of_events(driving_edges, events)
-    create_waiting_edges(waiting_edges, events)
-
-    return driving_edges + list(waiting_edges)
-
-
-
-def main(argv):
-    """ Main function """
-
-    try:
-        if len(argv) != 3:
-            print('USAGE: {} xmlFileName chosenDay outputFile'.format(os.path.basename(__file__)))
-            sys.exit()
-
-        if not argv[1] in DAYS:
-            raise DayNotFound('ERROR: Day not found! Please check for case-sensitivity (e.g. Mon, Tue, ...)')
-
-        # List of 5-tuples
-        # E.G., (from_station, departure_time, to_station, arrival_time, passenger_number)
+    """Create list of driving and waiting arcs from the xml timetable file
+    to construct the time-extended graph
+    
+    Attributes:
+        timetable : the xml timetable file 
+        chosen_day : day chosen to produce inspection shedule (e.g., Mon, Tue, etc)
+        
+    Return a list of 6-tuples 
+        (from_station, departure_time, to_station, arrival_time, passenger_number, travel_time)
+    """  
+    try: 
+        print('Extracting waiting and driving arcs from timetable...', end=' ')
+    
         driving_edges = list()
-        waiting_edges = set() # implemented as a set to avoid duplicate
+        waiting_edges = set() # to avoid duplicate
 
         # dictionary with station as keys and list of timestamps as values
         events = dict()
 
-        tree = ET.parse(argv[0])
+        tree = ET.parse(timetable)
         root = tree.getroot()
 
-        create_driving_edges(root, argv[1], driving_edges)
+        create_driving_edges(root, chosen_day, driving_edges)
         create_list_of_events(driving_edges, events)
         create_waiting_edges(waiting_edges, events)
-
-        # print to a file
-        with open(argv[2], "w+") as file:
-            for edge in driving_edges:
-                file.write(" ".join(str(i) for i in edge) + "\n")
-            for edge in waiting_edges:
-                file.write(" ".join(str(i) for i in edge) + "\n")
-
-        print("Print Completed.")
-
-    except (ET.ParseError, DayNotFound) as error:
+    
+        print('{} driving arcs and {} waiting arcs'.format(len(driving_edges), len(waiting_edges)))
+        return driving_edges + list(waiting_edges)
+    
+    except ET.ParseError as error:
         print(error)
-
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+        sys.exit(1)
+        
+        
