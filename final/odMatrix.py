@@ -128,4 +128,4 @@ def generate_OD_matrix(graph):
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2-t1))
-    return T, OD
+    return OD

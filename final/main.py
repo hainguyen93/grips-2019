@@ -1,7 +1,7 @@
 """Main codes for preducing the inspection schedules for multiple inspectors
 
 INVOCATION:
-$ python3 main.py timetable chosenDay inspectorFile maxInspectors > outputFile
+$ python3 main.py timetable chosenDay inspectorFile maxInspectors [options] > outputFile
 
 timetable -- name of the XML file from which train timetable is extracted 
             (note: must be in English, otherwise use xmltranslator.py to translate to English).
@@ -9,6 +9,8 @@ chosenDay -- a day to produce inspection shedule (e.g., Mon, Tue, etc).
 inspectorFile -- name of the CSV file from which inspector data is extracted.
 maxInspectors -- maximum number of inspectors allowed to work on the chosen day. 
 outputFile -- name of text file, where the produced inspection schedule is stored.
+[options] -- options to load arcs from a file (--load-arcs), 
+                     to load od matrix from a file (--load-od)
 
 EXAMPLE:
 $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt
@@ -31,7 +33,7 @@ from readInspectorData import *
 def main(argv):
     try:
         # check cl arguments
-        if len(argv) != 4:
+        if len(argv) < 4:
             raise CLArgumentsNotMatch('ERROR: Command-line arguments do not match')
 
         timetable_file = argv[0]        
@@ -49,13 +51,15 @@ def main(argv):
         graph_copy = deepcopy(graph)        
         shortest_paths, arc_paths = create_arc_paths(graph_copy)
 
-        # T, OD = generate_OD_matrix(deepcopy(graph))
-
-        with open('savedODMatrix.txt','r') as f:
-            data=f.read()
-        OD = eval(data)        
-        print("OD matrix loaded ...")
-
+        if '--load-od' in argv: 
+            print('Loading the OD matrix from file ...', end=' ')
+            with open('savedODMatrix.txt','r') as f:
+                data=f.read()
+            OD = eval(data)        
+            print("Done")
+        else: 
+            OD = generate_OD_matrix(graph_copy)
+        
         add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names)
         graph = nx.freeze(graph) #freeze graph to prevent further changes
 
