@@ -11,8 +11,7 @@ maxInspectors -- maximum number of inspectors allowed to work on the chosen day.
 outputFile -- name of text file, where the produced inspection schedule is stored.
 delta -- incremental step used in heuristic solver.
 
-[options] -- options to load arcs from a file (--load-arcs),
-                     to load od matrix from a file (--load-od)
+[--load-od] -- options to load od matrix from a file
 
 EXAMPLE:
 $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 delta schedule.txt [--load-od]
@@ -52,8 +51,11 @@ def main(argv):
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found')
 
-        edges, stations = extract_edges_from_timetable(timetable_file, chosen_day)
-        inspectors = extract_inspectors_data(inspector_file, stations)
+        edges, all_stations = extract_edges_from_timetable(timetable_file, chosen_day)
+        inspectors = extract_inspectors_data(inspector_file, all_stations)
+
+        print('There are {} inspectors'.format(len(inspectors)))
+        print(inspectors)
 
         if len(inspectors) < max_num_inspectors:
             print('''Note: The entered maximum number of inspectors, {}, allowed to work on
@@ -110,13 +112,20 @@ def main(argv):
         unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x)
 
         iteration = 0  # iteration counting
-        new_delta = min(delta, len(stations), max_num_inspectors) # number of inspector to start with
+        new_delta = min(delta, len(depot_dict), max_num_inspectors) # number of inspector to start with
+
         i = new_delta
 
         while True:
             iteration += 1
 
             print('=============== ITERATION No.{} ================'.format(iteration))
+            print('''Important Note: Heuristic Solver is trying to find the
+                  best possible schedule for {} inspectors from a set of {}
+                  inspectors (all in Known_Vars and Unknown_Vars), where {} of them
+                  are fixed. All others inspectors are set
+                  to 0 (using Gurobi cbSetSolution() function)
+                  '''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
             print('Known Vars: ', known_vars)
             print('Unknown Vars: ', unknown_vars)
             print("Don't care Vars: ", uncare_vars)
@@ -162,7 +171,7 @@ def main(argv):
             delta -- incremental step used in heuristic solver
 
         EXAMPLE:
-        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 delta schedule.txt\n"""
+        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 delta schedule.txt [--load-od]\n"""
         )
         sys.exit(1)
 
