@@ -381,6 +381,11 @@ def update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x, del
 
 
 
+def clean_up_sol(x):
+    return 1 if x >= 0.5 else 0
+
+
+
 def update_max_inspectors_constraint(model, new_max_inspectors):
     """ Update the max_num_inspectors in the model constraint named
     'Max_Inspector_Constraint', and also write the lp model to a file
