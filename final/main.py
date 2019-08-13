@@ -98,7 +98,7 @@ def main(argv):
         model.setParam('MIPGap', mip_gap)
         model.setParam('NumericFocus', 0)
 
-        if '--heuristic' in argv: # not to use heuristic
+        if not '--heuristic' in argv: # not to use heuristic
             print('No heuristic')
             add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspectors, x)
             model.write("Scheduling.rlp")
