@@ -100,7 +100,7 @@ def main(argv):
 
         # important for saving constraints and variables
         model.write("Scheduling.rlp")
-        model.setParam('MIPGap', 0.05)
+        model.setParam('MIPGap', 0.10)
         # model.setParam('MIPFocus', 1)
         model.setParam('NumericFocus', 0)
 

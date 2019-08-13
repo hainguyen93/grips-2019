@@ -255,6 +255,7 @@ def add_time_flow_constraint(graph, model, inspectors, x):
     print("Adding [Time Flow Constraint]...", end=" ")
     t1 = time.time()
 
+    """
     # only consider the source and sink timestamps
     for k, vals in inspectors.items():
         source = "source_" + str(k) + ""
@@ -288,7 +289,6 @@ def add_time_flow_constraint(graph, model, inspectors, x):
             k_coeff.append(travel_times[(start, end)])
         time_flow = LinExpr(k_coeff, k_vars)
         model.addConstr(time_flow, GRB.LESS_EQUAL, vals['working_hours'] * 60, 'time_flow_constr_{}'.format(k))
-    """
 
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
