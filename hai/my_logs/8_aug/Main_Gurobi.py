@@ -473,11 +473,12 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
 def main(argv):
     """main function"""
 
-    if len(argv) != 1:
-        print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
+    if len(argv) != 2:
+        print("USAGE: {} maxNumInspectors delta".format(os.path.basename(__file__)))
         sys.exit()
 
     max_num_inspectors = int(argv[0])
+    delta = int(argv[1])
 
     #timetable_file = argv[0]
     #chosen_day = argv[1]
@@ -576,6 +577,9 @@ def main(argv):
 
     depot_dict = create_depot_inspectors_dict(inspectors)
 
+    if delta > len(depot_dict):
+        delta = len(depot_dict)
+
     # upper-bound max_num_inspectors by number of inspectors
     if max_num_inspectors > len(inspectors):
         max_num_inspectors = len(inspectors)
@@ -647,8 +651,37 @@ def main(argv):
 
     # initial list fill
     unknown_vars, uncare_vars = update_all_var_lists(
-      [], known_vars, depot_dict, prev_sols, x, delta)
+      [], known_vars, depot_dict, prev_sols, x)
 
+    iteration = 0  # iteration counting
+    new_delta = min(delta, len(depot_dict), max_num_inspectors) # number of inspector to start with
+    i = new_delta
+
+    while True:
+        iteration += 1
+        print('=============== ITERATION No.{} ================'.format(iteration))
+        print('''Heuristic Solver is trying to find the best possible schedule
+              for {} inspector(s) from a set of {} inspector(s) (all in Known_Vars
+               and Unknown_Vars), where {} of them are fixed. Other inspectors are set to 0'''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
+        print('Known Vars \t: ', known_vars)
+        print('Unknown Vars \t: ', unknown_vars)
+        print("Don't care Vars \t: ", uncare_vars)
+
+        for uncare_inspector_id in uncare_vars:
+            arcs = x.select('*', '*', uncare_inspector_id)
+            prev_sols.update({arc:0 for arc in arcs})
+
+        update_max_inspectors_constraint(model, i)
+        model.optimize(mycallback)
+        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x)
+
+        if i >= max_num_inspectors:  # termination
+            break
+        elif i + new_delta > max_num_inspectors:  # last iteration
+            i = max_num_inspectors
+        else:
+            i += new_delta
+"""
     for i in range(1, max_num_inspectors + 1, delta):
 
         print(
@@ -668,6 +701,7 @@ def main(argv):
 
         unknown_vars, uncare_vars = update_all_var_lists(
             unknown_vars, known_vars, depot_dict, prev_sols, x, delta)
+            """
 
     print('==================== FINAL SOLUTION =====================')
     print('Known Vars: ', known_vars)

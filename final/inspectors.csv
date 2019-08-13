@@ -1,7 +1,11 @@
 Inspector_ID,Depot,Max_Hours
 1,RDRM,3
 2,RDRM,5
+3,RDRM,4
 4,HH,3
 5,HH,5
+6,HH,4
+7,FFU,6
+8,FFU,5
 9,HB,4
 10,HB,5

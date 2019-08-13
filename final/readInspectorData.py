@@ -29,7 +29,7 @@ def create_depot_inspector_dict(inspector_dict):
     to the max_working_hours
 
     Attributes:
-        inspector_dict : dict of inspectors
+        inspectors : dict of inspectors
     """
     res = dict()
     for inspector, val in inspector_dict.items():
@@ -37,7 +37,7 @@ def create_depot_inspector_dict(inspector_dict):
             res[val['base']] = [(inspector, val['working_hours'])]
         else:
             res[val['base']].append((inspector, val['working_hours']))
+
     for val in res.values():
         val.sort(key=lambda x: x[1], reverse=True)
-    res = {k:[i[0] for i in val] for k, val in res.items()}
-    return res
+    return {k: [i[0] for i in val] for k, val in res.items()}

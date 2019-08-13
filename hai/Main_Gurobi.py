@@ -236,14 +236,15 @@ def add_max_num_inspectors_constraint(
 
     print("Adding [Max Working Inspectors Constraint]...", end=" ")
     t1 = time.time()
+    iteration = 0
 
     for k, vals in inspectors.items():
+        iteration += 1
         source = "source_" + str(k)
-
         source_constr = LinExpr([1] * graph.out_degree(source),
                                 [x[source, u, k] for u in graph.successors(source)])
 
-        if k == 0:
+        if iteration == 1:
             maxWorking = source_constr
         else:
             maxWorking.add(source_constr)
@@ -359,6 +360,8 @@ def print_solution_paths(inspectors, x):
         while(start != "sink_{}".format(k)):
             arcs = x.select(start, '*', k)
             match = [x for x in arcs if x.getAttr("x") > 0.5]
+            if not match:
+                break
             arc = match[0].getAttr("VarName").split(",")
             arc[0] = arc[0].split("[")[1]
             arc = arc[:-1]
@@ -473,11 +476,14 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
 def main(argv):
     """main function"""
 
-    if len(argv) != 1:
-        print("USAGE: {} maxNumInspectors".format(os.path.basename(__file__)))
+    if len(argv) != 2:
+        print("USAGE: {} maxNumInspectors delta".format(os.path.basename(__file__)))
         sys.exit()
 
     max_num_inspectors = int(argv[0])
+    delta = int(argv[1])
+    print('Max_Num == {}'.format(max_num_inspectors))
+    print('delta == {}'.format(delta))
 
     #timetable_file = argv[0]
     #chosen_day = argv[1]
@@ -576,6 +582,9 @@ def main(argv):
 
     depot_dict = create_depot_inspectors_dict(inspectors)
 
+    if delta > len(depot_dict):
+        delta = len(depot_dict)
+
     # upper-bound max_num_inspectors by number of inspectors
     if max_num_inspectors > len(inspectors):
         max_num_inspectors = len(inspectors)
@@ -627,7 +636,7 @@ def main(argv):
     # uncare_vars = list(inspectors.keys())   # vars currently set to zeros
     # (don't care)
 
-    delta = 1  # incremental number of inspector schedules to make
+    #delta = 1  # incremental number of inspector schedules to make
     # start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
@@ -647,8 +656,43 @@ def main(argv):
 
     # initial list fill
     unknown_vars, uncare_vars = update_all_var_lists(
-      [], known_vars, depot_dict, prev_sols, x, delta)
+      [], known_vars, depot_dict, prev_sols, x)
 
+    iteration = 0  # iteration counting
+
+    #print('length of depot_dict == {}'.format(len(depot_dict)))
+    #print('delta and length = {}'.format(min([delta, len(depot_dict)])))
+    print('delta, len, max_num == {}'.format(min(delta, len(depot_dict), max_num_inspectors)))
+
+    new_delta = min(delta, len(depot_dict), max_num_inspectors) # number of inspector to start with
+    i = new_delta
+    print('i=={}'.format(i))
+
+    while True:
+        iteration += 1
+        print('=============== ITERATION No.{} ================'.format(iteration))
+        print('''Heuristic Solver is trying to find the best possible schedule
+              for at most {} inspector(s) from a set of {} inspector(s) (all in Known_Vars
+               and Unknown_Vars), where {} of them are fixed. Other inspectors are set to 0'''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
+        print('Known Vars: ', known_vars)
+        print('Unknown Vars: ', unknown_vars)
+        print("Don't care Vars: ", uncare_vars)
+
+        for uncare_inspector_id in uncare_vars:
+            arcs = x.select('*', '*', uncare_inspector_id)
+            prev_sols.update({arc:0 for arc in arcs})
+
+        update_max_inspectors_constraint(model, i)
+        model.optimize(mycallback)
+        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x)
+
+        if len(known_vars) >= max_num_inspectors:  # termination
+            break
+        elif len(known_vars) + new_delta > max_num_inspectors:  # last iteration
+            i = max_num_inspectors
+        else:
+            i = len(known_vars) + new_delta
+    """
     for i in range(1, max_num_inspectors + 1, delta):
 
         print(
@@ -667,7 +711,8 @@ def main(argv):
         model.optimize(mycallback)
 
         unknown_vars, uncare_vars = update_all_var_lists(
-            unknown_vars, known_vars, depot_dict, prev_sols, x, delta)
+            unknown_vars, known_vars, depot_dict, prev_sols, x)
+    """
 
     print('==================== FINAL SOLUTION =====================')
     print('Known Vars: ', known_vars)
