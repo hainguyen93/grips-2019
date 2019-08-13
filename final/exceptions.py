@@ -1,6 +1,6 @@
 # Python user-defined exceptions
 
-class CommandLineArgumentsNotMatch(Exception):
+class CLArgumentsNotMatch(Exception):
    """Raised when command-line arguments do not match"""
    pass
 
