@@ -5428,3 +5428,63 @@ Solution count 4: 62540 37362.6 26023.1 506.857
 
 Optimal solution found (tolerance 5.00e-02)
 Best objective 6.253999589058e+04, best bound 6.555108048693e+04, gap 4.8147%
+
+Gurobi 8.1.1 (mac64, Python) logging started Tue Aug 13 16:36:33 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Optimize a model with 15447 rows, 18939 columns and 68416 nonzeros
+Variable types: 10619 continuous, 8320 integer (8320 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+02]
+Found heuristic solution: objective -0.0000000
+Presolve removed 9634 rows and 9967 columns
+Presolve time: 0.14s
+Presolved: 5813 rows, 8972 columns, 29310 nonzeros
+Found heuristic solution: objective 506.8571429
+Variable types: 1826 continuous, 7146 integer (6909 binary)
+
+Root relaxation: objective 6.649456e+04, 14707 iterations, 0.68 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 66494.5550    0 1419  506.85714 66494.5550      -     -    0s
+H    0     0                    26023.136739 66494.5550   156%     -    0s
+     0     0 65816.5425    0 1378 26023.1367 65816.5425   153%     -    5s
+H    0     0                    49106.042245 65816.5425  34.0%     -    5s
+     0     0 65771.1871    0 1413 49106.0422 65771.1871  33.9%     -    9s
+     0     0 65770.8426    0 1411 49106.0422 65770.8426  33.9%     -   12s
+     0     0 65770.6450    0 1411 49106.0422 65770.6450  33.9%     -   16s
+     0     0 65770.4589    0 1411 49106.0422 65770.4589  33.9%     -   20s
+     0     0 65770.3191    0 1411 49106.0422 65770.3191  33.9%     -   24s
+     0     0 65770.1470    0 1411 49106.0422 65770.1470  33.9%     -   28s
+     0     0 65770.0057    0 1411 49106.0422 65770.0057  33.9%     -   32s
+     0     0 65769.8320    0 1411 49106.0422 65769.8320  33.9%     -   36s
+     0     0 65769.7230    0 1411 49106.0422 65769.7230  33.9%     -   40s
+H    0     0                    64003.052223 65769.7230  2.76%     -   40s
+H    0     0                    64003.052223 65769.7230  2.76%     -   40s
+
+Cutting planes:
+  Gomory: 33
+  Implied bound: 19
+  Clique: 3
+  MIR: 144
+  StrongCG: 1
+  Flow cover: 2
+  GUB cover: 2
+  Zero half: 1
+
+Explored 1 nodes (15082 simplex iterations) in 40.82 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 5: 64003.1 63827.7 49106 ... 506.857
+
+Optimal solution found (tolerance 5.00e-02)
+Best objective 6.400305222252e+04, best bound 6.576972297302e+04, gap 2.7603%
