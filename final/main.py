@@ -1,7 +1,7 @@
 """Main codes for preducing the inspection schedules for multiple inspectors
 
 INVOCATION:
-$ python3 main.py timetable chosenDay inspectorFile maxInspectors outputFile [--load-od]
+$ python3 main.py timetable chosenDay inspectorFile maxInspectors delta outputFile [--load-od]
 
 timetable -- name of the XML file from which train timetable is extracted
             (note: must be in English, otherwise use xmltranslator.py to translate to English).
@@ -9,11 +9,13 @@ chosenDay -- a day to produce inspection shedule (e.g., Mon, Tue, etc).
 inspectorFile -- name of the CSV file from which inspector data is extracted.
 maxInspectors -- maximum number of inspectors allowed to work on the chosen day.
 outputFile -- name of text file, where the produced inspection schedule is stored.
+delta -- incremental step used in heuristic solver.
+
 [options] -- options to load arcs from a file (--load-arcs),
                      to load od matrix from a file (--load-od)
 
 EXAMPLE:
-$ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 schedule.txt [--load-od]
+$ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 delta schedule.txt [--load-od]
 """
 
 import sys
@@ -33,20 +35,33 @@ from readInspectorData import *
 def main(argv):
     try:
         # check cl arguments
-        if len(argv) < 4:
+        if len(argv) < 6:
             raise CLArgumentsNotMatch('ERROR: Command-line arguments do not match')
 
         timetable_file = argv[0]
         chosen_day = argv[1]
         inspector_file = argv[2]
         max_num_inspectors = int(argv[3])
-        outputFile = argv[4]
+        outputFile = argv[5]
+
+        delta = int(argv[4])
+        if delta < 1: # check if delta set to 0, if so, reset it to 1
+            print('Note: delta can be smaller than 1. It has been reset to 1.')
+            delta = 1
 
         if not chosen_day in DAYS:
             raise DayNotFound('ERROR: Day not found')
 
         edges, stations = extract_edges_from_timetable(timetable_file, chosen_day)
         inspectors = extract_inspectors_data(inspector_file, stations)
+
+        if len(inspectors) < max_num_inspectors:
+            print('''Note: The entered maximum number of inspectors, {}, allowed to work on
+                  {} is greater than the total number of inspectors, {}.
+                  '''.format(max_num_inspectors, chosen_day, len(inspectors)))
+            max_num_inspectors = len(inspectors)
+
+
         depot_dict = create_depot_inspector_dict(inspectors)
         graph = construct_graph_from_edges(edges)
         flow_var_names = construct_variable_names(edges, inspectors)
@@ -75,8 +90,8 @@ def main(argv):
         add_max_num_inspectors_constraint(graph, model, inspectors, 1, x) # default by 1
 
         known_vars = []  # vars with known solutions
-        delta = 1 # incremental number of inspector schedules to make
-        start = 1 # number of inspector schedules to start with
+        #delta = 1 # incremental number of inspector schedules to make
+
         prev_sols = {} # store values of vars with known solutions
 
         # important for saving constraints and variables
@@ -92,11 +107,16 @@ def main(argv):
                 print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
         #initial list fill
-        unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta)
+        unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x)
 
-        for i in range(start, max_num_inspectors+1, delta):
+        iteration = 0  # iteration counting
+        new_delta = min(delta, len(stations), max_num_inspectors) # number of inspector to start with
+        i = new_delta
 
-            print('====================== ITERATION No.{} ======================='.format(i))
+        while True:
+            iteration += 1
+
+            print('=============== ITERATION No.{} ================'.format(iteration))
             print('Known Vars: ', known_vars)
             print('Unknown Vars: ', unknown_vars)
             print("Don't care Vars: ", uncare_vars)
@@ -107,7 +127,17 @@ def main(argv):
 
             update_max_inspectors_constraint(model, i)
             model.optimize(mycallback)
-            unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta)
+            unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x)
+
+            if i == max_num_inspectors:  # termination
+                break
+            elif i + new_delta > max_num_inspectors:  # last iteration
+                i = max_num_inspectors
+            else:
+                i += new_delta
+
+        print('=============== Final Solutions =================')
+        print('Inspectors: ', known_vars)
 
         # write solution to console
         solution  = print_solution_paths(known_vars, x)
@@ -121,7 +151,7 @@ def main(argv):
         print(error)
         sys.stderr.write(
         """USAGE:
-        $ python3 main.py timetable chosenDay inspectorFile maxInspectors > outputFile
+        $ python3 main.py timetable chosenDay inspectorFile maxInspectors delta outputFile
 
             timetable -- name of the XML file from which train timetable is extracted
                             (note: must be in English, otherwise use xmltranslator.py to translate to English).
@@ -129,9 +159,10 @@ def main(argv):
             inspectorFile -- name of the CSV file from which inspector data is extracted.
             maxInspectors -- maximum number of inspectors allowed to work on the chosen day.
             outputFile -- name of text file, where the produced inspection schedule is stored.
+            delta -- incremental step used in heuristic solver
 
         EXAMPLE:
-        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 > schedule.txt\n"""
+        $ python3 main.py EN_GRIPS2019_401.xml Mon inspectors.csv 30 delta schedule.txt\n"""
         )
         sys.exit(1)
 
