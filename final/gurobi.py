@@ -224,13 +224,14 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
 
     print("Adding [Max Working Inspectors Constraint]...", end=" ")
     t1 = time.time()
+    iteration = 0  # for-loop index
 
     for k, vals in inspectors.items():
+        iteration += 1
         source = "source_" + str(k)
-
         source_constr = LinExpr([1] * graph.out_degree(source),[x[source, u, k] for u in graph.successors(source)])
 
-        if k == 0:
+        if iteration == 1:
             maxWorking = source_constr
         else:
             maxWorking.add(source_constr)
@@ -254,6 +255,8 @@ def add_time_flow_constraint(graph, model, inspectors, x):
     print("Adding [Time Flow Constraint]...", end=" ")
     t1 = time.time()
 
+    """
+    # only consider the source and sink timestamps
     for k, vals in inspectors.items():
         source = "source_" + str(k) + ""
         sink = "sink_" + str(k)
@@ -272,6 +275,19 @@ def add_time_flow_constraint(graph, model, inspectors, x):
 
         time_flow = LinExpr(val,ind)
         model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_MINUTES,'time_flow_constr_{}'.format(k))
+    """
+    # sum the time over the whole path
+    travel_times = nx.get_edge_attributes(graph, 'travel_time')
+
+    for k, vals in inspectors.items():
+        k_vars = x.select('*', '*', k)
+        k_coeff = []
+        for var in k_vars:
+            start = var.getAttr('VarName').split(",")[0].split("[")[1]
+            end = var.getAttr('VarName').split(",")[-2]
+            k_coeff.append(travel_times[(start, end)])
+        time_flow = LinExpr(k_coeff, k_vars)
+        model.addConstr(time_flow, GRB.LESS_EQUAL, vals['working_hours'] * 60, 'time_flow_constr_{}'.format(k))
 
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
@@ -337,25 +353,20 @@ def print_solution_paths(inspectors, x):
 def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
     """Update the lists of variables
     """
-
     for inspector_id in unknown_vars[:]:
-        if [z for z in x.select('*','*',inspector_id) if z.getAttr('x') >= .9 ]:  # inspector involves in solution
+        if [z for z in x.select('source_{}'.format(inspector_id), '*', inspector_id)
+                if z.getAttr('x') >= .9]:
+            sol_arcs = x.select('*', '*', inspector_id)
+            prev_sols.update({arc:clean_up_sol(arc.getAttr('x')) for arc in sol_arcs})
             known_vars.append(inspector_id)
             unknown_vars.remove(inspector_id)
-
-            # find base 'key' where inspector_id lives, in order to delete from depot_dict:
-            # Hai's note: inefficient as no need of looping over all depots
-            # inspector_id_base = [base for base in depot_dict.keys() if inspector_id in depot_dict[base]]
 
             for depot, val in depot_dict.items():
                 if inspector_id in val:
                     inspector_id_base = depot
                     break
-
-            # now remove it from depot dict:
             depot_dict[inspector_id_base].remove(inspector_id)
 
-    # update unknown and uncare vars:
     unknown_vars = []
     uncare_vars = []
 
@@ -366,7 +377,6 @@ def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
         else:
             unknown_vars = unknown_vars + inspectors
     return unknown_vars, uncare_vars
-
 
 
 
