@@ -5310,3 +5310,121 @@ Root relaxation: objective 2.872652e+04, 74311 iterations, 74.16 seconds
      0     0 28726.5227    0 3186   -0.00000 28726.5227      -     -   77s
 H    0     0                    3463.5133898 28726.5227   729%     -   78s
 H    0     0                    3548.6542034 28726.5227   710%     -   78s
+
+Gurobi 8.1.1 (mac64, Python) logging started Tue Aug 13 16:24:27 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Optimize a model with 15447 rows, 18939 columns and 76495 nonzeros
+Variable types: 10619 continuous, 8320 integer (8320 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 6e+01]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+02]
+Found heuristic solution: objective -0.0000000
+Presolve removed 9554 rows and 9853 columns
+Presolve time: 0.24s
+Presolved: 5893 rows, 9086 columns, 33913 nonzeros
+Variable types: 1832 continuous, 7254 integer (7017 binary)
+
+Root relaxation: objective 5.303099e+03, 6119 iterations, 0.18 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 5303.09853    0  224   -0.00000 5303.09853      -     -    0s
+H    0     0                    4274.5586056 5303.09853  24.1%     -    0s
+H    0     0                    4298.0241502 5303.09853  23.4%     -    0s
+     0     0 5283.45725    0  124 4298.02415 5283.45725  22.9%     -   25s
+H    0     0                    4987.5123920 5283.45725  5.93%     -   25s
+     0     0 5275.93170    0  177 4987.51239 5275.93170  5.78%     -   29s
+     0     0 5275.93170    0  154 4987.51239 5275.93170  5.78%     -   33s
+     0     0 5274.29129    0  155 4987.51239 5274.29129  5.75%     -   38s
+     0     0 5269.27223    0  156 4987.51239 5269.27223  5.65%     -   42s
+     0     0 5267.91780    0  167 4987.51239 5267.91780  5.62%     -   46s
+     0     0 5263.15103    0  216 4987.51239 5263.15103  5.53%     -   50s
+     0     0 5262.38829    0  140 4987.51239 5262.38829  5.51%     -   54s
+     0     0 5260.14987    0  196 4987.51239 5260.14987  5.47%     -   58s
+     0     0 5260.06241    0  196 4987.51239 5260.06241  5.46%     -   62s
+     0     0 5260.04984    0  196 4987.51239 5260.04984  5.46%     -   66s
+     0     0 5260.04490    0  196 4987.51239 5260.04490  5.46%     -   70s
+     0     0 5260.04490    0  196 4987.51239 5260.04490  5.46%     -   72s
+
+Cutting planes:
+  Gomory: 8
+  Implied bound: 2
+  MIR: 3
+  Flow cover: 2
+  Zero half: 1
+
+Explored 1 nodes (9705 simplex iterations) in 72.90 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 4: 4987.51 4298.02 4274.56 -0 
+
+Solve interrupted
+Best objective 4.987512391958e+03, best bound 5.260044898679e+03, gap 5.4643%
+
+Gurobi 8.1.1 (mac64, Python) logging started Tue Aug 13 16:26:27 2019
+
+Academic license - for non-commercial use only
+Changed value of parameter MIPGap to 0.05
+   Prev: 0.0001  Min: 0.0  Max: 1e+100  Default: 0.0001
+Parameter NumericFocus unchanged
+   Value: 0  Min: 0  Max: 3  Default: 0
+Optimize a model with 15447 rows, 18939 columns and 68416 nonzeros
+Variable types: 10619 continuous, 8320 integer (8320 binary)
+Coefficient statistics:
+  Matrix range     [2e-02, 1e+03]
+  Objective range  [1e+00, 7e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+02]
+Found heuristic solution: objective -0.0000000
+Presolve removed 9630 rows and 9961 columns
+Presolve time: 0.18s
+Presolved: 5817 rows, 8978 columns, 29321 nonzeros
+Found heuristic solution: objective 506.8571429
+Variable types: 1825 continuous, 7153 integer (6916 binary)
+
+Root relaxation: objective 6.649456e+04, 14432 iterations, 0.64 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 66494.5550    0 1420  506.85714 66494.5550      -     -    0s
+H    0     0                    26023.136739 66494.5550   156%     -    0s
+     0     0 65787.3788    0 1351 26023.1367 65787.3788   153%     -    4s
+H    0     0                    37362.587591 65787.3788  76.1%     -    4s
+     0     0 65736.7704    0 1419 37362.5876 65736.7704  75.9%     -    8s
+     0     0 65736.3873    0 1430 37362.5876 65736.3873  75.9%     -   11s
+     0     0 65736.1929    0 1430 37362.5876 65736.1929  75.9%     -   14s
+     0     0 65736.0080    0 1430 37362.5876 65736.0080  75.9%     -   18s
+     0     0 65735.8766    0 1430 37362.5876 65735.8766  75.9%     -   21s
+     0     0 65735.7029    0 1430 37362.5876 65735.7029  75.9%     -   25s
+     0     0 65735.5578    0 1430 37362.5876 65735.5578  75.9%     -   28s
+     0     0 65735.3705    0 1430 37362.5876 65735.3705  75.9%     -   32s
+     0     0 65735.2676    0 1430 37362.5876 65735.2676  75.9%     -   36s
+H    0     0                    62539.995891 65735.2676  5.11%     -   36s
+     0     0 65551.0805    0 1300 62539.9959 65551.0805  4.81%     -   40s
+
+Cutting planes:
+  Gomory: 34
+  Implied bound: 17
+  Clique: 3
+  MIR: 181
+  StrongCG: 1
+  Flow cover: 2
+  GUB cover: 2
+  Zero half: 2
+
+Explored 1 nodes (14989 simplex iterations) in 40.36 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 4: 62540 37362.6 26023.1 506.857 
+
+Optimal solution found (tolerance 5.00e-02)
+Best objective 6.253999589058e+04, best bound 6.555108048693e+04, gap 4.8147%

@@ -255,7 +255,6 @@ def add_time_flow_constraint(graph, model, inspectors, x):
     print("Adding [Time Flow Constraint]...", end=" ")
     t1 = time.time()
 
-    """
     # only consider the source and sink timestamps
     for k, vals in inspectors.items():
         source = "source_" + str(k) + ""
@@ -275,6 +274,7 @@ def add_time_flow_constraint(graph, model, inspectors, x):
 
         time_flow = LinExpr(val,ind)
         model.addConstr(time_flow,GRB.LESS_EQUAL,vals['working_hours'] * HOUR_TO_MINUTES,'time_flow_constr_{}'.format(k))
+
     """
     # sum the time over the whole path
     travel_times = nx.get_edge_attributes(graph, 'travel_time')
@@ -288,6 +288,7 @@ def add_time_flow_constraint(graph, model, inspectors, x):
             k_coeff.append(travel_times[(start, end)])
         time_flow = LinExpr(k_coeff, k_vars)
         model.addConstr(time_flow, GRB.LESS_EQUAL, vals['working_hours'] * 60, 'time_flow_constr_{}'.format(k))
+    """
 
     t2 = time.time()
     print("Finished! Took {:.5f} seconds".format(t2-t1))
@@ -350,7 +351,7 @@ def print_solution_paths(inspectors, x):
 
 
 
-def update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta=1):
+def update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x, delta=1):
     """Update the lists of variables
     """
     for inspector_id in unknown_vars[:]:
