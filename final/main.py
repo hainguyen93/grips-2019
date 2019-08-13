@@ -54,9 +54,6 @@ def main(argv):
         edges, all_stations = extract_edges_from_timetable(timetable_file, chosen_day)
         inspectors = extract_inspectors_data(inspector_file, all_stations)
 
-        print('There are {} inspectors'.format(len(inspectors)))
-        print(inspectors)
-
         if len(inspectors) < max_num_inspectors:
             print('''Note: The entered maximum number of inspectors, {}, allowed to work on
                   {} is greater than the total number of inspectors, {}.
@@ -65,6 +62,11 @@ def main(argv):
 
 
         depot_dict = create_depot_inspector_dict(inspectors)
+
+        # print out depot and inspectors
+        for depot, ids in depot_dict.items():
+            print('{}: {}'.format(depot, ids))
+
         graph = construct_graph_from_edges(edges)
         flow_var_names = construct_variable_names(edges, inspectors)
         graph_copy = deepcopy(graph)
@@ -120,10 +122,10 @@ def main(argv):
             iteration += 1
 
             print('=============== ITERATION No.{} ================'.format(iteration))
-            print('''Important Note: Heuristic Solver is trying to find the
-                  best possible schedule for {} inspectors from a set of {}
-                  inspectors (all in Known_Vars and Unknown_Vars), where {} of them
-                  are fixed. All others inspectors are set
+            print('''Heuristic Solver is trying to find the
+                  best possible schedule for {} inspector(s) from a set of {}
+                  inspector(s) (all in Known_Vars and Unknown_Vars), where {} of them
+                  are fixed. Other inspectors are set
                   to 0 (using Gurobi cbSetSolution() function)
                   '''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
             print('Known Vars: ', known_vars)
