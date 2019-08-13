@@ -67,7 +67,7 @@ def main(argv):
 
         # print out depot and inspectors
         for depot, ids in depot_dict.items():
-            print('{}: {}'.format(depot, ids))
+            print('{} \t: {}'.format(depot, ids))
 
         graph = construct_graph_from_edges(edges)
         flow_var_names = construct_variable_names(edges, inspectors)
@@ -126,14 +126,12 @@ def main(argv):
             while True:
                 iteration += 1
                 print('=============== ITERATION No.{} ================'.format(iteration))
-                print('''Heuristic Solver is trying to find the
-                      best possible schedule for {} inspector(s) from a set of {}
-                      inspector(s) (all in Known_Vars and Unknown_Vars), where {} of them
-                      are fixed. Other inspectors are set
-                      to 0'''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
-                print('Known Vars: ', known_vars)
-                print('Unknown Vars: ', unknown_vars)
-                print("Don't care Vars: ", uncare_vars)
+                print('''Heuristic Solver is trying to find the best possible schedule
+                      for {} inspector(s) from a set of {} inspector(s) (all in Known_Vars 
+                       and Unknown_Vars), where {} of them are fixed. Other inspectors are set to 0'''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
+                print('Known Vars \t: ', known_vars)
+                print('Unknown Vars \t: ', unknown_vars)
+                print("Don't care Vars \t: ", uncare_vars)
 
                 for uncare_inspector_id in uncare_vars:
                     arcs = x.select('*', '*', uncare_inspector_id)

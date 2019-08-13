@@ -545,7 +545,7 @@ def main(argv):
                                'Max_Hours'])
     df.to_csv('inspectors.csv', index=False)
 
-    """
+
 
     inspectors = {0: {"base": 'RDRM', "working_hours": 8, "rate": 12},
                   1: {"base": 'HH', "working_hours": 5, "rate": 10},
@@ -557,6 +557,19 @@ def main(argv):
                   7: {"base": 'HH', "working_hours": 7, "rate": 10},
                   8: {"base": 'RDRM', "working_hours": 8, "rate": 10},
                   9: {"base": 'RM', 'working_hours': 5, 'rate': 11}
+                  }
+    """
+
+    inspectors = {0: {"base": 'RDRM', "working_hours": 3, "rate": 12},
+                  1: {"base": 'RDRM', "working_hours": 5, "rate": 10},
+                  2: {"base": 'HH', "working_hours": 3, "rate": 15},
+                  3: {"base": 'HH', "working_hours": 5, "rate": 10},
+                  4: {"base": 'HH', "working_hours": 4, "rate": 10},
+                  5: {"base": 'FFU', 'working_hours': 6, 'rate': 11},
+                  6: {"base": 'FFU', "working_hours": 5, "rate": 15},
+                  7: {"base": 'HB', "working_hours": 4, "rate": 10},
+                  8: {"base": 'HB', "working_hours": 5, "rate": 10},
+                  9: {"base": 'RDRM', 'working_hours': 4, 'rate': 11}
                   }
 
     # =====================================================================
@@ -575,7 +588,7 @@ def main(argv):
     shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
     # T, OD = generate_OD_matrix(graph)
 
-    with open('dict.txt', 'r') as f:
+    with open('savedODMatrix.txt', 'r') as f:
         data = f.read()
 
     OD = eval(data)
