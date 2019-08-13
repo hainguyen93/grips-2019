@@ -111,7 +111,7 @@ def main(argv):
                 print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
 
         #initial list fill
-        unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x)
+        unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, prev_sols, x)
 
         iteration = 0  # iteration counting
         new_delta = min(delta, len(depot_dict), max_num_inspectors) # number of inspector to start with
@@ -138,7 +138,7 @@ def main(argv):
 
             update_max_inspectors_constraint(model, i)
             model.optimize(mycallback)
-            unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x)
+            unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x)
 
             if i == max_num_inspectors:  # termination
                 break
