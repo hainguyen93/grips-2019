@@ -130,8 +130,7 @@ def main(argv):
                       best possible schedule for {} inspector(s) from a set of {}
                       inspector(s) (all in Known_Vars and Unknown_Vars), where {} of them
                       are fixed. Other inspectors are set
-                      to 0 (using Gurobi cbSetSolution() function)
-                      '''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
+                      to 0'''.format(new_delta,len(known_vars)+len(unknown_vars),len(known_vars)))
                 print('Known Vars: ', known_vars)
                 print('Unknown Vars: ', unknown_vars)
                 print("Don't care Vars: ", uncare_vars)
