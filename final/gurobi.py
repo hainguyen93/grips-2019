@@ -39,7 +39,7 @@ def construct_variable_names(all_edges, inspectors):
     for edge in all_edges:
         start = edge[0] + '@' + edge[1]
         end = edge[2] + '@' + edge[3]
-        flow_var_names.append([(start, end, k) for k in inspectors])
+        flow_var_names.extend([(start, end, k) for k in inspectors])
     return flow_var_names
 
 
