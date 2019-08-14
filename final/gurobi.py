@@ -23,14 +23,13 @@ import pandas as pd
 from copy import deepcopy
 
 from odMatrix import *
-from xmlParser import *
+from xmlParser import *g
 
+# inspection rate (#people inspected per minute)
 KAPPA = 12
 
 HOUR_TO_SECONDS = 3600
-
 HOUR_TO_MINUTES = 60
-
 MINUTE_TO_SECONDS = 60
 
 
@@ -71,7 +70,6 @@ def add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names):
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2 - t1))
-
 
 
 def add_mass_balance_constraint(graph, model, inspectors, x):
@@ -120,7 +118,6 @@ def add_mass_balance_constraint(graph, model, inspectors, x):
     print('Finished! Took {:.5f} seconds'.format(t2 - t1))
 
 
-
 def add_sinks_and_source_constraint(graph, model, inspectors, x):
     """Add sink/source constraint for each inspector
 
@@ -154,7 +151,6 @@ def add_sinks_and_source_constraint(graph, model, inspectors, x):
     print('Finished! Took {:.5f} seconds'.format(t2 - t1))
 
 
-
 def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspectors, x):
     """Adding a maximum number of inspectors constraint
 
@@ -185,7 +181,6 @@ def add_max_num_inspectors_constraint(graph, model, inspectors, max_num_inspecto
 
     t2 = time.time()
     print('Finished! Took {:.5f} seconds'.format(t2 - t1))
-
 
 
 def add_time_flow_constraint(graph, model, inspectors, x):
@@ -232,7 +227,6 @@ def add_time_flow_constraint(graph, model, inspectors, x):
     print("Finished! Took {:.5f} seconds".format(t2 - t1))
 
 
-
 def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
     """Add dummy variables to get rid of 'min' operators
 
@@ -270,7 +264,6 @@ def minimization_constraint(graph, model, inspectors, OD, shortest_paths, M, x):
     print("Finished! Took {:.5f} seconds".format(t2 - t1))
 
 
-
 def print_solution_paths(inspectors, x):
     """Print solutions
     Attributes:
@@ -300,7 +293,6 @@ def print_solution_paths(inspectors, x):
     return solution
 
 
-
 def update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x, delta=1):
     """Update the lists of variables
     """
@@ -310,7 +302,8 @@ def update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x, del
         if [z for z in x.select('source_{}'.format(inspector_id), '*', inspector_id)
                 if z.getAttr('x') >= .9]:
             sol_arcs = x.select('*', '*', inspector_id)
-            prev_sols.update({arc:clean_up_sol(arc.getAttr('x')) for arc in sol_arcs})
+            prev_sols.update({arc: clean_up_sol(arc.getAttr('x'))
+                              for arc in sol_arcs})
             known_vars.append(inspector_id)
             unknown_vars.remove(inspector_id)
 
@@ -339,10 +332,8 @@ def update_all_var_lists(unknown_vars, known_vars, depot_dict, prev_sols, x, del
     return unknown_vars, uncare_vars
 
 
-
 def clean_up_sol(x):
     return 1 if x >= 0.5 else 0
-
 
 
 def update_max_inspectors_constraint(model, new_max_inspectors):
@@ -360,7 +351,6 @@ def update_max_inspectors_constraint(model, new_max_inspectors):
     model.write("gurobi_model_{}.rlp".format(new_max_inspectors))
 
 
-
 def add_vars_and_obj_function(model, flow_var_names, OD):
     """Adding variables and objective function to model
 
@@ -372,15 +362,16 @@ def add_vars_and_obj_function(model, flow_var_names, OD):
     print("Adding variables...", end=" ")
 
     # adding variables
-    x = model.addVars(flow_var_names, ub=1, lb=0,obj=0, vtype=GRB.BINARY, name='x')
-    M = model.addVars(OD.keys(), lb=0, ub=1, obj=list(OD.values()), vtype=GRB.CONTINUOUS, name='M')
+    x = model.addVars(flow_var_names, ub=1, lb=0,
+                      obj=0, vtype=GRB.BINARY, name='x')
+    M = model.addVars(OD.keys(), lb=0, ub=1, obj=list(
+        OD.values()), vtype=GRB.CONTINUOUS, name='M')
 
     # Adding the objective function coefficients
     model.setObjective(M.prod(OD), GRB.MAXIMIZE)
 
     print('Done')
     return x, M
-
 
 
 def main(argv):
@@ -393,16 +384,17 @@ def main(argv):
     timetable_file = argv[0]
     chosen_day = argv[1]
 
-    #======================================================================
+    # ======================================================================
     station_list = create_station_list(timetable_file, chosen_day)
 
     inspectors = dict()
     indx = 0
 
     for station in station_list:
-        random_num_inspectors = np.random.randint(1,10)
+        random_num_inspectors = np.random.randint(1, 10)
         for i in range(random_num_inspectors):
-            inspectors[indx] = {'base':station, 'working_hours': np.random.randint(3,8)}
+            inspectors[indx] = {'base': station,
+                                'working_hours': np.random.randint(3, 8)}
             indx += 1
 
     print(station_list)
@@ -417,7 +409,7 @@ def main(argv):
                     # 5 : {"base": 'RM', 'working_hours': 5, 'rate':11}
                     }
     """
-    #=====================================================================
+    # =====================================================================
 
     depot_dict = create_depot_inspector_dict(inspectors)
 
@@ -434,8 +426,8 @@ def main(argv):
     shortest_paths, arc_paths = create_arc_paths(deepcopy(graph))
     # T, OD = generate_OD_matrix(graph)
 
-    with open('../final/dict.txt','r') as f:
-        data=f.read()
+    with open('../final/dict.txt', 'r') as f:
+        data = f.read()
 
     OD = eval(data)
     print("OD matrix loaded ...")
@@ -443,12 +435,12 @@ def main(argv):
     # adding sources/sinks nodes
     add_sinks_and_sources_to_graph(graph, inspectors, flow_var_names)
 
-    #freeze graph to prevent further changes
+    # freeze graph to prevent further changes
     graph = nx.freeze(graph)
 
     # start Gurobi
     print("Start Gurobi")
-    model = Model("DB_MIP");
+    model = Model("DB_MIP")
 
     # adding variables and objective functions
     x, M = add_vars_and_obj_function(model, flow_var_names, OD)
@@ -469,11 +461,11 @@ def main(argv):
     add_max_num_inspectors_constraint(graph, model, inspectors, 1, x)
 
     known_vars = []  # vars with known solutions
-    #unknown_vars = []  # vars currently in the model
-    #uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
+    # unknown_vars = []  # vars currently in the model
+    # uncare_vars = list(inspectors.keys())   # vars currently set to zeros (don't care)
 
-    delta = 1 # incremental number of inspector schedules to make
-    #start = 1 # number of inspector schedules to start with
+    delta = 1  # incremental number of inspector schedules to make
+    # start = 1 # number of inspector schedules to start with
 
     prev_sols = {}
 
@@ -484,14 +476,17 @@ def main(argv):
 
     def mycallback(model, where):
         if where == GRB.Callback.MIPNODE:
-            model.cbSetSolution(list(prev_sols.keys()), list(prev_sols.values()))
+            model.cbSetSolution(list(prev_sols.keys()),
+                                list(prev_sols.values()))
             model.cbUseSolution()  # newly added
-            print("MODEL RUNTIME: {}".format(model.cbGet(GRB.Callback.RUNTIME)))
+            print("MODEL RUNTIME: {}".format(
+                model.cbGet(GRB.Callback.RUNTIME)))
 
-    #initial list fill
-    unknown_vars, uncare_vars = update_all_var_lists([], known_vars, depot_dict, x, delta)
+    # initial list fill
+    unknown_vars, uncare_vars = update_all_var_lists(
+        [], known_vars, depot_dict, x, delta)
 
-    for i in range(1, max_num_inspectors+1, delta):
+    for i in range(1, max_num_inspectors + 1, delta):
 
         print('=========================== ITERATION No.{} ==========================='.format(i))
         print('Known Vars: ', known_vars)
@@ -499,21 +494,22 @@ def main(argv):
         print("Don't care Vars: ", uncare_vars)
 
         for uncare_inspector_id in uncare_vars:
-            #= x.select('*', '*', uncare_inspector_id)
-            prev_sols.update({arc:0 for arc in x.select('*', '*', uncare_inspector_id)})
+            # = x.select('*', '*', uncare_inspector_id)
+            prev_sols.update(
+                {arc: 0 for arc in x.select('*', '*', uncare_inspector_id)})
 
         update_max_inspectors_constraint(model, i)
 
         model.optimize(mycallback)
 
-        unknown_vars, uncare_vars = update_all_var_lists(unknown_vars, known_vars, depot_dict, x, delta)
+        unknown_vars, uncare_vars = update_all_var_lists(
+            unknown_vars, known_vars, depot_dict, x, delta)
 
     # write Solution:
-    solution  = print_solution_paths(known_vars, x)
+    solution = print_solution_paths(known_vars, x)
 
     with open("Gurobi_Solution.txt", "w") as f:
         f.write(solution.to_string())
-
 
 
 if __name__ == '__main__':

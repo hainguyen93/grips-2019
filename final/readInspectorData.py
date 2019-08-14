@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 
+
 def extract_inspectors_data(file_name, stations):
     """Extract a dictionary containing information for inspectors
     from the input file for inspectors
@@ -14,13 +15,12 @@ def extract_inspectors_data(file_name, stations):
     """
     print('Loading inspectors...', end=' ')
     data = pd.read_csv(file_name)
-    inspectors={ data.loc[i]['Inspector_ID']:
-                    {"base": data.loc[i]['Depot'],
-                     "working_hours": data.loc[i]['Max_Hours']}
-                    for i in range(len(data)) if data.loc[i]['Depot'] in stations}
+    inspectors = {data.loc[i]['Inspector_ID']:
+                  {"base": data.loc[i]['Depot'],
+                   "working_hours": data.loc[i]['Max_Hours']}
+                  for i in range(len(data)) if data.loc[i]['Depot'] in stations}
     print('There are {} inspectors in total'.format(len(inspectors)))
     return inspectors
-
 
 
 def create_depot_inspector_dict(inspector_dict):

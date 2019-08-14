@@ -74,7 +74,8 @@ def main(argv):
         #graph = construct_graph_from_edges(edges)
         #flow_var_names = construct_variable_names(edges, inspectors)
         input_dir = 'mon_arcs.txt'
-        graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
+        graph, flow_var_names = construct_graph_from_file(
+            input_dir, inspectors)
         graph_copy = deepcopy(graph)
         shortest_paths, arc_paths = create_arc_paths(graph_copy)
 

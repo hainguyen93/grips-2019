@@ -4,6 +4,7 @@ import sys
 import networkx as nx
 import time
 
+
 def construct_graph_from_file(input_dir, inspectors):
     """Construct graph from an external file
 
@@ -38,7 +39,6 @@ def construct_graph_from_file(input_dir, inspectors):
     print('Finished! Took {:.5f} seconds'.format(t2 - t1))
 
     return graph, flow_var_names
-
 
 
 def construct_graph_from_edges(all_edges):
