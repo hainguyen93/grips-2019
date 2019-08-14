@@ -45,7 +45,7 @@ def main(argv):
         inspector_file = argv[2]
         max_num_inspectors = int(argv[3])
         mip_gap = float(argv[5])
-        outputFile = argv[6]
+        outputFile = argv[6]g
 
         delta = int(argv[4])
         if delta < 1:  # check if delta set to 0, if so, reset it to 1
@@ -60,8 +60,10 @@ def main(argv):
         inspectors = extract_inspectors_data(inspector_file, all_stations)
 
         if len(inspectors) < max_num_inspectors:
-            print('''Note: The entered maximum number of inspectors, {}, allowed to work on
-                  {} is greater than the total number of inspectors, {}.
+            print('''
+                  Note: The entered maximum number of inspectors, {},
+                  allowed to work on {} is greater than the total number of
+                  inspectors, {}.
                   '''.format(max_num_inspectors, chosen_day, len(inspectors)))
             max_num_inspectors = len(inspectors)
 
@@ -160,9 +162,12 @@ def main(argv):
                 iteration += 1
                 print(
                     '=============== ITERATION No.{} ================'.format(iteration))
-                print('''Heuristic Solver is trying to find the best possible schedule
+                print('''
+                      Heuristic Solver is trying to find the best possible schedule
                       for at most {} inspector(s) from a set of {} inspector(s) (all in Known_Vars
-                       and Unknown_Vars), where {} of them are fixed. Other inspectors are set to 0'''.format(new_delta, len(known_vars) + len(unknown_vars), len(known_vars)))
+                      and Unknown_Vars), where {} of them are fixed. Other inspectors
+                      are set to 0
+                      '''.format(new_delta, len(known_vars) + len(unknown_vars), len(known_vars)))
                 print('Known Vars: ', known_vars)
                 print('Unknown Vars: ', unknown_vars)
                 print("Don't care Vars: ", uncare_vars)
