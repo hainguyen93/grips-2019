@@ -31,6 +31,7 @@ from xmlParser import *
 from gurobi import *
 from odMatrix import *
 from readInspectorData import *
+from graph import *
 
 
 def main(argv):
@@ -70,8 +71,10 @@ def main(argv):
         for depot, ids in depot_dict.items():
             print('{} \t: {}'.format(depot, ids))
 
-        graph = construct_graph_from_edges(edges)
-        flow_var_names = construct_variable_names(edges, inspectors)
+        #graph = construct_graph_from_edges(edges)
+        #flow_var_names = construct_variable_names(edges, inspectors)
+        input_dir = 'mon_arcs.txt'
+        graph, flow_var_names = construct_graph_from_file(input_dir, inspectors)
         graph_copy = deepcopy(graph)
         shortest_paths, arc_paths = create_arc_paths(graph_copy)
 
