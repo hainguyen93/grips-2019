@@ -23,7 +23,7 @@ import pandas as pd
 from copy import deepcopy
 
 from odMatrix import *
-from xmlParser import *g
+from xmlParser import *
 
 # inspection rate (#people inspected per minute)
 KAPPA = 12

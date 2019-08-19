@@ -45,7 +45,7 @@ def main(argv):
         inspector_file = argv[2]
         max_num_inspectors = int(argv[3])
         mip_gap = float(argv[5])
-        outputFile = argv[6]g
+        outputFile = argv[6]
 
         delta = int(argv[4])
         if delta < 1:  # check if delta set to 0, if so, reset it to 1
@@ -57,6 +57,9 @@ def main(argv):
 
         edges, all_stations = extract_edges_from_timetable(
             timetable_file, chosen_day)
+
+        print('There are {} stations involved in train timetable'.format(len(all_stations)))
+
         inspectors = extract_inspectors_data(inspector_file, all_stations)
 
         if len(inspectors) < max_num_inspectors:
@@ -73,11 +76,11 @@ def main(argv):
         for depot, ids in depot_dict.items():
             print('{} \t: {}'.format(depot, ids))
 
-        #graph = construct_graph_from_edges(edges)
-        #flow_var_names = construct_variable_names(edges, inspectors)
-        input_dir = 'mon_arcs.txt'
-        graph, flow_var_names = construct_graph_from_file(
-            input_dir, inspectors)
+        graph = construct_graph_from_edges(edges)
+        flow_var_names = construct_variable_names(edges, inspectors)
+        #input_dir = 'mon_arcs.txt'
+        #graph, flow_var_names = construct_graph_from_file(
+        #    input_dir, inspectors)
         graph_copy = deepcopy(graph)
         shortest_paths, arc_paths = create_arc_paths(graph_copy)
 
