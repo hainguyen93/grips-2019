@@ -3,7 +3,7 @@
 \usepackage[toc,page]{appendix}
 \include{preamble}
 
-\title{Scheduling of Ticket Inspectors in Deustche Bahn Inter-City Express Trains\footnote{This work was done when the three authors joined the G-RIPS 2019 Team at Zuse Institut Berlin,  working
+\title{Scheduling of Ticket Inspectors in Deutsche Bahn Inter-City Express Trains\footnote{This work was done when the three authors joined the G-RIPS 2019 Team at Zuse Institut Berlin,  working
 on the mobile ticket inspection
 project sponsored in part 
 by the Deustche Bahn Railway Company. All authors contributed equally to this project.}}
@@ -29,9 +29,10 @@ add an abstract here
 
 \subsection{Motivations}
 
-\par A recent report from Deustche Bahn \cite{DBFactFigure2017} shows that 
-there were about $86.7$ million passengers using 
-the Inter-City Express (ICE) trains in 2017. 
+\par 
+%A recent report from Deustche Bahn \cite{DBFactFigure2017} shows that 
+%there were about $86.7$ million passengers using 
+%the Inter-City Express (ICE) trains in 2017. 
 Currently the staff on the ICEs 
 need to stay on-board for the whole route (or most part of the route) to inspect passenger tickets. Though this ensures all passengers are checked,
 the number of inspectors required scales linearly with the number of trains; otherwise, some trains
@@ -47,26 +48,67 @@ only for a short part of the route, while maximising the number of passenger tic
   
 \subsection{Related Work}
 
-\par Passenger flow modelling from \cite{gao_jia_2016} describe flow of passengers in and out of trains, platforms, and stations. This specifically models pedestrian flows in a station using agent based modelling. A probabilistic variation could help determine the number of passengers boarding or alighting the train at each station.
+\citet{gao_jia_2016} describe flow of passengers in and out of trains, platforms, and stations. This specifically models pedestrian flows in a station using agent based modelling. A probabilistic variation could help determine the number of passengers boarding or alighting the train at each station.
 
-\par A common technique to study the inspector scheduling problem relies on Stackelberg strategies from Game Theory. This models a transportation system as a leader-follower game. In this context, the leader would be represented as the transportation system or its inspectors and the followers would be passengers. The game is played on a turn-by-turn basis, where each player (leader and follower) acts to optimise their respective objective function. These games are generally formulated as bi-level optimisation problems and implemented as Linear Programs.
-\par An example of such an implementation is done in \cite{jiang_sandholm_2012}. Inspectors move within the Los Angeles transit system to catch fare evaders. This is also modelled as a Stackelberg strategy and stated as a bi-level optimisation problem. The leader represents inspectors and the followers are passengers that choose to buy a ticket or not. Optimal scheduling requires temporal and spatial constraints to defer fare evasion and maximise revenue. This is also proposed as a Stackelberg problem that is formulated as an LP ``relaxation" problem.
-\par Work \cite{yin_sullivan_2012} improves on the previously stated work in \cite{jiang_sandholm_2012}. This paper develops an application for randomised inspector scheduling in transit systems using leader-follower Stackelberg games whilst also maximising the expected total revenue generated from ticket sales. It studies the inspector scheduling problem in the Los Angeles metro system and addresses two main issues: complex inspector assignments and infeasible strategies. Complex inspector assignments arise when the program produces schedules for inspectors that require many train changes. This can be difficult for the inspector to remember and result in sub-optimal inspections. Infeasible strategies refer to violating the maximum number of patrol hours. Each issue is tackled by adding a sufficient amount of information to each vertex of their \textit{transition matrix} to encode history of travel for each inspector to choose the easiest route to take in the future. To do this, they develop a \textit{History-Duplicate Transition graph} (HDT). To ensure inspectors do not work more than the maximum number of working hours, sub-graphs corresponding to paths of time length less than or equal to the maximum number of working hours are embedded into the HDT. Another goal of effective randomized scheduling is to deter passengers from not buying tickets.
+A common technique to study the inspector scheduling problem relies on Stackelberg strategies from Game Theory \cite{osborne1994course}. This models a transportation system as a leader-follower game. In this context, the leader would be represented as the transportation system or its inspectors and the followers would be passengers. The game is played on a turn-by-turn basis, where each player (leader and follower) acts to optimise their respective objective function. These games are generally formulated as bi-level optimisation problems and implemented as Linear Programs.
 
-\par In \cite{mastersthesis}, the author states that the inspector scheduling problem is not a well studied problem and yet has many open areas. The author first studies the Los Angeles transit system done in previous works \cite{jiang_sandholm_2012}\cite{yin_sullivan_2012} to formulate and solve this problem as a Linear Program problem, then adapts it to solve this problem in Oslo's transit system.
+An example of such an implementation is done by \citet{jiang_sandholm_2012}. Inspectors move within the Los Angeles transit system to catch fare evaders. This is also modelled as a Stackelberg strategy and stated as a bi-level optimisation problem. The leader represents inspectors, and the followers are passengers that choose to buy a ticket or not. Optimal scheduling requires temporal and spatial constraints to defer fare evasion and maximise revenue. This is also proposed as a Stackelberg problem that is formulated as an LP ``relaxation" problem.
 
-\par A common tool used in transportation research is the Origin-Destination matrix. Surveying data is resource expensive, so estimating this data is more efficient. Origin-Destination data can be approximated using tools in \cite{caceres_romero_benitez_2011}. We  assume no further data is given other than the train schedules with passenger numbers.
-\par A survey paper on approximating the O-D data is done by \cite{bera_krishna_rao}. This paper surveys the \textit{state of the art} techniques to generate such data using methods from statics to machine learning. Most techniques require prior knowledge of the transportation system or can be applied to specific scenarios.
-\par The fundamental paper in approximating O-D data comes from \cite{van_zuylen_willumsen_2002}. This paper develops two models, information minisation and entropy maximisation, to predict the most likely O-D matrix which is consistent with the data using traffic counts information. The authors present derivation of these models that do not require any \textit{a priori} knowledge and allow for the models to encode any known information if it exists. Their section on the multi-proportional algorithm is used to develop the results in this paper.
+\citet{yin_sullivan_2012} improves on the previously stated work in \cite{jiang_sandholm_2012}. This paper develops an application for randomised inspector scheduling in transit systems using leader-follower Stackelberg games whilst also maximising the expected total revenue generated from ticket sales. It studies the inspector scheduling problem in the Los Angeles metro system and addresses two main issues: complex inspector assignments and infeasible strategies. Complex inspector assignments arise when the program produces schedules for inspectors that require many train changes. This can be difficult for the inspector to remember and result in sub-optimal inspections. Infeasible strategies refer to violating the maximum number of patrol hours. Each issue is tackled by adding a sufficient amount of information to each vertex of their \textit{transition matrix} to encode history of travel for each inspector to choose the easiest route to take in the future. To do this, they develop a \textit{History-Duplicate Transition graph} (HDT). To ensure inspectors do not work more than the maximum number of working hours, sub-graphs corresponding to paths of time length less than or equal to the maximum number of working hours are embedded into the HDT. Another goal of effective randomized scheduling is to deter passengers from not buying tickets.
+
+\citet{mastersthesis} states that the inspector scheduling problem is not a well studied problem and yet has many open areas. The author first studies the Los Angeles transit system previously considered in \cite{jiang_sandholm_2012, yin_sullivan_2012} to formulate and solve this problem as a Linear Program problem, then adapts it to solve this problem in Oslo's transit system.
+
+A common tool used in transportation research is the Origin-Destination (OD) matrix. 
+Surveying data is resource expensive, so estimating this data 
+is more efficient. However, the problem
+of estimating the OD matrix is still one of the most challenging problems
+in transportation to date \cite{KRISHNAKUMARI2019}. More specifically, the problem is under-defined 
+due to the fact that the number of independent equations that can be formulated to constraint 
+OD flows with actual observations is significantly smaller than the number of OD pairs
+\cite{KRISHNAKUMARI2019}.  \citet{caceres_romero_benitez_2011} proposes an 
+iterated algorithm to approximate the OD matrix given
+no further data other than the train schedules with passenger numbers.
+
+A survey paper on approximating the O-D data is done by \citet{bera_krishna_rao}. This paper surveys the state-of-the-art techniques to generate such data using methods from statics to machine learning. Most techniques require prior knowledge of the transportation system or can be applied to specific scenarios.
+
+The breakthrough work in approximating OD data was done by
+\citet{van_zuylen_willumsen_1980}, where two models based on
+information minimisation or entropy maximisation were developed
+to predict the most likely OD matrix.
+Empirical results were consistent with the data using traffic counts information 
+\cite{van_zuylen_willumsen_1980}. The authors present derivation of these models that do not require any \textit{a priori} knowledge and allow for the models to encode any known information if it exists. Their section on the multi-proportional algorithm is used to develop the results in this paper.
 
 \subsection{Our Contributions}
-
-\par We take three main steps to solving this problem. First, we formulate the Inspector Scheduling problem as a Network Flow Problem. Next, we estimate the Origin-Destination (OD) Matrix to approximate the number of passengers travelling between any pair of stations. And lastly, solve our network flow as a Mixed Integer Programming problem (MIP).
+As already mentioned, we in this paper try to construct an alternative model to 
+address the ticket inspection scheduling problem in Deutsche Bahn ICE trains, where the inspectors
+do not need to stay onboard for the whole journey. Our work is different from previous work in 
+\begin{enumerate}
+    \item We try to maximise the number of passengers inspected by working inspectors, while previous work considers the maximisation of revenue (i.e., including 
+    fine from fare evaders and ticket sales).
+    \item A Stackelberg game between fare evaders and ticket inspectors has been commonly studied 
+    before, we do not consider any game playing in our model, which also means that the two roles
+    in our model is passengers (whether or not is fare evaders) and inspectors.
+    \item Although the inspectors can inspect passengers on the trains (i.e., on-train inspection)
+    or at the way out (i.e., on-station inspection), we only consider the on-train inspection.  
+\end{enumerate}
+Our contributions are three-fold as follows.
+\begin{enumerate}
+    \item  We first demonstrate how to formulate the problem of scheduling ticket inspectors 
+    as a Network Flow Problem. We rigorously re-write the problem as a 
+    Mixed Integer Problem (MIP).
+    \item We then estimate the OD Matrix to approximate the number of 
+    passengers travelling between any pair of stations. Once the number of passengers 
+    of each type is obtained, general linear programming solver like 
+    \textsc{Cplex} or \textsc{Gurobi} is used to solve our MIP problem.
+\end{enumerate}
 
 \subsection{Outline of Paper}
 \par We end this introduction with definitions and formalised notation to use throughout the rest of the paper. Section 2 describes the different components of the mathematical model developed to solve this problem. We start with the main object of study, a multi-weighted directed graph representation of the input train schedules. Then explain how we estimate the number of passengers travelling through each path of the directed graph. Lastly, we formalize this problem as a Mixed Integer Program. Section 3 will discuss implementation and limitations of our program. We will also discuss heuristic approaches to reducing the problem size and some experiments performed to test the effectiveness of these approaches. Section 4 will discuss the complexity of this problem and discussion on issues and future research directions.
 
 \section{Preliminaries}
+
+In this section, we will give a deeper discussion on the considered problem, the used 
+dataset and some assumptions.
 
 \subsection{Problem Definition}
 
@@ -149,11 +191,14 @@ The greedy approach is used to reduce the problem instance to a smaller pool ins
 
 
 \subsection{Graph Representation}
-\par The main object of study is the directed graph (which is a network flow) representing the flow of trains and passengers throughout the day.
-\par The nodes of the graph represent \textit{events}, where each event is either an \textit{arrival} or \textit{departure} of a train into or out of a station. Each node is then uniquely identified by a space-time pair, the station and time of event.
-\par Each arc represents a train ride from a departure station at a starting time to an arrival station at an ending time. This is used to distinguish between multiple trains rides using the same tracks. We incorporate the time of day that a train arrives or departs to induce an acyclic flow through the graph.
-\par Each arc has associated information extracted from the input train schedule data that describes the train ride taken on that day: (a) the number of passengers on each train ride, $v_e$ and (b) the amount of time taken from departure to arrival, $t_e$. An associated binary variable, $x_e^{(k)}$, also known as a decision variable, is also associated to each arc. If $x_e^{(k)} = 1$, then the $k^{th}$ inspector takes arc $e$, otherwise, not. This variable is the output of a linear program. See Figure \ref{fig:arc} for a graphical description of each arc.
-\par Every passenger trajectory is assumed to be the shortest path taken and can be determined (not uniquely, as multiple shortest paths could exist) as a pair of nodes starting station and start time and ending station and end time. See Figure \ref{fig:passenger_path} for an example passenger path.
+
+The main object of study is the directed graph (which is a network flow) representing the flow of trains and passengers throughout the day. 
+The nodes of the graph represent \textit{events}, where each event is either an \textit{arrival} or \textit{departure} of a train into or out of a station. Each node is then uniquely identified by a space-time pair, the station and time of event. 
+Each arc represents a train ride from a departure station at a starting time to an arrival station at an ending time. This is used to distinguish between multiple trains rides using the same tracks. We incorporate the time of day that a train arrives or departs to induce an acyclic flow through the graph. 
+
+Each arc has associated information extracted from the input train schedule data that describes the train ride taken on that day: (a) the number of passengers on each train ride, $v_e$ and (b) the amount of time taken from departure to arrival, $t_e$. An associated binary variable, $x_e^{(k)}$, also known as a decision variable, is also associated to each arc. If $x_e^{(k)} = 1$, then the $k^{th}$ inspector takes arc $e$, otherwise, not. This variable is the output of a linear program. See Figure \ref{fig:arc} for a graphical description of each arc.
+
+Every passenger trajectory is assumed to be the shortest path taken and can be determined (not uniquely, as multiple shortest paths could exist) as a pair of nodes starting station and start time and ending station and end time. See Figure \ref{fig:passenger_path} for an example passenger path.
 \begin{figure}
     \centering
     \includegraphics[scale=0.7]{pics/nodes.pdf}
@@ -167,9 +212,10 @@ The greedy approach is used to reduce the problem instance to a smaller pool ins
     \caption{An example trajectory for an inspector is highlighted in blue starting at the Hanover station at 8:00 am and ending at the Hanover station at 9:35 am. Dummy nodes known as source and sink are also attached.}
     \label{fig:patrol_strategy}
 \end{figure}
-\par The network flow graph can be represented by two axes: the train station name and time events (where each event is an arrival or departure of some train). arcs in this graph are classified as either \textit{driving} (train changing stations) (Figure \ref{fig:driving_arcs}) or \textit{waiting} arcs (train staying at the same station) (Figure \ref{fig:waiting_arcs}). An example network flow graph is depicted in (Figure \ref{fig:graph}). 
-\par We solve the inspector scheduling problem for each inspector. This means for $|K|$ inspectors, there are $|K|$ unknown decision variables associated to each arc in the graph. i.e. a binary-valued vector of length $|K|$ is associated to each of the graph and is the output of our Linear Program.
-\par Each inspector is required to start and end at the same station. To impose this constraint, we attach ``dummy" nodes called a \textit{source} and \textit{sink} nodes. These nodes are connected to every node of the inspector's base station. This will allow the output of the program to determine where in the graph the inspectors need to start and end. See Figure \ref{fig:sink_and_source}. An example inspector trajectory is depicted in Figure \ref{fig:patrol_strategy}.
+
+The network flow graph can be represented by two axes: the train station name and time events (where each event is an arrival or departure of some train). arcs in this graph are classified as either \textit{driving} (train changing stations) (Figure \ref{fig:driving_arcs}) or \textit{waiting} arcs (train staying at the same station) (Figure \ref{fig:waiting_arcs}). An example network flow graph is depicted in (Figure \ref{fig:graph}). We solve the inspector scheduling problem for each inspector. This means for $|K|$ inspectors, there are $|K|$ unknown decision variables associated to each arc in the graph. i.e. a binary-valued vector of length $|K|$ is associated to each of the graph and is the output of our Linear Program.
+
+Each inspector is required to start and end at the same station. To impose this constraint, we attach ``dummy" nodes called a \textit{source} and \textit{sink} nodes. These nodes are connected to every node of the inspector's base station. This will allow the output of the program to determine where in the graph the inspectors need to start and end. See Figure \ref{fig:sink_and_source}. An example inspector trajectory is depicted in Figure \ref{fig:patrol_strategy}.
 \begin{figure}
     \centering
     \includegraphics[scale=0.15]{pics/Graph.jpg}
@@ -177,24 +223,39 @@ The greedy approach is used to reduce the problem instance to a smaller pool ins
     \label{fig:graph}
 \end{figure}
 \subsection{Origin-Destination Matrix}
-\par The Origin-Destination (OD) matrix is useful in urban transportation design and planning, but difficult to information to acquire. In \cite{bera_krishna_rao}, the authors give a brief over view of the different methods, like bi-level programming and machine learning, to estimate the OD matrix. However, most of these approaches assume a priori knowlarc acquired via sampling. Since we do not assume any a priori knowlarc about the system, the most appropriate method to use is the original paper by Van Zuylen and Willumsen \cite{van_zuylen_willumsen_1978}, which proposes a maximum entropy/information minimization  approach to computing the OD matrix. We refer to the multiproportional algorithm in their paper for details on implementation. The input of this algorithm is the directed graph with the volume counts (the number of passengers on each arc) and the output of the algorithm is a matrix whose $(i,j)$ entry represents the number of people who travelling from starting node $i$ to ending node $j$.
+\par The Origin-Destination (OD) matrix is useful in urban transportation design and planning, but difficult to information to acquire. \citet{bera_krishna_rao} give a brief over view of the different methods, like bi-level programming and machine learning, to estimate the OD matrix. However, most of these approaches assume a priori knowledge acquired via sampling. Since we do not assume any a priori knowledge about the system, the most appropriate method to use is the original paper by \citet{van_zuylen_willumsen_1980}, which proposes a maximum entropy/information minimisation  approach to computing the OD matrix. We refer to the multi-proportional algorithm in their paper for details on implementation. The input of this algorithm is the directed graph with the volume counts (the number of passengers on each arc) and the output of the algorithm is a matrix whose $(i,j)$ entry represents the number of people who travelling from starting node $i$ to ending node $j$.
 
 
 \subsection{The Mixed Integer Program}
-\par According to \cite{jiang_sandholm_2012}\cite{mastersthesis}\cite{yin_sullivan_2012}, we can quantify the probability that a certain passenger type is inspected. It is defined by
+
+\subsubsection{Probability of passenger inspection}
+
+According to \cite{jiang_sandholm_2012, mastersthesis, yin_sullivan_2012}, we can quantify the probability that a certain passenger type is inspected. It is defined by
 \begin{align}
     \min\bigg\{1,\sum_{i=1}^\gamma\sum_{e\in P_i\cap\lambda} f_e\bigg\}
 \end{align}
 where $f_e$ is the \textit{arc effectiveness} value of a patrol unit on arc $e$, $\gamma$ is the number of deployable patrol units, $P_i$ is the $i^{th}$ patrol strategy (a path subset of the graph), and $\lambda$ is a passenger type (also a path subset of the graph). The arc effectiveness value is defined by $f_e = r\cdot t_e/v_e$, where $r\cdot t_e$ is the potential number of passengers an inspector can inspect and $v_e$ is the total number of passengers on a train ride. The inspection rate $r$ is assumed to be constant for every inspector. Thus, $f_e$ has physical interpretation of volume fraction of passengers inspected of arc $e$. Since multiple inspectors are allowed on each train ride, passengers can be inspected by portioning off sections of the train amongst the available inspectors, so that the arc effectiveness becomes additive. A passenger of \textit{type} $\lambda$ is a passenger that travels the path $\lambda$ (an ordered sequence of arcs in the directed graph).
-\par We formulate our objective function in the following way.
-\begin{align}\label{objectivefxn}
-    \max_{\textbf{x}}\sum_{\lambda}T_{\lambda}\cdot\min\bigg\{\sum_{e\in\lambda}f_e\big(
-        \sum_{k=1}^K x_{e}^{(k)}
-    \big), 1\bigg\}
-\end{align}
-where $T_\lambda$ is the number of passengers travelling through path $\lambda$. This can be interpreted as maximising the proportion of people of each passenger type inspected.
 
-\par Below we establish the input parameters and output variables of our Linear Program and follow it with the completely formulated problem. We use Gurobi solvers written in Python to implement this program.\\
+\subsubsection{Objective as number of passenger inspected}
+
+We formulate our objective function in the following way.
+
+\begin{equation}
+\label{objectivefxn}
+     \max_{\textbf{x}}\sum_{\lambda}\underbrace{T_{\lambda}\cdot\min\bigg\{\sum_{e\in\lambda}f_e\left(
+        \sum_{k=1}^K x_{e}^{(k)}
+    \right), 1\bigg\}}_{\text{Expected number of passengers of type $\lambda$ inspected}}
+\end{equation}
+where $T_\lambda$ is the number of passengers travelling through path $\lambda$. This can be interpreted as maximising the proportion of people of each passenger type inspected, where
+the value inside the sum can be interpreted as the expected number of 
+passengers of type $\lambda$ being inspected.
+
+\subsubsection{Our mixed integer programme}
+
+We establish below the input parameters and output variables of 
+our Linear Program and follow it with the completely formulated problem. 
+We use \textsc{Gurobi} solvers written in Python to implement this program.
+
 \textbf{Parameters:}
 \begin{itemize}\itemsep -2pt
     \item $T_\lambda$: the number of passengers on path $\lambda\in\Lambda$
@@ -204,20 +265,21 @@ where $T_\lambda$ is the number of passengers travelling through path $\lambda$.
     \item $\theta_k$: the maximum number of working hours for inspector $k$
     \item $\kappa$: the maximum number of inspectors allowed to work.
 \end{itemize}
+
 \textbf{Variables:}
 \begin{itemize}\itemsep -2pt
     \item $x_e^{(k)}\in\{0,1\}$: decision variable for if inspector $k$ uses arc $e$.
     \item $\Pi_\lambda\in [0,1]$: the probability that a passenger of type (or path) $\lambda$ being inspected.
 \end{itemize}
-\textbf{Objective function:}
-\begin{align}
-    \max_{\textbf{x}} \sum_{\lambda\in\Lambda}T_\lambda\Pi_\lambda
-\end{align}
+
+Below is the complete problem: 
+\begin{equation}
+    \max_{\textbf{x}} \sum_{\lambda\in\Lambda}T_\lambda\cdot \Pi_\lambda
+\end{equation}
 \textbf{subject to:}
 \begin{align}
 \begin{split}\label{mass-balance}
-     \sum_{e\in\delta^+(B)}x_e^{(k)} - \sum_{e\in\delta^-(B)}x_e^{(k)} 
-     = 0, \forall B\in N, \forall k\in K\\
+     \sum_{e\in\delta^+(B)}x_e^{(k)} - \sum_{e\in\delta^-(B)}x_e^{(k)} &= 0, \forall B\in N, \forall k\in K\\
 \end{split}\\
 \begin{split}\label{source}
          \sum_{e\in\delta^+(S_k)}x_e^{(k)}
@@ -237,47 +299,56 @@ where $T_\lambda$ is the number of passengers travelling through path $\lambda$.
 \end{split}
 \end{align}
 
-\par Equation (\ref{mass-balance}) represents the \textit{mass-balance} or \textit{flow conservation} constraint. This states that the number of outgoing arcs and number of incoming arcs for every node that is not a source or sink are equal.
-\par The \textit{source constraint}, in equation (\ref{source}), is sufficient to guarantee that \textit{if} an inspector leaves a source, it will also enter a sink. This constraint with the mass-balance constraint ensures that if an inspector leaves a station from a source node, he/she will also return to that station at a sink node. The less than or equal to sign allows inspectors not to work, since it may be the case that not all resources are necessary to ensure that sufficiently many passengers are inspected.
-\par The \textit{time flow} (or \textit{max work shift}) constraint, equation (\ref{time-flow}), imposes work schedule restriction stating that the $k^{th}$ inspector cannot work more than $\theta_k$ hours. This constraint may also be implemented as the sum of times across all arcs in the graph. The following reformulation of the time-flow constraint may speed up computation time.
+Equation (\ref{mass-balance}) represents the \textit{mass-balance} or \textit{flow conservation} constraint. This states that the number of outgoing arcs and number of incoming arcs for every node that is not a source or sink are equal.
+
+The \textit{source constraint}, in equation (\ref{source}), is sufficient to guarantee that \textit{if} an inspector leaves a source, it will also enter a sink. This constraint with the mass-balance constraint ensures that if an inspector leaves a station from a source node, he/she will also return to that station at a sink node. The less than or equal to sign allows inspectors not to work, since it may be the case that not all resources are necessary to ensure that sufficiently many passengers are inspected.
+
+The \textit{time flow} (or \textit{max work shift}) constraint, equation (\ref{time-flow}), imposes work schedule restriction stating that the $k^{th}$ inspector cannot work more than $\theta_k$ hours. This constraint may also be implemented as the sum of times across all arcs in the graph. The following reformulation of the time-flow constraint may speed up computation time.
 \begin{align}
     \sum_{e\in E}x_e^{(k)}\cdot t_e\le \theta_k\qquad\qquad\forall k\in K
 \end{align}
-\par We impose the \textit{minimisation constraint}, equation (\ref{minimum}), because the original objective function, equation (\ref{objectivefxn}), is not a linear function, but a piece-wise linear function. To over come this, we create a new dummy variable $\Pi_\lambda$ to replace the minimum function in the objective function and impose upper bounds of its entries in as constraints. Note that $\Pi_\lambda$ has physical interpretation as the probability that a passenger of type $\lambda$ being inspected. This quantity is bounded above by $1$ and must also be less than the total inspection effectiveness of all inspectors travelling through any path.
-\par Lastly, we used equation (\ref{max_num_insps}) for development purposes. We test our schedule building algorithm for each $\kappa\in\mathbb{N}$ and record approximate percentage of people inspected in the entire system. This imposes a maximum number of inspectors allowed to work on a given day.
+
+We impose the \textit{minimisation constraint}, equation (\ref{minimum}), because the original objective function, equation (\ref{objectivefxn}), is not a linear function, but a piece-wise linear function. To over come this, we create a new dummy variable $\Pi_\lambda$ to replace the minimum function in the objective function and impose upper bounds of its entries in as constraints. Note that $\Pi_\lambda$ has physical interpretation as the probability that a passenger of type $\lambda$ being inspected. This quantity is bounded above by $1$ and must also be less than the total inspection effectiveness of all inspectors travelling through any path.
+
+Lastly, we used equation (\ref{max_num_insps}) for development purposes. We test our schedule building algorithm for each $\kappa\in\mathbb{N}$ and record approximate percentage of people inspected in the entire system. This imposes a maximum number of inspectors allowed to work on a given day.
 
 \subsection{Complexity Analysis}
- \par According to Gary and Johnson's book, \textit{Computers and Intractability: A Theory of NP-Completeness}\cite{Garey:1990:CIG:574848}, Integer Programming (IP) problems are NP-Complete in the strong sense. Thus, we encounter exponential growth of run time with respect to the size of our input. The rest of our research relies in practical implementation: creating good results in a reasonable runtime.
+According to Gary and Johnson's book, \textit{Computers and Intractability: A Theory of NP-Completeness}\cite{Garey:1990:CIG:574848}, Integer Programming (IP) problems are NP-Complete in the strong sense. Thus, we encounter exponential growth of run time with respect to the size of our input. The rest of our research relies in practical implementation: creating good results in a reasonable runtime.
 
- \par For each inspector, the number of unknown output variables $x_e$ is equal to the number of arcs in the directed graph. In order to determine the complexity, we need to turn our problem into an instance of an already known hard problem to conclude that our problem is at least as hard as the known hard problem. We classify our problem as a constrained shortest path problem. Further work entails reducing our problem into one of these to determine complexity. According to the appendices of \cite{Garey:1990:CIG:574848}, our problem is most similar to the following problems
+For each inspector, the number of unknown output variables $x_e$ is equal to the number of arcs in the directed graph. In order to determine the complexity, we need to turn our problem into an instance of an already known hard problem to conclude that our problem is at least as hard as the known hard problem. We classify our problem as a constrained shortest path problem. Further work entails reducing our problem into one of these to determine complexity. According to the appendices of \cite{Garey:1990:CIG:574848}, our problem is most similar to the following problems
 \begin{itemize}
-    \item Path Constrained Network Flow [ND34]
-    \begin{itemize}
-        \item NP-Complete
-    \end{itemize}
-    \item Integer Programming [MP1]
-    \begin{itemize}
-        \item NP-Complete in the strong sense
-    \end{itemize}
-    \item Vertex Covering (or restated arc Covering) [GT1]
-    \begin{itemize}
-        \item Vertex covering is an NP-Complete problem
-        \item arc covering can be solved in polynomial time using graph matching.
-    \end{itemize}
-    \item Minimum Covering [SP5]
-    \begin{itemize}
-        \item NP-Complete, but can become solvable in polynomial time under a specific assumption. 
-    \end{itemize}
+    \item Path Constrained Network Flow: $\mathcal{NP}$-Complete
+    \item Vertex Covering (or restated arc Covering): 
+    Vertex covering is an $\mathcal{NP}$-Complete problem.  
+    Arc covering can be solved in polynomial time using graph matching.
+    \item Minimum Covering: $\mathcal{NP}$-Complete, but can become solvable in polynomial time under a specific assumption. 
 \end{itemize}
 
 \section{Implementation}
 
 \subsection{Heuristic Solvers}
-\par Our approach to solve this problem heuristically is implementing a \textit{local search}. We reduce the number of dimensions of the problem by fixing trajectories for certain inspectors using the \texttt{useSolution()} and \texttt{setSolution()} functions from Gurobi solvers. We apply a greedy heuristic: inspectors working the maximum number of hours will contribute the most to maximizing the objective function (refer to the assumptions section). Out of the choices of inspectors to choose from, we reduce the pool of candidates to choose from to the inspectors who work the maximum number of working hours. The remaining inspectors' trajectories are set to $0$ and the problem is solved on a smaller set of unknown variables.
-\par However, we encounter the following limitation of the Gurobi solver. When the inspector scheduling problem is solved for 1 inspector, a solution is obtained less than 1 second (see table \ref{tab:runtime-without-heuristic}). When the problem is solved for 6 inspectors and the solutions for 5 of them are fixed (leaving 1 free inspector schedule to be determined), a solution is obtained in 70 seconds.
-\par Thus, our heuristic solver is the following: given a list of $I$ inspectors, where we seek to build schedules for the best $n\le I$ inspectors, we build the schedules incrementally with $\Delta$ number of inspectors at a time. By specifying $I, n$ and $\Delta$, we can build inspector schedules in a reasonable run-time. 
+We conjecture that our MIP problem is in 
+$\mathcal{NP}$-class, which also means the running time will increase exponentially with 
+respect to the number of inspectors. As can be seen latter that it takes 1.5 hours to
+obtain the inspection schedule for 30 inspectors with an optimality gap of 5\%. The
+Deutsche Bahn railway company has over 500 inspectors for the ICE 401 fleet, and solving the MIP programme for all of them simultaneously turns out to be impractical. 
+Our approach to solve this problem heuristically is implementing a \textit{local search}. We reduce the number of dimensions of the problem by fixing trajectories for certain inspectors using the \texttt{useSolution()} and \texttt{setSolution()} functions from Gurobi solvers. We apply a greedy heuristic: inspectors working the maximum number of hours will contribute the most to maximizing the objective function (refer to the assumptions section). Out of the choices of inspectors to choose from, we reduce the pool of candidates to choose from to the inspectors who work the maximum number of working hours. The remaining inspectors' trajectories are set to $0$ and the problem is solved on a smaller set of unknown variables. Algorithm~\ref{algor:heuristic-solver} gives a full
+description of our proposed heuristic solver for large-scale problem.
+
+However, we encounter the following limitation of the Gurobi solver. When the inspector scheduling problem is solved for 1 inspector, a solution is obtained less than 1 second (see Table \ref{tab:runtime-without-heuristic}). When the problem is solved for 6 inspectors and the solutions for 5 of them are fixed (leaving 1 free inspector schedule to be determined), a solution is obtained in 70 seconds. Thus, our heuristic solver is the following: given a list of $I$ inspectors, where we seek to build schedules for the best $n\le I$ inspectors, we build the schedules incrementally with $\Delta$ number of inspectors at a time. By specifying $I, n$ and $\Delta$, we can build inspector schedules in a reasonable run-time. 
 
 
+\begin{algorithm}[t]
+    \DontPrintSemicolon
+    Choose a subset of inspectors from the inspector pool\;
+    \Repeat{termination condition is fulfilled}{
+       Solve the current MIP model\;
+       Fix the solutions for these inpsectors\;
+       Add more inspectors into the model\;
+    }
+    \caption{Heuristic solver for large-scale problem}
+    \label{algor:heuristic-solver}
+\end{algorithm}
 
 \section{Empirical results}
 
